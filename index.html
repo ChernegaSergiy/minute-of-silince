@@ -1,0 +1,202 @@
+<!doctype html>
+<html lang="uk">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Хвилина мовчання</title>
+    <style>
+      /* ── Reset & tokens ─────────────────────────────────────────────────── */
+      *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+      :root {
+        --c-bg:      #0d0d0d;
+        --c-surface: #111111;
+        --c-border:  #2a2a2a;
+        --c-text:    #e8e8e8;
+        --c-muted:   #666666;
+        --c-accent:  #c0392b;
+        --c-ok:      #27ae60;
+        --font-mono: "Courier New", "Lucida Console", monospace;
+        --radius:    0;           /* brutalist: no border-radius */
+        --border:    1px solid var(--c-border);
+      }
+
+      html, body {
+        width: 360px; height: 440px;
+        overflow: hidden;
+        background: var(--c-bg);
+        color: var(--c-text);
+        font-family: var(--font-mono);
+        font-size: 12px;
+        line-height: 1.5;
+        user-select: none;
+      }
+
+      #app { width: 100%; height: 100%; }
+
+      /* ── Window chrome ───────────────────────────────────────────────────── */
+      .window {
+        display: flex; flex-direction: column;
+        height: 100%;
+        border: 2px solid var(--c-text);
+      }
+
+      .window__header {
+        display: flex; justify-content: space-between; align-items: center;
+        padding: 8px 12px;
+        background: var(--c-text);
+        color: var(--c-bg);
+        font-weight: bold;
+        letter-spacing: 0.12em;
+        font-size: 11px;
+        flex-shrink: 0;
+      }
+
+      .window__version { font-size: 10px; opacity: 0.6; }
+
+      .window__body {
+        flex: 1; overflow-y: auto; overflow-x: hidden;
+        padding: 12px;
+        display: flex; flex-direction: column; gap: 8px;
+      }
+
+      .window__footer {
+        display: flex; gap: 8px; padding: 10px 12px;
+        border-top: var(--border);
+        flex-shrink: 0;
+      }
+
+      /* ── Status badge ────────────────────────────────────────────────────── */
+      .status-badge {
+        font-size: 10px; letter-spacing: 0.1em;
+        color: var(--c-muted);
+        padding: 4px 0;
+      }
+      .status-badge--active { color: var(--c-accent); animation: blink 1s step-start infinite; }
+      @keyframes blink { 50% { opacity: 0.4; } }
+
+      /* ── Control row ─────────────────────────────────────────────────────── */
+      .control-row {
+        display: flex; align-items: center; justify-content: space-between;
+        gap: 8px; cursor: pointer;
+      }
+      .control-row--column { flex-direction: column; align-items: stretch; gap: 4px; }
+      .control-row__label { color: var(--c-text); font-size: 11px; letter-spacing: 0.06em; }
+      .control-row__header { display: flex; justify-content: space-between; }
+      .control-row__value { color: var(--c-accent); font-weight: bold; }
+
+      /* ── Toggle (checkbox) ───────────────────────────────────────────────── */
+      .toggle {
+        appearance: none; -webkit-appearance: none;
+        width: 36px; height: 18px;
+        background: var(--c-border);
+        border: 1px solid var(--c-muted);
+        position: relative; cursor: pointer; flex-shrink: 0;
+        transition: background 0.15s;
+      }
+      .toggle::after {
+        content: ""; position: absolute;
+        top: 2px; left: 2px;
+        width: 12px; height: 12px;
+        background: var(--c-muted);
+        transition: left 0.15s, background 0.15s;
+      }
+      .toggle:checked { background: var(--c-accent); border-color: var(--c-accent); }
+      .toggle:checked::after { left: 20px; background: var(--c-text); }
+
+      /* ── Select ──────────────────────────────────────────────────────────── */
+      .select {
+        appearance: none;
+        background: var(--c-surface);
+        border: var(--border);
+        color: var(--c-text);
+        font-family: var(--font-mono);
+        font-size: 11px;
+        padding: 4px 8px;
+        cursor: pointer;
+        width: 200px;
+      }
+      .select:focus { outline: 1px solid var(--c-accent); }
+
+      /* ── Slider ──────────────────────────────────────────────────────────── */
+      .slider {
+        -webkit-appearance: none; appearance: none;
+        width: 100%; height: 4px;
+        background: var(--c-border);
+        outline: none; cursor: pointer;
+      }
+      .slider::-webkit-slider-thumb {
+        -webkit-appearance: none;
+        width: 14px; height: 14px;
+        background: var(--c-accent);
+        cursor: pointer;
+      }
+      .slider::-moz-range-thumb {
+        width: 14px; height: 14px;
+        background: var(--c-accent);
+        border: none; cursor: pointer;
+      }
+
+      /* ── Divider ─────────────────────────────────────────────────────────── */
+      .divider { border: none; border-top: var(--border); margin: 2px 0; }
+
+      /* ── Meta ────────────────────────────────────────────────────────────── */
+      .meta { display: flex; flex-direction: column; gap: 3px; color: var(--c-muted); font-size: 10px; }
+
+      /* ── Buttons ─────────────────────────────────────────────────────────── */
+      .btn {
+        font-family: var(--font-mono);
+        font-size: 11px; letter-spacing: 0.08em;
+        padding: 6px 16px;
+        border: none; cursor: pointer;
+        transition: opacity 0.1s;
+        text-transform: uppercase;
+      }
+      .btn:active { opacity: 0.7; }
+      .btn--primary { background: var(--c-text); color: var(--c-bg); flex: 1; font-weight: bold; }
+      .btn--ghost   { background: transparent; color: var(--c-muted); border: var(--border); }
+      .btn--ghost:hover { color: var(--c-text); border-color: var(--c-text); }
+
+      /* ── Overlay ─────────────────────────────────────────────────────────── */
+      .overlay {
+        position: fixed; inset: 0; z-index: 9999;
+        background: var(--c-bg);
+        display: flex; align-items: center; justify-content: center;
+        transition: opacity 0.4s;
+      }
+      .overlay--hidden  { opacity: 0; pointer-events: none; }
+      .overlay--visible { opacity: 1; pointer-events: all; }
+
+      .overlay__inner { text-align: center; display: flex; flex-direction: column; align-items: center; gap: 16px; }
+
+      .overlay__cross {
+        width: 60px; height: 60px;
+        background: var(--c-accent);
+        clip-path: polygon(
+          35% 0%,65% 0%,65% 35%,100% 35%,100% 65%,
+          65% 65%,65% 100%,35% 100%,35% 65%,0% 65%,0% 35%,35% 35%
+        );
+      }
+
+      .overlay__text {
+        font-size: 28px; font-weight: bold;
+        letter-spacing: 0.18em; line-height: 1.2;
+        color: var(--c-text);
+      }
+
+      .overlay__sub {
+        font-size: 14px; letter-spacing: 0.3em;
+        color: var(--c-muted);
+      }
+
+      /* ── Scrollbar ───────────────────────────────────────────────────────── */
+      ::-webkit-scrollbar { width: 4px; }
+      ::-webkit-scrollbar-track { background: var(--c-bg); }
+      ::-webkit-scrollbar-thumb { background: var(--c-border); }
+    </style>
+  </head>
+  <body>
+    <div id="app"></div>
+    <script type="module" src="/src/main.ts"></script>
+  </body>
+</html>
