@@ -1,11 +1,11 @@
 # Minute of Silence
 
-A lightweight desktop application for the daily Minute of Silence at 09:00.  
-Built with [Tauri 2](https://tauri.app) (Rust + TypeScript).
-
 [![CI](https://github.com/ChernegaSergiy/minute-of-silence/actions/workflows/ci.yml/badge.svg)](https://github.com/ChernegaSergiy/minute-of-silence/actions)
 [![License: CSSM Unlimited License v2.0](https://img.shields.io/badge/License-CSSM%20Unlimited%20License%20v2.0-blue.svg)](LICENSE)
 [![Platform](https://img.shields.io/badge/platform-Windows%20%7C%20Linux-black)](https://github.com/ChernegaSergiy/minute-of-silence/releases)
+
+A lightweight desktop application for the daily Minute of Silence at 09:00.  
+Built with [Tauri 2](https://tauri.app) (Rust + TypeScript).
 
 ## Overview
 
