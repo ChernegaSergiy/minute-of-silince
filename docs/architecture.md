@@ -2,31 +2,27 @@
 
 ## Overview
 
-```
-┌─────────────────────────────────────────────────────┐
-│                    Tauri Process                     │
-│                                                      │
-│  ┌──────────────┐        ┌──────────────────────┐   │
-│  │  Scheduler   │──emit──▶   Frontend (Vite/TS)  │   │
-│  │  (Tokio task)│        │   OverlayController   │   │
-│  └──────┬───────┘        └──────────┬────────────┘   │
-│         │                           │ invoke()        │
-│         ▼                           ▼                 │
-│  ┌──────────────┐        ┌──────────────────────┐   │
-│  │  NTP module  │        │   commands.rs (IPC)   │   │
-│  └──────────────┘        └──────────┬────────────┘   │
-│                                     │                 │
-│  ┌──────────────────────────────────▼─────────────┐  │
-│  │               AppState (Arc<Mutex>)             │  │
-│  │  settings · skip_date · ceremony_active · ...   │  │
-│  └─────────────────────────────────────────────────┘  │
-│                                                      │
-│  ┌──────────────────────────────────────────────┐   │
-│  │       Platform layer (cfg-gated)              │   │
-│  │  platform_windows  │  platform_linux          │   │
-│  │  SendInput / SMTC  │  xdotool / MPRIS         │   │
-│  └──────────────────────────────────────────────┘   │
-└─────────────────────────────────────────────────────┘
+```mermaid
+graph TD
+    Scheduler["Scheduler\n(Tokio task)"]
+    NTP["NTP module"]
+    Frontend["Frontend\n(Vite / TS)"]
+    Overlay["OverlayController"]
+    Commands["commands.rs\n(IPC)"]
+    State["AppState\nArc&lt;Mutex&lt;Inner&gt;&gt;\nsettings · skip_date · ceremony_active"]
+    Platform["Platform layer\ncfg-gated"]
+    Windows["platform_windows\nSendInput / SMTC"]
+    Linux["platform_linux\nxdotool / MPRIS"]
+
+    Scheduler -->|emit| Frontend
+    Frontend --> Overlay
+    Frontend -->|invoke| Commands
+    Scheduler --> NTP
+    Scheduler --> State
+    Commands --> State
+    State --> Platform
+    Platform --> Windows
+    Platform --> Linux
 ```
 
 ## Key design decisions
