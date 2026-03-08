@@ -15,15 +15,15 @@ The trigger time is corrected against an NTP server, ensuring accuracy regardles
 
 ## Features
 
-- **Automatic daily activation** at 09:00 with NTP time correction
-- **Five audio presets** — voice announcement combined with silence, bell, metronome, and/or national anthem
-- **Media management** — pauses Spotify, browser video, VLC, and other players before the ceremony; resumes them after
-- **Visual overlay** — a full-screen indicator appears on top of all windows during the ceremony
-- **Skip next** — suppress a single upcoming activation via the tray menu or the main window
-- **Post-sleep handling** — if the system wakes from sleep after 09:00, a configurable grace window decides whether to activate late or skip
-- **Persistent settings** — stored as JSON in the platform config directory; no registry writes
-- **Autostart on login** — registers with the OS login mechanism on first launch
-- **Structured logging** — rotating log files written to the platform log directory
+- **Automatic Daily Activation**: Activates at 09:00 with NTP time correction.
+- **Five Audio Presets**: Voice announcement combined with silence, bell, metronome, and/or national anthem.
+- **Media Management**: Pauses Spotify, browser video, VLC, and other players before the ceremony; resumes them after.
+- **Visual Overlay**: A full-screen indicator appears on top of all windows during the ceremony.
+- **Skip Next**: Suppresses a single upcoming activation via the tray menu or the main window.
+- **Post-Sleep Handling**: If the system wakes from sleep after 09:00, a configurable grace window decides whether to activate late or skip.
+- **Persistent Settings**: Stored as JSON in the platform config directory; no registry writes.
+- **Autostart on Login**: Registers with the OS login mechanism on first launch.
+- **Structured Logging**: Rotating log files written to the platform log directory.
 
 ## Audio Presets
 
