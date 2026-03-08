@@ -1,0 +1,81 @@
+{
+  "$schema": "https://schema.tauri.app/config/2",
+  "productName": "Minute of Silence",
+  "identifier": "ua.minute-of-silence",
+  "version": "0.1.0",
+  "build": {
+    "beforeDevCommand": "npm run dev",
+    "devUrl": "http://localhost:1420",
+    "beforeBuildCommand": "npm run build",
+    "frontendDist": "../dist"
+  },
+  "app": {
+    "withGlobalTauri": true,
+    "windows": [
+      {
+        "title": "Хвилина мовчання",
+        "label": "main",
+        "width": 360,
+        "height": 440,
+        "minWidth": 360,
+        "minHeight": 440,
+        "maxWidth": 360,
+        "maxHeight": 440,
+        "resizable": false,
+        "decorations": true,
+        "visible": false,
+        "center": true,
+        "skipTaskbar": true,
+        "alwaysOnTop": false
+      }
+    ],
+    "trayIcon": {
+      "iconPath": "icons/tray-icon.ico",
+      "iconAsTemplate": false,
+      "menuOnLeftClick": false,
+      "tooltip": "Хвилина мовчання"
+    }
+  },
+  "bundle": {
+    "active": true,
+    "targets": "all",
+    "icon": [
+      "icons/32x32.png",
+      "icons/128x128.png",
+      "icons/128x128@2x.png",
+      "icons/icon.ico"
+    ],
+    "windows": {
+      "wix": {
+        "language": "uk-UA"
+      },
+      "nsis": {
+        "languages": ["Ukrainian"],
+        "displayLanguageSelector": false
+      }
+    },
+    "linux": {
+      "deb": {
+        "depends": ["libasound2"]
+      },
+      "appimage": {
+        "bundleMediaFramework": true
+      }
+    }
+  },
+  "plugins": {
+    "autostart": {
+      "mobile": false,
+      "desktop": true
+    },
+    "log": {
+      "targets": [
+        { "kind": "stdout", "filter": "debug" },
+        { "kind": "logdir", "fileName": "minute-of-silence" }
+      ],
+      "maxFileSize": 1048576,
+      "rotationStrategy": "keepAll",
+      "maxBackups": 3
+    }
+  }
+}
