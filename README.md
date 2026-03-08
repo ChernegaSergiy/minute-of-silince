@@ -42,7 +42,7 @@ The trigger time is corrected against an NTP server, ensuring accuracy regardles
 
 ### Windows
 
-Download the `.msi` or `.exe` installer from the [Releases](https://github.com/your-org/minute-of-silence/releases) page and run it. The application will start in the system tray and register itself for autostart.
+Download the `.msi` or `.exe` installer from the [Releases](https://github.com/ChernegaSergiy/minute-of-silence/releases) page and run it. The application will start in the system tray and register itself for autostart.
 
 ### Linux (Ubuntu / Debian)
 
@@ -82,7 +82,7 @@ sudo apt-get install -y \
 ### Development
 
 ```bash
-git clone https://github.com/your-org/minute-of-silence.git
+git clone https://github.com/ChernegaSergiy/minute-of-silence.git
 cd minute-of-silence
 npm install
 npm run tauri dev
