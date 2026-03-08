@@ -35,7 +35,8 @@ The trigger time is corrected against an NTP server, ensuring accuracy regardles
 | 4 | Voice + Metronome + Anthem | Announcement, metronome, then anthem |
 | 5 | Metronome only | No voice announcement |
 
-> **Note:** Audio playback is not yet implemented. The scheduler, overlay, and media pause/resume are fully functional. Audio assets and the playback engine are planned for the next release.
+> [!NOTE]
+> Audio playback is not yet implemented. The scheduler, overlay, and media pause/resume are fully functional. Audio assets and the playback engine are planned for the next release.
 
 ## Installation
 
