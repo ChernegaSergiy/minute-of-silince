@@ -49,6 +49,18 @@ jobs:
             patchelf \
             libasound2-dev
 
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: "npm"
+
+      - name: Install frontend deps
+        run: npm ci
+
+      - name: Build frontend
+        run: npm run build
+
       - name: Check formatting
         working-directory: src-tauri
         run: cargo fmt --all -- --check
