@@ -18,11 +18,7 @@ pub fn get_settings(state: State<'_, AppState>) -> Settings {
 
 /// Persist updated settings and apply side-effects (e.g. autostart toggle).
 #[tauri::command]
-pub fn save_settings(
-    _app: AppHandle,
-    state: State<'_, AppState>,
-    settings: Settings,
-) -> Result<()> {
+pub fn save_settings(app: AppHandle, state: State<'_, AppState>, settings: Settings) -> Result<()> {
     // Persist to disk.
     settings.save()?;
 
@@ -34,11 +30,11 @@ pub fn save_settings(
         if settings.autostart_enabled {
             autostart_manager
                 .enable()
-                .map_err(|e| AppError::Platform(e.to_string()))?;
+                .map_err(|e: tauri_plugin_autostart::Error| AppError::Platform(e.to_string()))?;
         } else {
             autostart_manager
                 .disable()
-                .map_err(|e| AppError::Platform(e.to_string()))?;
+                .map_err(|e: tauri_plugin_autostart::Error| AppError::Platform(e.to_string()))?;
         }
     }
 
