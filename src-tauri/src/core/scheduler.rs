@@ -112,7 +112,7 @@ async fn current_local_time(app: &AppHandle) -> chrono::DateTime<Local> {
 
 /// Orchestrate the ceremony sequence (audio handled elsewhere; here we emit
 /// Tauri events and update state).
-async fn trigger_ceremony(app: AppHandle) {
+pub async fn trigger_ceremony(app: AppHandle) {
     // Mark ceremony as active.
     {
         let state = app.state::<AppState>();

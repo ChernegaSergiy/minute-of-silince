@@ -18,14 +18,12 @@ fn query_offset_sync(server: &str) -> Result<i64> {
         .synchronize(server)
         .map_err(|e| AppError::Ntp(e.to_string()))?;
 
-    let offset = result.clock_offset();
-    Ok(offset.as_millis() as i64)
+    let offset_ms = result.clock_offset().as_secs_f64() * 1000.0;
+    Ok(offset_ms as i64)
 }
 
 #[cfg(test)]
 mod tests {
-    use super::*;
-
     #[test]
     fn rsntp_library_works() {
         let result = rsntp::SntpClient::new().synchronize("pool.ntp.org");
