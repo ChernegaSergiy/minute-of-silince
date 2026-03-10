@@ -80,9 +80,10 @@ pub mod power {
     //! NOTE: Full message-loop integration is wired via the Tauri window
     //! `WndProc` callback; this module exposes the handler logic only.
 
-    use windows::Win32::System::Power::{
-        PBT_APMRESUMEAUTOMATIC, PBT_APMRESUMESUSPEND, POWERBROADCAST_SETTING,
-    };
+    use windows::Win32::UI::WindowsAndMessaging::{PBT_APMRESUMEAUTOMATIC, PBT_APMRESUMESUSPEND};
+
+    #[allow(unused_imports)]
+    use windows::Win32::UI::WindowsAndMessaging::POWERBROADCAST_SETTING;
 
     /// Returns `true` when `wparam` signals a resume-from-sleep event.
     pub fn is_resume_event(wparam: usize) -> bool {

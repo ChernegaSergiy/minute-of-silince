@@ -4,6 +4,8 @@ mod error;
 mod state;
 mod tray;
 
+use tauri::Manager;
+
 pub use error::{AppError, Result};
 pub use state::AppState;
 
