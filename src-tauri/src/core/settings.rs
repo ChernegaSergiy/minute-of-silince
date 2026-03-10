@@ -38,7 +38,7 @@ impl Default for Settings {
     fn default() -> Self {
         Self {
             autostart_enabled: true,
-            preset: AudioPreset::VoiceSilenceBell,
+            preset: AudioPreset::VoiceMetronome,
             volume: 80,
             pause_other_players: true,
             show_visual_overlay: true,
@@ -91,26 +91,35 @@ impl Settings {
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
 #[serde(rename_all = "snake_case")]
 pub enum AudioPreset {
-    /// Voice announcement + 60 s silence + bell
-    VoiceSilenceBell,
-    /// Voice announcement + national anthem
-    VoiceAnthem,
     /// Voice announcement + metronome
     VoiceMetronome,
-    /// Voice announcement + metronome + national anthem
-    VoiceMetronomeAnthem,
     /// Metronome only (no voice)
     MetronomeOnly,
+    /// Voice announcement + 60 s silence + bell
+    VoiceSilenceBell,
+    /// Voice announcement + 60 s silence
+    VoiceSilence,
+    /// Voice announcement + metronome + national anthem
+    VoiceMetronomeAnthem,
+    /// Metronome + national anthem
+    MetronomeAnthem,
+    /// Bell + 60 s silence + bell
+    BellSilenceBell,
+    /// Bell + metronome + bell
+    BellMetronomeBell,
 }
 
 impl std::fmt::Display for AudioPreset {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let label = match self {
-            Self::VoiceSilenceBell => "Голос + тиша + дзвін",
-            Self::VoiceAnthem => "Голос + гімн",
             Self::VoiceMetronome => "Голос + метроном",
+            Self::MetronomeOnly => "Метроном",
+            Self::VoiceSilenceBell => "Голос + тиша + дзвін",
+            Self::VoiceSilence => "Голос + тиша",
             Self::VoiceMetronomeAnthem => "Голос + метроном + гімн",
-            Self::MetronomeOnly => "Тільки метроном",
+            Self::MetronomeAnthem => "Метроном + гімн",
+            Self::BellSilenceBell => "Дзвін + тиша + дзвін",
+            Self::BellMetronomeBell => "Дзвін + метроном + дзвін",
         };
         write!(f, "{label}")
     }
