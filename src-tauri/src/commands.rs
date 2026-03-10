@@ -2,6 +2,7 @@
 
 use tauri::{AppHandle, State};
 
+#[allow(unused_imports)]
 use crate::{
     core::settings::Settings,
     state::{AppState, StatusSnapshot},
@@ -18,6 +19,7 @@ pub fn get_settings(state: State<'_, AppState>) -> Settings {
 
 /// Persist updated settings and apply side-effects (e.g. autostart toggle).
 #[tauri::command]
+#[allow(unused_variables)]
 pub fn save_settings(app: AppHandle, state: State<'_, AppState>, settings: Settings) -> Result<()> {
     // Persist to disk.
     settings.save()?;
