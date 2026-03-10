@@ -18,7 +18,11 @@ pub fn get_settings(state: State<'_, AppState>) -> Settings {
 
 /// Persist updated settings and apply side-effects (e.g. autostart toggle).
 #[tauri::command]
-pub fn save_settings(_app: AppHandle, state: State<'_, AppState>, settings: Settings) -> Result<()> {
+pub fn save_settings(
+    _app: AppHandle,
+    state: State<'_, AppState>,
+    settings: Settings,
+) -> Result<()> {
     // Persist to disk.
     settings.save()?;
 
