@@ -9,11 +9,9 @@ use crate::error::{AppError, Result};
 pub async fn query_offset(server: &str) -> Result<i64> {
     // `sntp` is a synchronous crate; run it on the blocking thread pool.
     let server = server.to_owned();
-    tokio::task::spawn_blocking(move || {
-        query_offset_sync(&server)
-    })
-    .await
-    .map_err(|e| AppError::Ntp(e.to_string()))?
+    tokio::task::spawn_blocking(move || query_offset_sync(&server))
+        .await
+        .map_err(|e| AppError::Ntp(e.to_string()))?
 }
 
 fn query_offset_sync(server: &str) -> Result<i64> {

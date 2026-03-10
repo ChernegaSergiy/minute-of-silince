@@ -30,8 +30,7 @@ pub fn build_tray(app: &App) -> tauri::Result<()> {
             }
             "skip_next" => {
                 let state = app.state::<AppState>();
-                let tomorrow =
-                    (chrono::Local::now() + chrono::Duration::days(1)).date_naive();
+                let tomorrow = (chrono::Local::now() + chrono::Duration::days(1)).date_naive();
                 state.lock().skip_date = Some(tomorrow);
                 log::info!("Tray: next ceremony skipped ({tomorrow})");
             }

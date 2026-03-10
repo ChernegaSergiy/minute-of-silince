@@ -93,8 +93,7 @@ async fn current_local_time(app: &AppHandle) -> chrono::DateTime<Local> {
     if ntp_enabled {
         match ntp::query_offset(&server).await {
             Ok(offset_ms) => {
-                let corrected =
-                    Local::now() + chrono::Duration::milliseconds(offset_ms);
+                let corrected = Local::now() + chrono::Duration::milliseconds(offset_ms);
                 {
                     let state = app.state::<AppState>();
                     let mut inner = state.lock();

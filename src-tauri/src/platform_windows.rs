@@ -61,12 +61,7 @@ pub mod media {
         };
 
         let inputs = [key_down, key_up];
-        let result = unsafe {
-            SendInput(
-                &inputs,
-                std::mem::size_of::<INPUT>() as i32,
-            )
-        };
+        let result = unsafe { SendInput(&inputs, std::mem::size_of::<INPUT>() as i32) };
 
         if result == 0 {
             Err(AppError::Platform(
@@ -91,7 +86,6 @@ pub mod power {
 
     /// Returns `true` when `wparam` signals a resume-from-sleep event.
     pub fn is_resume_event(wparam: usize) -> bool {
-        wparam == PBT_APMRESUMESUSPEND as usize
-            || wparam == PBT_APMRESUMEAUTOMATIC as usize
+        wparam == PBT_APMRESUMESUSPEND as usize || wparam == PBT_APMRESUMEAUTOMATIC as usize
     }
 }

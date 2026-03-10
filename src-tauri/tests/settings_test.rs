@@ -6,13 +6,15 @@ use minute_of_silence_lib::core::settings::{AudioPreset, Settings};
 fn default_settings_serialise_and_deserialise() {
     let original = Settings::default();
     let json = serde_json::to_string(&original).expect("serialisation failed");
-    let restored: Settings =
-        serde_json::from_str(&json).expect("deserialisation failed");
+    let restored: Settings = serde_json::from_str(&json).expect("deserialisation failed");
 
     assert_eq!(restored.autostart_enabled, original.autostart_enabled);
     assert_eq!(restored.volume, original.volume);
     assert_eq!(restored.ntp_server, original.ntp_server);
-    assert_eq!(restored.late_start_grace_minutes, original.late_start_grace_minutes);
+    assert_eq!(
+        restored.late_start_grace_minutes,
+        original.late_start_grace_minutes
+    );
 }
 
 #[test]
