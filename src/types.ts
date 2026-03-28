@@ -17,6 +17,7 @@ export interface Settings {
   volume: number; // 0–100
   pauseOtherPlayers: boolean;
   systemTimeOnly: boolean;
+  volumePriority: boolean;
   ntpServer: string;
   lateStartGraceMinutes: number; // 0–15
 }
@@ -50,6 +51,7 @@ export const DEFAULT_SETTINGS: Settings = {
   volume: 80,
   pauseOtherPlayers: true,
   systemTimeOnly: false,
+  volumePriority: false,
   ntpServer: "pool.ntp.org",
   lateStartGraceMinutes: 5,
 };

@@ -26,6 +26,9 @@ pub struct Settings {
     /// Use system time instead of NTP.
     pub system_time_only: bool,
 
+    /// Prioritize app volume over system controls.
+    pub volume_priority: bool,
+
     /// NTP server hostname (used when system_time_only is false).
     pub ntp_server: String,
 
@@ -43,6 +46,7 @@ impl Default for Settings {
             volume: 80,
             pause_other_players: true,
             system_time_only: false,
+            volume_priority: false,
             ntp_server: "pool.ntp.org".to_string(),
             late_start_grace_minutes: 5,
         }

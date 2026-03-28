@@ -113,6 +113,13 @@ export class App {
                    ${this.settings.systemTimeOnly ? "checked" : ""} />
           </label>
 
+          <!-- Volume priority toggle -->
+          <label class="control-row">
+            <span class="control-row__label">Пріоритет гучності</span>
+            <input type="checkbox" id="volumePriorityToggle" class="toggle"
+                   ${this.settings.volumePriority ? "checked" : ""} />
+          </label>
+
           <!-- Skip tomorrow toggle -->
           <label class="control-row">
             <span class="control-row__label">Пропустити завтра</span>
@@ -205,6 +212,16 @@ export class App {
         this.settings = {
           ...this.settings,
           systemTimeOnly: (e.target as HTMLInputElement).checked,
+        };
+      }
+    );
+
+    this.q<HTMLInputElement>("#volumePriorityToggle").addEventListener(
+      "change",
+      (e) => {
+        this.settings = {
+          ...this.settings,
+          volumePriority: (e.target as HTMLInputElement).checked,
         };
       }
     );

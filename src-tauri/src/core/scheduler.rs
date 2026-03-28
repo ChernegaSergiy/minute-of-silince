@@ -2,10 +2,15 @@
 //! corrected by NTP, and handles the post-sleep "late start" grace period.
 
 use chrono::{Datelike, Local, NaiveTime};
+use std::sync::Mutex;
 use tauri::{AppHandle, Emitter, Manager};
 use tokio::time::{sleep, Duration};
 
 use crate::AppState;
+
+lazy_static::lazy_static! {
+    static ref PREVIOUS_VOLUME: Mutex<Option<u8>> = Mutex::new(None);
+}
 
 /// Target time-of-day for the ceremony.
 const TRIGGER_TIME: NaiveTime = match NaiveTime::from_hms_opt(9, 0, 0) {
@@ -166,11 +171,14 @@ async fn current_local_time(app: &AppHandle) -> chrono::DateTime<Local> {
 /// Orchestrate the ceremony sequence (audio handled elsewhere; here we emit
 /// Tauri events and update state).
 pub async fn trigger_ceremony(app: AppHandle) {
-    // Check if we should pause other players.
-    let should_pause_players = {
+    let (should_pause_players, volume_priority, target_volume) = {
         let state = app.state::<AppState>();
         let inner = state.lock();
-        inner.settings.pause_other_players
+        (
+            inner.settings.pause_other_players,
+            inner.settings.volume_priority,
+            inner.settings.volume,
+        )
     };
 
     // Mark ceremony as active.
@@ -179,6 +187,24 @@ pub async fn trigger_ceremony(app: AppHandle) {
         let mut inner = state.lock();
         inner.ceremony_active = true;
         inner.last_activation = Some(Local::now());
+    }
+
+    // Volume priority: save current volume and set to target.
+    if volume_priority {
+        #[cfg(target_os = "linux")]
+        {
+            match crate::platform_linux::volume::get_volume() {
+                Ok(vol) => {
+                    *PREVIOUS_VOLUME.lock().unwrap() = Some(vol);
+                    if let Err(e) = crate::platform_linux::volume::set_volume(target_volume) {
+                        log::warn!("Could not set volume: {e}");
+                    } else {
+                        log::info!("Volume priority: saved {}%, set to {}%", vol, target_volume);
+                    }
+                }
+                Err(e) => log::warn!("Could not get current volume: {e}"),
+            }
+        }
     }
 
     // Pause other media players before playback starts (if enabled).
@@ -206,19 +232,35 @@ pub async fn trigger_ceremony(app: AppHandle) {
 
 /// Called when the ceremony audio sequence completes.
 pub async fn finish_ceremony(app: AppHandle) {
-    let should_resume_players = {
+    let (should_resume_players, volume_priority) = {
         let state = app.state::<AppState>();
         let inner = state.lock();
         if !inner.ceremony_active {
             return; // Already finished by the frontend early return.
         }
-        inner.settings.pause_other_players
+        (inner.settings.pause_other_players, inner.settings.volume_priority)
     };
 
     {
         let state = app.state::<AppState>();
         let mut inner = state.lock();
         inner.ceremony_active = false;
+    }
+
+    // Restore previous volume if volume priority was enabled.
+    if volume_priority {
+        let prev_volume = *PREVIOUS_VOLUME.lock().unwrap();
+        if let Some(vol) = prev_volume {
+            #[cfg(target_os = "linux")]
+            {
+                if let Err(e) = crate::platform_linux::volume::set_volume(vol) {
+                    log::warn!("Could not restore volume: {e}");
+                } else {
+                    log::info!("Volume restored to {}%", vol);
+                }
+            }
+            *PREVIOUS_VOLUME.lock().unwrap() = None;
+        }
     }
 
     if should_resume_players {

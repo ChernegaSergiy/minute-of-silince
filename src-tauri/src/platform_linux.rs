@@ -9,6 +9,97 @@ lazy_static::lazy_static! {
     static ref PAUSED_PLAYERS: Mutex<HashSet<String>> = Mutex::new(HashSet::new());
 }
 
+pub mod volume {
+    use crate::error::{AppError, Result};
+    use std::process::Command;
+
+    pub fn get_volume() -> Result<u8> {
+        let output = Command::new("wpctl")
+            .args(["get-volume", "@DEFAULT_AUDIO_SINK@"])
+            .output()
+            .map_err(|e| AppError::Io(e))?;
+
+        if !output.status.success() {
+            return get_volume_amixer();
+        }
+
+        let stdout = String::from_utf8_lossy(&output.stdout);
+        let volume_str = stdout.trim();
+        
+        if volume_str.contains("MUTE") {
+            return Ok(0);
+        }
+
+        let parts: Vec<&str> = volume_str.split_whitespace().collect();
+        if parts.is_empty() {
+            return Err(AppError::Platform("Failed to parse volume".into()));
+        }
+
+        let vol_str = parts[0].trim_end_matches('.');
+        let vol_str = vol_str.trim_start_matches("0.");
+        let vol_str = vol_str.trim_start_matches("Volume: ");
+        
+        let vol: f64 = vol_str.parse().unwrap_or(50.0);
+        Ok(vol as u8)
+    }
+
+    fn get_volume_amixer() -> Result<u8> {
+        let output = Command::new("amixer")
+            .args(["get", "Master"])
+            .output()
+            .map_err(|e| AppError::Io(e))?;
+
+        if !output.status.success() {
+            return Err(AppError::Platform("Failed to get volume".into()));
+        }
+
+        let stdout = String::from_utf8_lossy(&output.stdout);
+        
+        for line in stdout.lines() {
+            if line.contains("%[") || line.contains("Playback") {
+                if let Some(pos) = line.find('[') {
+                    let rest = &line[pos..];
+                    if let Some(end) = rest.find('%') {
+                        let vol_str = &rest[1..end];
+                        if let Ok(vol) = vol_str.parse::<u8>() {
+                            return Ok(vol);
+                        }
+                    }
+                }
+            }
+        }
+
+        Err(AppError::Platform("Could not parse volume".into()))
+    }
+
+    pub fn set_volume(level: u8) -> Result<()> {
+        let clamped = level.min(100);
+        
+        let result = Command::new("wpctl")
+            .args(["set-volume", "@DEFAULT_AUDIO_SINK@", &format!("{}%", clamped)])
+            .status();
+
+        if result.is_ok() && result.unwrap().success() {
+            return Ok(());
+        }
+
+        set_volume_amixer(clamped)
+    }
+
+    fn set_volume_amixer(level: u8) -> Result<()> {
+        let output = Command::new("amixer")
+            .args(["set", "Master", &format!("{}%", level)])
+            .output()
+            .map_err(|e| AppError::Io(e))?;
+
+        if !output.status.success() {
+            return Err(AppError::Platform("Failed to set volume".into()));
+        }
+
+        Ok(())
+    }
+}
+
 pub mod media {
     use super::*;
     use crate::error::{AppError, Result};
