@@ -83,3 +83,11 @@ pub async fn trigger_ceremony_now(app: AppHandle) -> Result<()> {
     });
     Ok(())
 }
+
+/// Finish the ceremony early (called by frontend when audio playback completes).
+#[tauri::command]
+pub async fn finish_ceremony_now(app: AppHandle) -> Result<()> {
+    log::info!("Ceremony finish requested by audio engine");
+    crate::core::scheduler::finish_ceremony(app).await;
+    Ok(())
+}

@@ -151,6 +151,9 @@ pub async fn finish_ceremony(app: AppHandle) {
     {
         let state = app.state::<AppState>();
         let mut inner = state.lock();
+        if !inner.ceremony_active {
+            return; // Already finished by the frontend early return.
+        }
         inner.ceremony_active = false;
     }
 

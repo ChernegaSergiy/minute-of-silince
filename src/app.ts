@@ -15,10 +15,12 @@ import {
   skipNext,
   unskipNext,
   triggerCeremonyNow,
+  finishCeremonyNow,
   onCeremonyStart,
   onCeremonyEnd,
 } from "./api";
 import { OverlayController } from "./overlay";
+import { audioPlayer } from "./audio";
 import type { Settings, StatusSnapshot } from "./types";
 import { PRESET_LABELS } from "./types";
 
@@ -206,16 +208,23 @@ export class App {
   }
 
   private async subscribeToBackendEvents(): Promise<void> {
-    await onCeremonyStart(() => {
+    await onCeremonyStart(async () => {
       this.overlay.show();
       const badge = document.getElementById("statusBadge");
       if (badge) {
         badge.textContent = "● АКТИВНА ЦЕРЕМОНІЯ";
         badge.classList.add("status-badge--active");
       }
+
+      // Play audio sequence based on current settings
+      await audioPlayer.playPreset(this.settings.preset, this.settings.volume);
+      
+      // Notify backend to immediately finish the ceremony (resumes media, hides overlay)
+      await finishCeremonyNow();
     });
 
     await onCeremonyEnd(() => {
+      audioPlayer.stop(); // Ensure audio stops if cancelled externally
       this.overlay.hide();
       const badge = document.getElementById("statusBadge");
       if (badge) {

@@ -41,6 +41,10 @@ export async function triggerCeremonyNow(): Promise<void> {
   return invoke<void>("trigger_ceremony_now");
 }
 
+export async function finishCeremonyNow(): Promise<void> {
+  return invoke<void>("finish_ceremony_now");
+}
+
 // ── Event listeners ─────────────────────────────────────────────────────────
 
 export const CEREMONY_START_EVENT = "ceremony:start";
