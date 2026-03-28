@@ -140,14 +140,14 @@ export class App {
                    min="0" max="100" value="${this.settings.volume}" />
           </div>
 
+          <hr class="divider" />
+
           <!-- Volume priority toggle -->
           <label class="control-row">
             <span class="control-row__label">Пріоритет гучності</span>
             <input type="checkbox" id="volumePriorityToggle" class="toggle"
                    ${this.settings.volumePriority ? "checked" : ""} />
           </label>
-
-          <hr class="divider" />
 
           <!-- Pause other players -->
           <label class="control-row">
