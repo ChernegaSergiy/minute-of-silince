@@ -104,20 +104,13 @@ export class App {
             <span class="control-row__label">Лише в будні</span>
             <input type="checkbox" id="weekdaysToggle" class="toggle"
                    ${this.settings.weekdaysOnly ? "checked" : ""} />
-          </label>
+           </label>
 
           <!-- System time toggle -->
           <label class="control-row">
             <span class="control-row__label">Системний час</span>
             <input type="checkbox" id="systemTimeToggle" class="toggle"
                    ${this.settings.systemTimeOnly ? "checked" : ""} />
-          </label>
-
-          <!-- Volume priority toggle -->
-          <label class="control-row">
-            <span class="control-row__label">Пріоритет гучності</span>
-            <input type="checkbox" id="volumePriorityToggle" class="toggle"
-                   ${this.settings.volumePriority ? "checked" : ""} />
           </label>
 
           <!-- Skip tomorrow toggle -->
@@ -146,6 +139,13 @@ export class App {
             <input type="range" id="volumeRange" class="slider"
                    min="0" max="100" value="${this.settings.volume}" />
           </div>
+
+          <!-- Volume priority toggle -->
+          <label class="control-row">
+            <span class="control-row__label">Пріоритет гучності</span>
+            <input type="checkbox" id="volumePriorityToggle" class="toggle"
+                   ${this.settings.volumePriority ? "checked" : ""} />
+          </label>
 
           <hr class="divider" />
 
