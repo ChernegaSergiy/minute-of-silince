@@ -64,6 +64,11 @@ impl NtpService {
         self.set_last_sync(Local::now());
     }
 
+    pub fn clear_cache(&self) {
+        *self.cached_offset.lock().unwrap() = None;
+        *self.last_sync.lock().unwrap() = None;
+    }
+
     pub fn server(&self) -> String {
         self.server.clone()
     }
