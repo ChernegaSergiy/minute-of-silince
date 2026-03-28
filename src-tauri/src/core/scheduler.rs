@@ -96,6 +96,11 @@ async fn current_local_time(app: &AppHandle) -> chrono::DateTime<Local> {
 
     if system_time_only {
         log::debug!("Using system time (system_time_only is enabled)");
+        {
+            let state = app.state::<AppState>();
+            let mut inner = state.lock();
+            inner.last_ntp_sync = Some(Local::now());
+        }
         return Local::now();
     }
 

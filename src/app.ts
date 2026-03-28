@@ -39,7 +39,6 @@ export class App {
         getSettings(),
         getStatus(),
       ]);
-      await this.refreshStatus();
     } catch (err) {
       console.error("Failed to load initial data from backend:", err);
       return;
@@ -48,6 +47,7 @@ export class App {
     this.render();
     this.bindEvents();
     await this.subscribeToBackendEvents();
+    this.refreshStatus();
     this.startStatusPolling();
   }
 
