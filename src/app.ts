@@ -47,6 +47,31 @@ export class App {
     this.render();
     this.bindEvents();
     await this.subscribeToBackendEvents();
+    this.startStatusPolling();
+  }
+
+  private async refreshStatus(): Promise<void> {
+    try {
+      this.status = await getStatus();
+      this.updateStatusUI();
+    } catch (err) {
+      console.error("Failed to refresh status:", err);
+    }
+  }
+
+  private updateStatusUI(): void {
+    const ntpSpan = document.querySelector(".meta span:last-child");
+    if (ntpSpan) {
+      ntpSpan.textContent = `Синхронізація NTP: ${this.status.lastNtpSync ?? "—"}`;
+    }
+    const ceremonySpan = document.querySelector(".meta span:first-child");
+    if (ceremonySpan) {
+      ceremonySpan.textContent = `Остання церемонія: ${this.status.lastActivation ?? "—"}`;
+    }
+  }
+
+  private startStatusPolling(): void {
+    setInterval(() => this.refreshStatus(), 60000);
   }
 
   // ── Rendering ─────────────────────────────────────────────────────────────
@@ -248,6 +273,7 @@ export class App {
         badge.textContent = "○ ОЧІКУВАННЯ";
         badge.classList.remove("status-badge--active");
       }
+      this.refreshStatus();
     });
   }
 
