@@ -203,12 +203,29 @@ export class App {
     });
 
     this.q<HTMLButtonElement>("#testBtn").addEventListener("click", async () => {
+      console.log("Test button clicked, triggering ceremony...");
+      // Sync UI state back to this.settings before testing
+      this.syncSettingsFromUI();
       await triggerCeremonyNow();
     });
   }
 
+  private syncSettingsFromUI(): void {
+    const presetSelect = this.q<HTMLSelectElement>("#presetSelect");
+    const volumeSlider = this.q<HTMLInputElement>("#volumeSlider");
+    const autostartToggle = this.q<HTMLInputElement>("#autostartToggle");
+
+    this.settings = {
+      ...this.settings,
+      preset: presetSelect.value as any,
+      volume: parseInt(volumeSlider.value, 10),
+      autostartEnabled: autostartToggle.checked,
+    };
+  }
+
   private async subscribeToBackendEvents(): Promise<void> {
     await onCeremonyStart(async () => {
+      console.log("Ceremony start event received");
       this.overlay.show();
       const badge = document.getElementById("statusBadge");
       if (badge) {
@@ -217,13 +234,16 @@ export class App {
       }
 
       // Play audio sequence based on current settings
+      console.log(`Starting audio preset: ${this.settings.preset} with volume ${this.settings.volume}`);
       await audioPlayer.playPreset(this.settings.preset, this.settings.volume);
       
       // Notify backend to immediately finish the ceremony (resumes media, hides overlay)
+      console.log("Audio playback finished, notifying backend");
       await finishCeremonyNow();
     });
 
     await onCeremonyEnd(() => {
+      console.log("Ceremony end event received");
       audioPlayer.stop(); // Ensure audio stops if cancelled externally
       this.overlay.hide();
       const badge = document.getElementById("statusBadge");

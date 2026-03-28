@@ -22,8 +22,10 @@ class AudioEngine {
   }
 
   private playFile(url: string, volume: number): Promise<void> {
+    console.log(`AudioEngine: preparing to play ${url}`);
     return new Promise((resolve) => {
       if (this.stopRequested) {
+        console.log("AudioEngine: stop requested before playing");
         resolve();
         return;
       }
@@ -31,19 +33,22 @@ class AudioEngine {
       audio.volume = volume / 100;
       this.currentAudio = audio;
 
+      audio.onplay = () => console.log(`AudioEngine: playing ${url}`);
+      
       audio.onended = () => {
+        console.log(`AudioEngine: finished ${url}`);
         this.currentAudio = null;
         resolve();
       };
 
       audio.onerror = (e) => {
-        console.error(`Audio playback error for ${url}:`, e);
+        console.error(`AudioEngine: error for ${url}:`, e);
         this.currentAudio = null;
-        resolve(); // Continue sequence even if file fails
+        resolve();
       };
 
       audio.play().catch((e) => {
-        console.error(`Failed to play audio ${url}:`, e);
+        console.error(`AudioEngine: failed to play ${url}:`, e);
         this.currentAudio = null;
         resolve();
       });
