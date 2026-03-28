@@ -25,6 +25,13 @@ pub const EVENT_CEREMONY_END: &str = "ceremony:end";
 pub async fn run(app: AppHandle) {
     log::info!("Scheduler started");
 
+    // Initialize last_ntp_sync on startup.
+    {
+        let state = app.state::<AppState>();
+        let mut inner = state.lock();
+        inner.last_ntp_sync = Some(Local::now());
+    }
+
     // Track the last date on which we fired so we don't double-trigger.
     let mut last_fired_date: Option<chrono::NaiveDate> = None;
 
