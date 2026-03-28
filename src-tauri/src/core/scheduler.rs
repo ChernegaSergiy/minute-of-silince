@@ -87,6 +87,7 @@ async fn initialize_ntp(app: &AppHandle) {
 
     let system_time_only = {
         let inner = state.lock();
+        log::info!("system_time_only = {}", inner.settings.system_time_only);
         inner.settings.system_time_only
     };
 
