@@ -23,7 +23,7 @@
         "maxHeight": 440,
         "resizable": false,
         "decorations": true,
-        "visible": false,
+        "visible": true,
         "center": true,
         "skipTaskbar": true,
         "alwaysOnTop": false
@@ -63,19 +63,5 @@
       }
     }
   },
-  "plugins": {
-    "autostart": {
-      "mobile": false,
-      "desktop": true
-    },
-    "log": {
-      "targets": [
-        { "kind": "stdout", "filter": "debug" },
-        { "kind": "logdir", "fileName": "minute-of-silence" }
-      ],
-      "maxFileSize": 1048576,
-      "rotationStrategy": "keepAll",
-      "maxBackups": 3
-    }
-  }
+  "plugins": {}
 }
