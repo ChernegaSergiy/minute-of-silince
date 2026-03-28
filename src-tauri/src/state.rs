@@ -3,11 +3,15 @@ use std::sync::{Arc, Mutex};
 use chrono::{DateTime, Local};
 use serde::{Deserialize, Serialize};
 
+use crate::core::ntp_service::NtpService;
 use crate::core::settings::Settings;
 
 /// Runtime state shared between the scheduler, commands, and tray.
-#[derive(Debug, Default)]
-pub struct AppState(Arc<Mutex<Inner>>);
+#[derive(Debug)]
+pub struct AppState {
+    inner: Arc<Mutex<Inner>>,
+    pub ntp_service: NtpService,
+}
 
 #[derive(Debug)]
 pub struct Inner {
@@ -36,19 +40,19 @@ impl Default for Inner {
 
 impl AppState {
     pub fn new() -> Self {
-        Self(Arc::new(Mutex::new(Inner::default())))
+        let settings = Settings::load_or_default();
+        Self {
+            inner: Arc::new(Mutex::new(Inner::default())),
+            ntp_service: NtpService::new(settings.ntp_server.clone()),
+        }
     }
 
-    /// Acquire the inner lock.
-    ///
-    /// Panics only if the mutex is poisoned (i.e. a previous thread panicked
-    /// while holding it), which is treated as an unrecoverable error.
     pub fn lock(&self) -> std::sync::MutexGuard<'_, Inner> {
-        self.0.lock().expect("AppState mutex poisoned")
+        self.inner.lock().expect("AppState mutex poisoned")
     }
 
-    pub fn clone_arc(&self) -> Arc<Mutex<Inner>> {
-        Arc::clone(&self.0)
+    pub fn clone_inner_arc(&self) -> Arc<Mutex<Inner>> {
+        Arc::clone(&self.inner)
     }
 }
 

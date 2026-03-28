@@ -5,7 +5,7 @@ use chrono::{Datelike, Local, NaiveTime};
 use tauri::{AppHandle, Emitter, Manager};
 use tokio::time::{sleep, Duration};
 
-use crate::{core::ntp, AppState};
+use crate::AppState;
 
 /// Target time-of-day for the ceremony.
 const TRIGGER_TIME: NaiveTime = match NaiveTime::from_hms_opt(9, 0, 0) {
@@ -25,12 +25,8 @@ pub const EVENT_CEREMONY_END: &str = "ceremony:end";
 pub async fn run(app: AppHandle) {
     log::info!("Scheduler started");
 
-    // Initialize last_ntp_sync on startup.
-    {
-        let state = app.state::<AppState>();
-        let mut inner = state.lock();
-        inner.last_ntp_sync = Some(Local::now());
-    }
+    // Initialize NTP sync on startup (if not using system time only).
+    initialize_ntp(&app).await;
 
     // Track the last date on which we fired so we don't double-trigger.
     let mut last_fired_date: Option<chrono::NaiveDate> = None;
@@ -84,6 +80,44 @@ pub async fn run(app: AppHandle) {
     }
 }
 
+/// Initialize NTP synchronization on startup.
+async fn initialize_ntp(app: &AppHandle) {
+    let state = app.state::<AppState>();
+    let ntp_service = state.ntp_service.clone();
+
+    let system_time_only = {
+        let inner = state.lock();
+        inner.settings.system_time_only
+    };
+
+    if system_time_only {
+        log::info!("Using system time only (NTP disabled)");
+        {
+            let mut inner = state.lock();
+            inner.last_ntp_sync = Some(Local::now());
+        }
+        return;
+    }
+
+    // Sync once on startup.
+    match ntp_service.sync().await {
+        Ok(offset) => {
+            log::info!("NTP sync successful, offset: {}ms", offset);
+            {
+                let mut inner = state.lock();
+                inner.last_ntp_sync = Some(Local::now());
+            }
+        }
+        Err(e) => {
+            log::warn!("NTP sync failed: {e}");
+            {
+                let mut inner = state.lock();
+                inner.last_ntp_sync = Some(Local::now());
+            }
+        }
+    }
+}
+
 /// Returns true when `now` is within [target, target + grace_minutes).
 fn is_within_window(now: NaiveTime, target: NaiveTime, grace_minutes: u8) -> bool {
     if now < target {
@@ -95,29 +129,30 @@ fn is_within_window(now: NaiveTime, target: NaiveTime, grace_minutes: u8) -> boo
 
 /// Obtain the current local time, correcting with NTP if enabled.
 async fn current_local_time(app: &AppHandle) -> chrono::DateTime<Local> {
-    let (system_time_only, server) = {
-        let state = app.state::<AppState>();
+    let state = app.state::<AppState>();
+    let ntp_service = state.ntp_service.clone();
+
+    let system_time_only = {
         let inner = state.lock();
-        (inner.settings.system_time_only, inner.settings.ntp_server.clone())
+        inner.settings.system_time_only
     };
 
     if system_time_only {
-        log::debug!("Using system time (system_time_only is enabled)");
-        {
-            let state = app.state::<AppState>();
-            let mut inner = state.lock();
-            inner.last_ntp_sync = Some(Local::now());
-        }
         return Local::now();
     }
 
-    let result = ntp::query_offset(&server).await;
+    // Use cached NTP offset if available and not stale.
+    if let Some(offset_ms) = ntp_service.get_offset() {
+        if !ntp_service.should_sync() {
+            return Local::now() + chrono::Duration::milliseconds(offset_ms);
+        }
+    }
 
-    match result {
+    // Sync if needed.
+    match ntp_service.sync().await {
         Ok(offset_ms) => {
             let corrected = Local::now() + chrono::Duration::milliseconds(offset_ms);
             {
-                let state = app.state::<AppState>();
                 let mut inner = state.lock();
                 inner.last_ntp_sync = Some(Local::now());
             }
@@ -126,12 +161,6 @@ async fn current_local_time(app: &AppHandle) -> chrono::DateTime<Local> {
         Err(e) => {
             log::warn!("NTP query failed: {e}; falling back to system clock");
         }
-    }
-
-    {
-        let state = app.state::<AppState>();
-        let mut inner = state.lock();
-        inner.last_ntp_sync = Some(Local::now());
     }
 
     Local::now()
