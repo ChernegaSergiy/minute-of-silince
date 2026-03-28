@@ -161,32 +161,6 @@
       .btn--ghost   { background: transparent; color: var(--c-muted); border: var(--border); }
       .btn--ghost:hover { color: var(--c-text); border-color: var(--c-text); }
 
-      /* ── Overlay (temporarily disabled) ──────────────────────────────────── */
-      .overlay { display: none; }
-      .overlay--visible { display: flex; }
-
-      .overlay__inner { text-align: center; display: flex; flex-direction: column; align-items: center; gap: 16px; }
-
-      .overlay__cross {
-        width: 60px; height: 60px;
-        background: var(--c-accent);
-        clip-path: polygon(
-          35% 0%,65% 0%,65% 35%,100% 35%,100% 65%,
-          65% 65%,65% 100%,35% 100%,35% 65%,0% 65%,0% 35%,35% 35%
-        );
-      }
-
-      .overlay__text {
-        font-size: 28px; font-weight: bold;
-        letter-spacing: 0.18em; line-height: 1.2;
-        color: var(--c-text);
-      }
-
-      .overlay__sub {
-        font-size: 14px; letter-spacing: 0.3em;
-        color: var(--c-muted);
-      }
-
       /* ── Scrollbar ───────────────────────────────────────────────────────── */
       ::-webkit-scrollbar { width: 4px; }
       ::-webkit-scrollbar-track { background: var(--c-bg); }

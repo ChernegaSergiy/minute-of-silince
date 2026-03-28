@@ -23,9 +23,6 @@ pub struct Settings {
     /// Pause other media players before the ceremony.
     pub pause_other_players: bool,
 
-    /// Show a visual overlay window when the ceremony starts.
-    pub show_visual_overlay: bool,
-
     /// Use NTP to correct the trigger time.
     pub ntp_sync_enabled: bool,
 
@@ -45,7 +42,6 @@ impl Default for Settings {
             preset: AudioPreset::VoiceMetronome,
             volume: 80,
             pause_other_players: true,
-            show_visual_overlay: true,
             ntp_sync_enabled: true,
             ntp_server: "pool.ntp.org".to_string(),
             late_start_grace_minutes: 5,

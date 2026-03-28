@@ -117,12 +117,6 @@ export class App {
           </label>
 
           <!-- Visual overlay -->
-          <label class="control-row">
-            <span class="control-row__label">Візуальне сповіщення</span>
-            <input type="checkbox" id="overlayToggle" class="toggle"
-                   ${this.settings.showVisualOverlay ? "checked" : ""} />
-          </label>
-
           <hr class="divider" />
 
           <!-- Meta / debug info -->
@@ -202,16 +196,6 @@ export class App {
         pauseOtherPlayers: (e.target as HTMLInputElement).checked,
       };
     });
-
-    this.q<HTMLInputElement>("#overlayToggle").addEventListener(
-      "change",
-      (e) => {
-        this.settings = {
-          ...this.settings,
-          showVisualOverlay: (e.target as HTMLInputElement).checked,
-        };
-      }
-    );
 
     this.q<HTMLButtonElement>("#saveBtn").addEventListener("click", async () => {
       await saveSettings(this.settings);

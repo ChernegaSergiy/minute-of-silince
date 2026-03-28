@@ -16,7 +16,6 @@ export interface Settings {
   preset: AudioPreset;
   volume: number; // 0–100
   pauseOtherPlayers: boolean;
-  showVisualOverlay: boolean;
   ntpSyncEnabled: boolean;
   ntpServer: string;
   lateStartGraceMinutes: number; // 0–15
@@ -50,7 +49,6 @@ export const DEFAULT_SETTINGS: Settings = {
   preset: "voice_metronome",
   volume: 80,
   pauseOtherPlayers: true,
-  showVisualOverlay: true,
   ntpSyncEnabled: true,
   ntpServer: "pool.ntp.org",
   lateStartGraceMinutes: 5,
