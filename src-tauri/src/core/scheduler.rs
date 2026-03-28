@@ -93,12 +93,7 @@ async fn initialize_ntp(app: &AppHandle) {
 
     if system_time_only {
         log::info!("Using system time only (NTP disabled)");
-        // Clear NTP cache.
         ntp_service.clear_cache();
-        {
-            let mut inner = state.lock();
-            inner.last_ntp_sync = Some(Local::now());
-        }
         return;
     }
 
