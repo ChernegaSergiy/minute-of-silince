@@ -23,10 +23,10 @@ pub struct Settings {
     /// Pause other media players before the ceremony.
     pub pause_other_players: bool,
 
-    /// Use NTP to correct the trigger time.
-    pub ntp_sync_enabled: bool,
+    /// Use system time instead of NTP.
+    pub system_time_only: bool,
 
-    /// NTP server hostname.
+    /// NTP server hostname (used when system_time_only is false).
     pub ntp_server: String,
 
     /// If the system wakes from sleep after 09:00, activate if within this
@@ -42,7 +42,7 @@ impl Default for Settings {
             preset: AudioPreset::VoiceMetronome,
             volume: 80,
             pause_other_players: true,
-            ntp_sync_enabled: true,
+            system_time_only: false,
             ntp_server: "pool.ntp.org".to_string(),
             late_start_grace_minutes: 5,
         }

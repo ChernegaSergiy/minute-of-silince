@@ -88,29 +88,29 @@ fn is_within_window(now: NaiveTime, target: NaiveTime, grace_minutes: u8) -> boo
 
 /// Obtain the current local time, correcting with NTP if enabled.
 async fn current_local_time(app: &AppHandle) -> chrono::DateTime<Local> {
-    let (ntp_enabled, server) = {
+    let (system_time_only, server) = {
         let state = app.state::<AppState>();
         let inner = state.lock();
-        (
-            inner.settings.ntp_sync_enabled,
-            inner.settings.ntp_server.clone(),
-        )
+        (inner.settings.system_time_only, inner.settings.ntp_server.clone())
     };
 
-    if ntp_enabled {
-        match ntp::query_offset(&server).await {
-            Ok(offset_ms) => {
-                let corrected = Local::now() + chrono::Duration::milliseconds(offset_ms);
-                {
-                    let state = app.state::<AppState>();
-                    let mut inner = state.lock();
-                    inner.last_ntp_sync = Some(Local::now());
-                }
-                return corrected;
+    if system_time_only {
+        log::debug!("Using system time (system_time_only is enabled)");
+        return Local::now();
+    }
+
+    match ntp::query_offset(&server).await {
+        Ok(offset_ms) => {
+            let corrected = Local::now() + chrono::Duration::milliseconds(offset_ms);
+            {
+                let state = app.state::<AppState>();
+                let mut inner = state.lock();
+                inner.last_ntp_sync = Some(Local::now());
             }
-            Err(e) => {
-                log::warn!("NTP query failed: {e}; falling back to system clock");
-            }
+            return corrected;
+        }
+        Err(e) => {
+            log::warn!("NTP query failed: {e}; falling back to system clock");
         }
     }
 

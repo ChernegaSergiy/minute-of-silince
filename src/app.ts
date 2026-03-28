@@ -80,6 +80,13 @@ export class App {
                    ${this.settings.weekdaysOnly ? "checked" : ""} />
           </label>
 
+          <!-- System time toggle -->
+          <label class="control-row">
+            <span class="control-row__label">Системний час</span>
+            <input type="checkbox" id="systemTimeToggle" class="toggle"
+                   ${this.settings.systemTimeOnly ? "checked" : ""} />
+          </label>
+
           <!-- Skip tomorrow toggle -->
           <label class="control-row">
             <span class="control-row__label">Пропустити завтра</span>
@@ -162,6 +169,16 @@ export class App {
         this.settings = {
           ...this.settings,
           weekdaysOnly: (e.target as HTMLInputElement).checked,
+        };
+      }
+    );
+
+    this.q<HTMLInputElement>("#systemTimeToggle").addEventListener(
+      "change",
+      (e) => {
+        this.settings = {
+          ...this.settings,
+          systemTimeOnly: (e.target as HTMLInputElement).checked,
         };
       }
     );
