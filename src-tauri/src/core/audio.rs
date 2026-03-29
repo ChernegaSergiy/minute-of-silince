@@ -244,11 +244,12 @@ impl AudioEngine {
     /// Resolves the absolute path to an audio resource using Tauri's path resolver.
     fn get_path(&self, filename: &str) -> Result<PathBuf> {
         let resource_path = format!("audio/{}", filename);
-        let path = self.app_handle
+        let path = self
+            .app_handle
             .path()
             .resolve(&resource_path, tauri::path::BaseDirectory::Resource)
             .map_err(|e| AppError::Audio(format!("Failed to resolve resource path: {e}")))?;
-        
+
         if !path.exists() {
             return Err(AppError::Audio(format!("Audio file not found: {:?}", path)));
         }

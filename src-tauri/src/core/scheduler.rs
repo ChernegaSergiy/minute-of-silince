@@ -4,9 +4,9 @@ use chrono::{Local, NaiveTime, Timelike};
 use std::sync::Arc;
 use tauri::{AppHandle, Emitter, Manager};
 
-use crate::state::AppState;
-use crate::core::CeremonyManager;
 use crate::core::audio::AudioEngine;
+use crate::core::CeremonyManager;
+use crate::state::AppState;
 
 /// Scheduler for the daily ceremony.
 pub struct CeremonyScheduler {
@@ -23,7 +23,7 @@ impl CeremonyScheduler {
     /// Run the main scheduler loop.
     pub async fn run(&self) {
         log::info!("Scheduler loop started");
-        
+
         // Initial NTP sync
         self.sync_ntp().await;
 
@@ -72,7 +72,7 @@ impl CeremonyScheduler {
 
     async fn sync_ntp(&self) {
         let state = self.app.state::<AppState>();
-        
+
         if state.lock().settings.system_time_only {
             state.ntp_service.clear_cache();
             return;
@@ -85,7 +85,9 @@ impl CeremonyScheduler {
     }
 
     fn is_within_window(&self, now: NaiveTime, target: NaiveTime, grace_minutes: u8) -> bool {
-        if now < target { return false; }
+        if now < target {
+            return false;
+        }
         let elapsed_secs = (now - target).num_seconds();
         elapsed_secs <= (grace_minutes as i64) * 60
     }

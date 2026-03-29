@@ -5,11 +5,11 @@ pub mod platform;
 pub mod scheduler;
 pub mod settings;
 
+use crate::core::audio::AudioEngine;
+use crate::core::platform::Platform;
+use crate::state::AppState;
 use std::sync::{Arc, Mutex};
 use tauri::{AppHandle, Emitter, Manager};
-use crate::state::AppState;
-use crate::core::platform::Platform;
-use crate::core::audio::AudioEngine;
 
 lazy_static::lazy_static! {
     static ref PREVIOUS_VOLUME: Mutex<Option<u8>> = Mutex::new(None);
@@ -25,7 +25,11 @@ pub struct CeremonyManager {
 
 impl CeremonyManager {
     pub fn new(app: AppHandle, platform: Box<dyn Platform>, audio: Arc<AudioEngine>) -> Self {
-        Self { app, platform, audio }
+        Self {
+            app,
+            platform,
+            audio,
+        }
     }
 
     pub async fn run_ceremony(&self) {
@@ -66,14 +70,14 @@ impl CeremonyManager {
 
         // 5. Play Audio (Stop previous first)
         self.audio.stop();
-        
+
         let audio_engine = Arc::clone(&self.audio);
         let app_handle = self.app.clone();
         let platform_handle = platform::get_platform(); // Need a fresh one for the thread or make it cloneable
 
         std::thread::spawn(move || {
             let _ = audio_engine.play_preset(preset, target_volume);
-            
+
             // 6. Finish
             tauri::async_runtime::spawn(async move {
                 CeremonyManager::finish_ceremony(app_handle, platform_handle).await;
@@ -85,8 +89,13 @@ impl CeremonyManager {
         let (should_resume_players, volume_priority) = {
             let state = app.state::<AppState>();
             let inner = state.lock();
-            if !inner.ceremony_active { return; }
-            (inner.settings.pause_other_players, inner.settings.volume_priority)
+            if !inner.ceremony_active {
+                return;
+            }
+            (
+                inner.settings.pause_other_players,
+                inner.settings.volume_priority,
+            )
         };
 
         {

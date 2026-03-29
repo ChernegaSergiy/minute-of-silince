@@ -1,13 +1,13 @@
 //! Shared application state.
 
-use std::sync::{Arc, Mutex};
 use chrono::{DateTime, Local};
 use serde::{Deserialize, Serialize};
+use std::sync::{Arc, Mutex};
 use tauri::AppHandle;
 
+use crate::core::audio::AudioEngine;
 use crate::core::ntp_service::NtpService;
 use crate::core::settings::Settings;
-use crate::core::audio::AudioEngine;
 
 /// Runtime state shared between the scheduler, commands, and tray.
 #[derive(Debug)]
@@ -66,11 +66,12 @@ impl AppState {
     pub fn get_snapshot(&self) -> StatusSnapshot {
         let inner = self.lock();
         let tomorrow = (Local::now() + chrono::Duration::days(1)).date_naive();
-        
+
         let ntp_status = if inner.settings.system_time_only {
             Some("Вимкнено (системний час)".to_string())
         } else {
-            self.ntp_service.last_sync_time()
+            self.ntp_service
+                .last_sync_time()
                 .map(|dt| dt.format("%H:%M:%S").to_string())
                 .or_else(|| Some("Синхронізація...".to_string()))
         };

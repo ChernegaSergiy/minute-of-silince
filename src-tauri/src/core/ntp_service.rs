@@ -75,12 +75,10 @@ impl NtpService {
         let server = self.server.clone();
         println!("NTP: Attempting to sync with server: {}", server);
         tokio::task::spawn_blocking(move || {
-            let result = rsntp::SntpClient::new()
-                .synchronize(&server)
-                .map_err(|e| {
-                    println!("NTP: Sync error: {}", e);
-                    AppError::Ntp(e.to_string())
-                })?;
+            let result = rsntp::SntpClient::new().synchronize(&server).map_err(|e| {
+                println!("NTP: Sync error: {}", e);
+                AppError::Ntp(e.to_string())
+            })?;
             let offset_ms = result.clock_offset().as_secs_f64() * 1000.0;
             println!("NTP: Sync successful, offset: {}ms", offset_ms);
             Ok(offset_ms as i64)
