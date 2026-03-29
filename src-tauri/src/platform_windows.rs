@@ -48,7 +48,7 @@ pub mod volume {
                 .Activate(CLSCTX_INPROC_SERVER, None)
                 .map_err(|e| AppError::Platform(e.to_string()))?;
 
-            let clamped = (level as f32 / 100.0).min(1.0).max(0.0);
+            let clamped = (level as f32 / 100.0).clamp(0.0, 1.0);
             endpoint
                 .SetMasterVolumeLevelScalar(clamped, std::ptr::null())
                 .map_err(|e| AppError::Platform(e.to_string()))?;
@@ -136,7 +136,7 @@ pub mod power {
 
     use windows::Win32::UI::WindowsAndMessaging::{PBT_APMRESUMEAUTOMATIC, PBT_APMRESUMESUSPEND};
 
-    /// Returns `true` when `wparam` signals a resume-from-sleep event.
+    #[allow(dead_code)]
     pub fn is_resume_event(wparam: usize) -> bool {
         wparam == PBT_APMRESUMESUSPEND as usize || wparam == PBT_APMRESUMEAUTOMATIC as usize
     }
