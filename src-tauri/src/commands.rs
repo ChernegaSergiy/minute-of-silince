@@ -79,7 +79,7 @@ pub fn unskip_next(state: State<'_, AppState>) {
 pub async fn trigger_ceremony_now(app: AppHandle) -> Result<()> {
     log::info!("Manual ceremony trigger requested");
     tauri::async_runtime::spawn(async move {
-        crate::core::scheduler::trigger_ceremony(app).await;
+        crate::core::scheduler::trigger_now(app).await;
     });
     Ok(())
 }
@@ -88,6 +88,7 @@ pub async fn trigger_ceremony_now(app: AppHandle) -> Result<()> {
 #[tauri::command]
 pub async fn finish_ceremony_now(app: AppHandle) -> Result<()> {
     log::info!("Ceremony finish requested by audio engine");
-    crate::core::scheduler::finish_ceremony(app).await;
+    let platform = crate::core::platform::get_platform();
+    crate::core::CeremonyManager::finish_ceremony(app, platform).await;
     Ok(())
 }

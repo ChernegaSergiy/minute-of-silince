@@ -1,33 +1,27 @@
 //! Shared application state.
-//!
-//! Defines the `AppState` struct which holds the global application
-//! state, including settings and runtime status, protected by a Mutex.
 
 use std::sync::{Arc, Mutex};
-
 use chrono::{DateTime, Local};
 use serde::{Deserialize, Serialize};
 
 use crate::core::ntp_service::NtpService;
 use crate::core::settings::Settings;
+use crate::core::audio::AudioEngine;
 
 /// Runtime state shared between the scheduler, commands, and tray.
 #[derive(Debug)]
 pub struct AppState {
     inner: Arc<Mutex<Inner>>,
     pub ntp_service: NtpService,
+    pub audio: Arc<AudioEngine>,
 }
 
 #[derive(Debug)]
 pub struct Inner {
     pub settings: Settings,
-    /// When set, the scheduler will skip the activation on this calendar day.
     pub skip_date: Option<chrono::NaiveDate>,
-    /// Whether the ceremony is currently in progress.
     pub ceremony_active: bool,
-    /// Timestamp of the last successful NTP sync.
     pub last_ntp_sync: Option<DateTime<Local>>,
-    /// Timestamp of the last ceremony activation.
     pub last_activation: Option<DateTime<Local>>,
 }
 
@@ -43,34 +37,23 @@ impl Default for Inner {
     }
 }
 
-impl Default for AppState {
-    fn default() -> Self {
-        Self::new()
-    }
-}
-
 impl AppState {
-    #[allow(dead_code)]
     pub fn new() -> Self {
         let settings = Settings::load_or_default();
         Self {
             inner: Arc::new(Mutex::new(Inner::default())),
             ntp_service: NtpService::new(settings.ntp_server.clone()),
+            audio: Arc::new(AudioEngine::new()),
         }
     }
 
     pub fn lock(&self) -> std::sync::MutexGuard<'_, Inner> {
         self.inner.lock().expect("AppState mutex poisoned")
     }
-
-    pub fn clone_inner_arc(&self) -> Arc<Mutex<Inner>> {
-        Arc::clone(&self.inner)
-    }
 }
 
 // ── Serialisable snapshot for the frontend ──────────────────────────────────
 
-/// A read-only snapshot of the runtime status sent to the UI.
 #[derive(Debug, Serialize, Deserialize, Clone)]
 #[serde(rename_all = "camelCase")]
 pub struct StatusSnapshot {
