@@ -212,7 +212,7 @@ export class App {
 
               <div class="meta-row" style="flex-direction: column; align-items: flex-start; gap: 4px;">
                 <span>КОД (GITHUB):</span>
-                <button class="btn btn--link" id="githubLinkBtn" style="margin: 0;">github.com/chernega/minute-of-silence</button>
+                <button class="btn btn--link" id="githubLinkBtn" style="margin: 0;">github.com/ChernegaSergiy/minute-of-silence</button>
               </div>
 
               <p style="opacity: 0.5; font-size: 9px; margin-top: 10px;">
@@ -288,7 +288,7 @@ export class App {
 
     // About link
     this.q<HTMLButtonElement>("#githubLinkBtn").addEventListener("click", async () => {
-      await open("https://github.com/chernega/minute-of-silence");
+      await open("https://github.com/ChernegaSergiy/minute-of-silence");
     });
 
     this.q<HTMLInputElement>("#autostartToggle").addEventListener(
