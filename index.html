@@ -16,6 +16,7 @@
         --c-muted:   #666666;
         --c-accent:  #c0392b;
         --c-ok:      #27ae60;
+        --font-sans: "Ubuntu", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
         --font-mono: "Courier New", "Lucida Console", monospace;
         --radius:    0;           /* brutalist: no border-radius */
         --border:    1px solid var(--c-border);
@@ -29,7 +30,7 @@
         overflow: hidden;
         background: var(--c-bg);
         color: var(--c-text);
-        font-family: var(--font-mono);
+        font-family: var(--font-sans);
         font-size: 12px;
         line-height: 1.5;
         /* Disable text selection and drag */
@@ -37,10 +38,14 @@
         -ms-user-select: none;
         user-select: none;
         cursor: default;
+        /* Smooth rendering */
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
       }
 
       /* Allow selection in input fields if needed, but here we don't have text inputs */
       input, textarea {
+        font-family: var(--font-sans);
         user-select: text;
         cursor: auto;
       }
@@ -61,12 +66,12 @@
         background: var(--c-text);
         color: var(--c-bg);
         font-weight: bold;
-        letter-spacing: 0.12em;
-        font-size: 11px;
+        letter-spacing: 0.1em;
+        font-size: 10px;
         flex-shrink: 0;
       }
 
-      .window__version { font-size: 10px; opacity: 0.6; }
+      .window__version { font-size: 9px; opacity: 0.7; font-family: var(--font-mono); }
 
       .window__body {
         flex: 1; overflow-y: auto; overflow-x: hidden;
@@ -124,7 +129,7 @@
         background: var(--c-surface);
         border: var(--border);
         color: var(--c-text);
-        font-family: var(--font-mono);
+        font-family: var(--font-sans);
         font-size: 11px;
         padding: 4px 8px;
         cursor: pointer;
