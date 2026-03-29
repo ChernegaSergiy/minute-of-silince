@@ -26,6 +26,7 @@ import { PRESET_LABELS } from "./types";
 export class App {
   private root: HTMLElement;
   private settings!: Settings;
+  private cleanSettings!: Settings;
   private status!: StatusSnapshot;
   private isDirty: boolean = false;
 
@@ -39,6 +40,7 @@ export class App {
         getSettings(),
         getStatus(),
       ]);
+      this.cleanSettings = { ...this.settings };
     } catch (err) {
       console.error("Failed to load initial data from backend:", err);
       return;
@@ -223,6 +225,11 @@ export class App {
     }
   }
 
+  private checkDirty(): void {
+    const dirty = JSON.stringify(this.settings) !== JSON.stringify(this.cleanSettings);
+    this.setDirty(dirty);
+  }
+
   // ── Event wiring ──────────────────────────────────────────────────────────
 
   private bindEvents(): void {
@@ -233,7 +240,7 @@ export class App {
           ...this.settings,
           autostartEnabled: (e.target as HTMLInputElement).checked,
         };
-        this.setDirty(true);
+        this.checkDirty();
       }
     );
 
@@ -244,7 +251,7 @@ export class App {
           ...this.settings,
           weekdaysOnly: (e.target as HTMLInputElement).checked,
         };
-        this.setDirty(true);
+        this.checkDirty();
       }
     );
 
@@ -255,7 +262,7 @@ export class App {
           ...this.settings,
           systemTimeOnly: (e.target as HTMLInputElement).checked,
         };
-        this.setDirty(true);
+        this.checkDirty();
       }
     );
 
@@ -266,7 +273,7 @@ export class App {
           ...this.settings,
           volumePriority: (e.target as HTMLInputElement).checked,
         };
-        this.setDirty(true);
+        this.checkDirty();
       }
     );
 
@@ -281,7 +288,7 @@ export class App {
           ...this.settings,
           preset: (e.target as HTMLSelectElement).value as Settings["preset"],
         };
-        this.setDirty(true);
+        this.checkDirty();
       }
     );
 
@@ -291,7 +298,7 @@ export class App {
       const v = parseInt(volumeRange.value, 10);
       volumeValue.textContent = `${v}%`;
       this.settings = { ...this.settings, volume: v };
-      this.setDirty(true);
+      this.checkDirty();
     });
 
     this.q<HTMLInputElement>("#pauseToggle").addEventListener("change", (e) => {
@@ -299,11 +306,12 @@ export class App {
         ...this.settings,
         pauseOtherPlayers: (e.target as HTMLInputElement).checked,
       };
-      this.setDirty(true);
+      this.checkDirty();
     });
 
     this.q<HTMLButtonElement>("#saveBtn").addEventListener("click", async () => {
       await saveSettings(this.settings);
+      this.cleanSettings = { ...this.settings }; // Update original state after save
       await this.refreshStatus(); // Immediately update status UI (NTP, activation info, etc)
       this.setDirty(false);
     });
