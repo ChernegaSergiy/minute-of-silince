@@ -168,16 +168,16 @@ async fn current_local_time(app: &AppHandle) -> chrono::DateTime<Local> {
     Local::now()
 }
 
-/// Orchestrate the ceremony sequence (audio handled elsewhere; here we emit
-/// Tauri events and update state).
+/// Orchestrate the ceremony sequence (audio handled in backend via rodio).
 pub async fn trigger_ceremony(app: AppHandle) {
-    let (should_pause_players, volume_priority, target_volume) = {
+    let (should_pause_players, volume_priority, target_volume, preset) = {
         let state = app.state::<AppState>();
         let inner = state.lock();
         (
             inner.settings.pause_other_players,
             inner.settings.volume_priority,
             inner.settings.volume,
+            inner.settings.preset,
         )
     };
 
@@ -188,6 +188,9 @@ pub async fn trigger_ceremony(app: AppHandle) {
         inner.ceremony_active = true;
         inner.last_activation = Some(Local::now());
     }
+
+    // Notify the frontend that ceremony started.
+    let _ = app.emit(EVENT_CEREMONY_START, ());
 
     // Volume priority: save current volume and set to target.
     if volume_priority {
@@ -237,11 +240,24 @@ pub async fn trigger_ceremony(app: AppHandle) {
         }
     }
 
-    // Notify the frontend.
-    let _ = app.emit(EVENT_CEREMONY_START, ());
-
-    // The audio engine drives the actual ceremony length via finish_ceremony_now.
-    // We no longer sleep here to avoid blocking the scheduler or commands.
+    // Play audio in backend (blocking, runs in spawned task so doesn't block scheduler).
+    let app_clone = app.clone();
+    std::thread::spawn(move || {
+        log::info!("Starting audio playback for preset: {:?}", preset);
+        match crate::core::audio::play_preset(preset, target_volume) {
+            Ok(()) => {
+                log::info!("Audio playback completed");
+            }
+            Err(e) => {
+                log::error!("Audio playback failed: {}", e);
+            }
+        }
+        
+        // Notify that ceremony finished.
+        tauri::async_runtime::spawn(async move {
+            finish_ceremony(app_clone).await;
+        });
+    });
 }
 
 /// Called when the ceremony audio sequence completes.
