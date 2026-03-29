@@ -75,7 +75,7 @@
       .window__body {
         flex: 1; overflow-y: auto; overflow-x: hidden;
         padding: 12px;
-        display: flex; flex-direction: column; gap: 8px;
+        display: flex; flex-direction: column; gap: 12px;
       }
 
       .window__footer {
@@ -122,8 +122,9 @@
       .control-row {
         display: flex; align-items: center; justify-content: space-between;
         gap: 8px; cursor: pointer;
+        padding: 2px 0;
       }
-      .control-row--column { flex-direction: column; align-items: stretch; gap: 4px; }
+      .control-row--column { flex-direction: column; align-items: stretch; gap: 6px; margin: 4px 0; }
       .control-row__label { color: var(--c-text); font-size: 11px; letter-spacing: 0.06em; }
       .control-row__header { display: flex; justify-content: space-between; }
       .control-row__value { color: var(--c-accent); font-weight: bold; }
