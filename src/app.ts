@@ -15,12 +15,10 @@ import {
   skipNext,
   unskipNext,
   triggerCeremonyNow,
-  finishCeremonyNow,
   onCeremonyStart,
   onCeremonyEnd,
 } from "./api";
 
-import { audioPlayer } from "./audio";
 import type { Settings, StatusSnapshot } from "./types";
 import { PRESET_LABELS } from "./types";
 
@@ -268,24 +266,16 @@ export class App {
   private async subscribeToBackendEvents(): Promise<void> {
     await onCeremonyStart(async () => {
       console.log("Ceremony start event received");
-      audioPlayer.stop();
       const badge = document.getElementById("statusBadge");
       if (badge) {
         badge.textContent = "● АКТИВНА ЦЕРЕМОНІЯ";
         badge.classList.add("status-badge--active");
       }
-
-      const settings = await getSettings();
-      console.log(`Starting audio preset: ${settings.preset} with volume ${settings.volume}`);
-      await audioPlayer.playPreset(settings.preset, settings.volume);
-      
-      console.log("Audio playback finished, notifying backend");
-      await finishCeremonyNow();
+      // Audio is now handled by the backend (rodio)
     });
 
     await onCeremonyEnd(() => {
       console.log("Ceremony end event received");
-      audioPlayer.stop();
       const badge = document.getElementById("statusBadge");
       if (badge) {
         badge.textContent = "○ ОЧІКУВАННЯ";
