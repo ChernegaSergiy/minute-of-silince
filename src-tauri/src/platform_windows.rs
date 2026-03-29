@@ -8,20 +8,20 @@
 pub mod volume {
     use crate::error::{AppError, Result};
     use windows::Win32::Media::Audio::Endpoints::IAudioEndpointVolume;
-    use windows::Win32::Media::Audio::{MMDeviceEnumerator, IMMDeviceEnumerator};
+    use windows::Win32::Media::Audio::{IMMDeviceEnumerator, MMDeviceEnumerator};
     use windows::Win32::System::Com::{CoCreateInstance, CLSCTX_INPROC_SERVER};
 
     pub fn get_volume() -> Result<u8> {
         unsafe {
-            let enumerator: IMMDeviceEnumerator = CoCreateInstance(
-                &MMDeviceEnumerator,
-                None,
-                CLSCTX_INPROC_SERVER,
-            )
-            .map_err(AppError::Platform)?;
+            let enumerator: IMMDeviceEnumerator =
+                CoCreateInstance(&MMDeviceEnumerator, None, CLSCTX_INPROC_SERVER)
+                    .map_err(AppError::Platform)?;
 
             let device = enumerator
-                .GetDefaultAudioEndpoint(windows::Win32::Media::Audio::Render, windows::Win32::Media::Audio::Communications)
+                .GetDefaultAudioEndpoint(
+                    windows::Win32::Media::Audio::Render,
+                    windows::Win32::Media::Audio::Communications,
+                )
                 .map_err(AppError::Platform)?;
 
             let endpoint: IAudioEndpointVolume = device
@@ -37,15 +37,15 @@ pub mod volume {
 
     pub fn set_volume(level: u8) -> Result<()> {
         unsafe {
-            let enumerator: IMMDeviceEnumerator = CoCreateInstance(
-                &MMDeviceEnumerator,
-                None,
-                CLSCTX_INPROC_SERVER,
-            )
-            .map_err(AppError::Platform)?;
+            let enumerator: IMMDeviceEnumerator =
+                CoCreateInstance(&MMDeviceEnumerator, None, CLSCTX_INPROC_SERVER)
+                    .map_err(AppError::Platform)?;
 
             let device = enumerator
-                .GetDefaultAudioEndpoint(windows::Win32::Media::Audio::Render, windows::Win32::Media::Audio::Communications)
+                .GetDefaultAudioEndpoint(
+                    windows::Win32::Media::Audio::Render,
+                    windows::Win32::Media::Audio::Communications,
+                )
                 .map_err(AppError::Platform)?;
 
             let endpoint: IAudioEndpointVolume = device
