@@ -19,7 +19,7 @@ pub fn stop() {
 }
 
 fn get_audio_path(filename: &str) -> PathBuf {
-    PathBuf::from("public/audio/").join(filename)
+    PathBuf::from("audio/").join(filename)
 }
 
 pub fn play_preset(preset: AudioPreset, volume: u8) -> Result<()> {
