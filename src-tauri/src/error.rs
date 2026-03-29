@@ -1,3 +1,8 @@
+//! Unified error handling.
+//!
+//! Provides the `AppError` enum to wrap various error types from
+//! different modules, ensuring consistent error reporting to the frontend.
+
 use thiserror::Error;
 
 pub type Result<T> = std::result::Result<T, AppError>;

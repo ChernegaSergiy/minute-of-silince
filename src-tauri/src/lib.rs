@@ -1,3 +1,8 @@
+//! Main library entry point for the Minute of Silence application.
+//!
+//! Orchestrates the initialization of the Tauri application,
+//! including plugin registration, tray setup, and starting the scheduler.
+
 mod commands;
 mod core;
 mod error;

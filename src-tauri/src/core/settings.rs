@@ -1,3 +1,8 @@
+//! Persistent application settings and audio presets.
+//!
+//! Handles loading, saving, and providing default values for user
+//! configurations such as volume, selected preset, and scheduling options.
+
 use std::path::PathBuf;
 
 use serde::{Deserialize, Serialize};

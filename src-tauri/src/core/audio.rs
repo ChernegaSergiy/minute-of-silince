@@ -1,3 +1,8 @@
+//! Backend audio playback engine.
+//!
+//! Manages the playback of ceremony audio sequences using the `rodio` library,
+//! supporting various presets with metronomes, announcements, and anthems.
+
 use rodio::{Decoder, OutputStream, Sink};
 use std::fs::File;
 use std::io::BufReader;

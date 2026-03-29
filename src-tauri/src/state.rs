@@ -1,3 +1,8 @@
+//! Shared application state.
+//!
+//! Defines the `AppState` struct which holds the global application
+//! state, including settings and runtime status, protected by a Mutex.
+
 use std::sync::{Arc, Mutex};
 
 use chrono::{DateTime, Local};
