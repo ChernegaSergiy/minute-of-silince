@@ -1,6 +1,6 @@
 //! Tests for `Settings` serialisation / deserialisation round-trips.
 
-use minute_of_silence_lib::core::settings::{AudioPreset, Settings};
+use minute_of_silence_lib::{AudioPreset, Settings};
 
 #[test]
 fn default_settings_serialise_and_deserialise() {

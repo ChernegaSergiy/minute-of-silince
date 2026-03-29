@@ -4,6 +4,8 @@ mod error;
 mod state;
 mod tray;
 
+pub use core::settings::{AudioPreset, Settings};
+
 #[cfg(target_os = "windows")]
 use tauri::Manager;
 

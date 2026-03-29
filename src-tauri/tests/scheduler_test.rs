@@ -12,7 +12,7 @@ fn within_window(now: NaiveTime, target: NaiveTime, grace: u8) -> bool {
         return false;
     }
     let elapsed_secs = (now - target).num_seconds();
-    elapsed_secs < (grace as i64) * 60
+    elapsed_secs <= (grace as i64) * 60
 }
 
 #[test]
@@ -36,10 +36,10 @@ fn fires_at_grace_boundary_minus_one_second() {
 }
 
 #[test]
-fn does_not_fire_at_grace_boundary() {
+fn fires_at_grace_boundary() {
     let target = NaiveTime::from_hms_opt(9, 0, 0).unwrap();
     let edge = NaiveTime::from_hms_opt(9, 5, 0).unwrap();
-    assert!(!within_window(edge, target, 5));
+    assert!(within_window(edge, target, 5));
 }
 
 #[test]

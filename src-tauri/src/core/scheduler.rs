@@ -126,7 +126,7 @@ fn is_within_window(now: NaiveTime, target: NaiveTime, grace_minutes: u8) -> boo
         return false;
     }
     let elapsed_secs = (now - target).num_seconds();
-    elapsed_secs < (grace_minutes as i64) * 60
+    elapsed_secs <= (grace_minutes as i64) * 60
 }
 
 /// Obtain the current local time, correcting with NTP if enabled.
