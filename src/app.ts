@@ -60,7 +60,6 @@ export class App {
   }
 
   private updateStatusUI(): void {
-    console.log("Status update received:", this.status);
     const ntpEl = document.getElementById("ntpSyncValue");
     const syncBtn = document.getElementById("syncNtpBtn");
     
