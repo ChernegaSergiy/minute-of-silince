@@ -255,7 +255,7 @@ pub async fn trigger_ceremony(app: AppHandle) {
                 log::error!("Audio playback failed: {}", e);
             }
         }
-        
+
         // Notify that ceremony finished.
         tauri::async_runtime::spawn(async move {
             finish_ceremony(app_clone).await;
