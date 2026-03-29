@@ -8,6 +8,7 @@
     "core:window:default",
     "autostart:default",
     "notification:default",
+    "shell:default",
     "log:default"
   ]
 }

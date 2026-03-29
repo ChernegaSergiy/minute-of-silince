@@ -20,6 +20,7 @@ import {
 } from "./api";
 
 import { listen } from "@tauri-apps/api/event";
+import { open } from "@tauri-apps/plugin-shell";
 import type { Settings, StatusSnapshot } from "./types";
 import { PRESET_LABELS } from "./types";
 
@@ -211,7 +212,7 @@ export class App {
 
               <div class="meta-row" style="flex-direction: column; align-items: flex-start; gap: 4px;">
                 <span>КОД (GITHUB):</span>
-                <span>github.com/chernega/minute-of-silence</span>
+                <button class="btn btn--link" id="githubLinkBtn" style="margin: 0;">github.com/chernega/minute-of-silence</button>
               </div>
 
               <p style="opacity: 0.5; font-size: 9px; margin-top: 10px;">
@@ -283,6 +284,11 @@ export class App {
       aboutContent.classList.add("tab-content--active");
       settingsContent.classList.remove("tab-content--active");
       footer.classList.add("hidden");
+    });
+
+    // About link
+    this.q<HTMLButtonElement>("#githubLinkBtn").addEventListener("click", async () => {
+      await open("https://github.com/chernega/minute-of-silence");
     });
 
     this.q<HTMLInputElement>("#autostartToggle").addEventListener(
