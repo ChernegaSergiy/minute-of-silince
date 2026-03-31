@@ -33,7 +33,7 @@ pub fn build_tray(app: &App) -> tauri::Result<()> {
                 let tomorrow = (chrono::Local::now() + chrono::Duration::days(1)).date_naive();
                 state.lock().skip_date = Some(tomorrow);
                 log::info!("Tray: next ceremony skipped ({tomorrow})");
-                
+
                 // Notify the frontend that the status has changed
                 let _ = app.emit("status-updated", ());
             }
