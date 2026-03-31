@@ -26,13 +26,7 @@
         "skipTaskbar": true,
         "alwaysOnTop": false
       }
-    ],
-    "trayIcon": {
-      "iconPath": "icons/tray-icon.ico",
-      "iconAsTemplate": false,
-      "menuOnLeftClick": false,
-      "tooltip": "Хвилина мовчання"
-    }
+    ]
   },
   "bundle": {
     "active": true,
