@@ -4,14 +4,7 @@
 [![License: CSSM Unlimited License v2.0](https://img.shields.io/badge/License-CSSM%20Unlimited%20License%20v2.0-blue.svg?logo=opensourceinitiative)](LICENSE)
 [![Platform](https://img.shields.io/badge/Platform-Windows%20%7C%20Linux-black.svg?logo=rust)](https://github.com/ChernegaSergiy/minute-of-silence/releases)
 
-A lightweight desktop application for the daily Minute of Silence at 09:00.  
-Built with [Tauri 2](https://tauri.app) (Rust + TypeScript).
-
-## Overview
-
-Minute of Silence runs silently in the system tray and activates every day at 09:00. When the time comes, it pauses any playing media, plays an audio sequence according to the selected preset, and displays a visual status indicator. Once the ceremony concludes, media playback is restored automatically.
-
-The trigger time is corrected against an NTP server, ensuring accuracy regardless of local clock drift. A one-shot skip option allows the user to suppress the next activation without disabling the feature permanently.
+Minute of Silence is a lightweight desktop application built with [Tauri 2](https://tauri.app) (Rust + TypeScript) that runs silently in the system tray and accurately triggers the daily ceremony at 09:00 using NTP time correction. Upon activation, it automatically pauses background media, plays a selected audio preset, and seamlessly restores playback afterward, offering flexible control through persistent settings and a convenient one-shot skip option.
 
 ## Features
 
