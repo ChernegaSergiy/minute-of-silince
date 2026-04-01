@@ -130,7 +130,7 @@ export class App {
 
             <!-- Autostart toggle -->
             <label class="control-row">
-              <span class="control-row__label">Автозапуск о 09:00</span>
+              <span class="control-row__label">Автозапуск при старті системи</span>
               <input type="checkbox" id="autostartToggle" class="toggle"
                      ${this.settings.autostartEnabled ? "checked" : ""} />
             </label>
