@@ -19,6 +19,7 @@ export interface Settings {
   pauseOtherPlayers: boolean;
   systemTimeOnly: boolean;
   volumePriority: boolean;
+  autoUnmute: boolean;
   ntpServer: string;
   lateStartGraceMinutes: number; // 0–15
 }
@@ -54,6 +55,7 @@ export const DEFAULT_SETTINGS: Settings = {
   pauseOtherPlayers: true,
   systemTimeOnly: false,
   volumePriority: false,
+  autoUnmute: true,
   ntpServer: "pool.ntp.org",
   lateStartGraceMinutes: 1,
 };
