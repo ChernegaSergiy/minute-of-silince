@@ -4,7 +4,7 @@
 name: minute-of-silence
 title: Хвилина мовчання
 base: core22
-version: '0.2.0'
+version: '0.3.0'
 summary: Національна хвилина мовчання о 09:00
 description: |
   Додаток для автоматизації загальнонаціональної хвилини мовчання.
