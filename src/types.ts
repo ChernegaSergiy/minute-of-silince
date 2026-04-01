@@ -55,7 +55,7 @@ export const DEFAULT_SETTINGS: Settings = {
   pauseOtherPlayers: true,
   systemTimeOnly: false,
   volumePriority: false,
-  autoUnmute: true,
+  autoUnmute: false,
   ntpServer: "pool.ntp.org",
   lateStartGraceMinutes: 1,
 };

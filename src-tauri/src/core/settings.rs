@@ -59,7 +59,7 @@ impl Default for Settings {
             pause_other_players: true,
             system_time_only: false,
             volume_priority: false,
-            auto_unmute: true,
+            auto_unmute: false,
             ntp_server: "pool.ntp.org".to_string(),
             late_start_grace_minutes: 1,
         }
