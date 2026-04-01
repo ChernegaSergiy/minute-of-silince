@@ -82,6 +82,7 @@ jobs:
     runs-on: ${{ matrix.os }}
     permissions:
       contents: write
+      packages: write
     strategy:
       fail-fast: false
       matrix:
