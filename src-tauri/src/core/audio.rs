@@ -1,8 +1,6 @@
 //! Backend audio playback engine.
 
-use rodio::Decoder;
-use rodio::OutputStream;
-use rodio::Sink;
+use rodio::{Decoder, DeviceSinkBuilder, Player};
 use std::fs::File;
 use std::io::BufReader;
 use std::path::PathBuf;
@@ -50,10 +48,10 @@ impl AudioEngine {
         false
     }
 
-    fn wait_sink_interruptible(&self, sink: &Sink, start_counter: u64) -> bool {
-        while !sink.empty() {
+    fn wait_player_interruptible(&self, player: &Player, start_counter: u64) -> bool {
+        while !player.empty() {
             if self.is_stopped(start_counter) {
-                sink.stop();
+                player.stop();
                 return true;
             }
             thread::sleep(Duration::from_millis(50));
@@ -64,14 +62,14 @@ impl AudioEngine {
     pub fn play_preset(&self, preset: AudioPreset, volume: u8) -> Result<()> {
         let start_counter = self.stop_counter.load(Ordering::SeqCst);
 
-        let (_stream, stream_handle) = OutputStream::try_default()
+        let sink = DeviceSinkBuilder::open_default_sink()
             .map_err(|e| AppError::Audio(format!("Failed to open audio stream: {e}")))?;
 
-        let sink = Sink::try_new(&stream_handle)
-            .map_err(|e| AppError::Audio(format!("Failed to create audio sink: {e}")))?;
+        let mixer = sink.mixer();
+        let player = Player::connect_new(mixer);
 
         let volume_float = volume as f32 / 100.0;
-        sink.set_volume(volume_float);
+        player.set_volume(volume_float);
 
         match preset {
             AudioPreset::VoiceMetronome => {
@@ -82,10 +80,10 @@ impl AudioEngine {
                 let metronome = self.get_path("metronome.ogg")?;
 
                 if let Ok(source) = Decoder::new(BufReader::new(File::open(&announcement)?)) {
-                    sink.append(source);
+                    player.append(source);
                 }
                 if let Ok(source) = Decoder::new(BufReader::new(File::open(&metronome)?)) {
-                    sink.append(source);
+                    player.append(source);
                 }
             }
             AudioPreset::MetronomeOnly => {
@@ -94,7 +92,7 @@ impl AudioEngine {
                 }
                 let metronome = self.get_path("metronome.ogg")?;
                 if let Ok(source) = Decoder::new(BufReader::new(File::open(&metronome)?)) {
-                    sink.append(source);
+                    player.append(source);
                 }
             }
             AudioPreset::VoiceSilenceBell => {
@@ -105,10 +103,10 @@ impl AudioEngine {
                 let bell = self.get_path("bell.ogg")?;
 
                 if let Ok(source) = Decoder::new(BufReader::new(File::open(&announcement)?)) {
-                    sink.append(source);
+                    player.append(source);
                 }
 
-                if self.wait_sink_interruptible(&sink, start_counter) {
+                if self.wait_player_interruptible(&player, start_counter) {
                     return Ok(());
                 }
                 if self.sleep_interruptible(Duration::from_secs(60), start_counter) {
@@ -116,7 +114,7 @@ impl AudioEngine {
                 }
 
                 if let Ok(source) = Decoder::new(BufReader::new(File::open(&bell)?)) {
-                    sink.append(source);
+                    player.append(source);
                 }
             }
             AudioPreset::VoiceSilence => {
@@ -125,9 +123,9 @@ impl AudioEngine {
                 }
                 let announcement = self.get_path("announcement.ogg")?;
                 if let Ok(source) = Decoder::new(BufReader::new(File::open(&announcement)?)) {
-                    sink.append(source);
+                    player.append(source);
                 }
-                if self.wait_sink_interruptible(&sink, start_counter) {
+                if self.wait_player_interruptible(&player, start_counter) {
                     return Ok(());
                 }
                 if self.sleep_interruptible(Duration::from_secs(60), start_counter) {
@@ -144,10 +142,10 @@ impl AudioEngine {
                 let anthem = self.get_path("anthem.ogg")?;
 
                 if let Ok(source) = Decoder::new(BufReader::new(File::open(&announcement)?)) {
-                    sink.append(source);
+                    player.append(source);
                 }
 
-                if self.wait_sink_interruptible(&sink, start_counter) {
+                if self.wait_player_interruptible(&player, start_counter) {
                     return Ok(());
                 }
                 if self.sleep_interruptible(Duration::from_secs(1), start_counter) {
@@ -155,7 +153,7 @@ impl AudioEngine {
                 }
 
                 if let Ok(source) = Decoder::new(BufReader::new(File::open(&metronome)?)) {
-                    sink.append(source);
+                    player.append(source);
                 }
 
                 if self.sleep_interruptible(Duration::from_secs(30), start_counter) {
@@ -163,7 +161,7 @@ impl AudioEngine {
                 }
 
                 if let Ok(source) = Decoder::new(BufReader::new(File::open(&anthem)?)) {
-                    sink.append(source);
+                    player.append(source);
                 }
             }
             AudioPreset::MetronomeAnthem => {
@@ -174,7 +172,7 @@ impl AudioEngine {
                 let anthem = self.get_path("anthem.ogg")?;
 
                 if let Ok(source) = Decoder::new(BufReader::new(File::open(&metronome)?)) {
-                    sink.append(source);
+                    player.append(source);
                 }
 
                 if self.sleep_interruptible(Duration::from_secs(30), start_counter) {
@@ -182,7 +180,7 @@ impl AudioEngine {
                 }
 
                 if let Ok(source) = Decoder::new(BufReader::new(File::open(&anthem)?)) {
-                    sink.append(source);
+                    player.append(source);
                 }
             }
             AudioPreset::BellSilenceBell => {
@@ -192,10 +190,10 @@ impl AudioEngine {
                 let bell = self.get_path("bell.ogg")?;
 
                 if let Ok(source) = Decoder::new(BufReader::new(File::open(&bell)?)) {
-                    sink.append(source);
+                    player.append(source);
                 }
 
-                if self.wait_sink_interruptible(&sink, start_counter) {
+                if self.wait_player_interruptible(&player, start_counter) {
                     return Ok(());
                 }
                 if self.sleep_interruptible(Duration::from_secs(60), start_counter) {
@@ -203,7 +201,7 @@ impl AudioEngine {
                 }
 
                 if let Ok(source) = Decoder::new(BufReader::new(File::open(&bell)?)) {
-                    sink.append(source);
+                    player.append(source);
                 }
             }
             AudioPreset::BellMetronomeBell => {
@@ -214,10 +212,10 @@ impl AudioEngine {
                 let metronome = self.get_path("metronome.ogg")?;
 
                 if let Ok(source) = Decoder::new(BufReader::new(File::open(&bell)?)) {
-                    sink.append(source);
+                    player.append(source);
                 }
 
-                if self.wait_sink_interruptible(&sink, start_counter) {
+                if self.wait_player_interruptible(&player, start_counter) {
                     return Ok(());
                 }
                 if self.sleep_interruptible(Duration::from_secs(1), start_counter) {
@@ -225,7 +223,7 @@ impl AudioEngine {
                 }
 
                 if let Ok(source) = Decoder::new(BufReader::new(File::open(&metronome)?)) {
-                    sink.append(source);
+                    player.append(source);
                 }
 
                 if self.sleep_interruptible(Duration::from_secs(58), start_counter) {
@@ -234,12 +232,12 @@ impl AudioEngine {
 
                 let bell2 = self.get_path("bell.ogg")?;
                 if let Ok(source) = Decoder::new(BufReader::new(File::open(&bell2)?)) {
-                    sink.append(source);
+                    player.append(source);
                 }
             }
         }
 
-        self.wait_sink_interruptible(&sink, start_counter);
+        self.wait_player_interruptible(&player, start_counter);
         Ok(())
     }
 
