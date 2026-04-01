@@ -118,7 +118,9 @@ input, textarea {
   padding: 2px 0;
 }
 .control-row--column { flex-direction: column; align-items: stretch; gap: 6px; margin: 4px 0; }
+.control-row__info { display: flex; flex-direction: column; flex: 1; }
 .control-row__label { color: var(--c-text); font-size: 11px; letter-spacing: 0.06em; }
+.control-row__description { color: var(--c-muted); font-size: 10px; margin-top: 2px; line-height: 1.3; display: block; }
 .control-row__header { display: flex; justify-content: space-between; }
 .control-row__value { color: var(--c-accent); font-weight: bold; }
 

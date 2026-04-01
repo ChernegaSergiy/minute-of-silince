@@ -130,14 +130,20 @@ export class App {
 
             <!-- Ceremony enabled toggle -->
             <label class="control-row">
-              <span class="control-row__label">Церемонія о 09:00</span>
+              <div class="control-row__info">
+                <span class="control-row__label">Церемонія о 09:00</span>
+                <span class="control-row__description">Автоматично активує пам'ятні заходи кожного дня о 9-й ранку.</span>
+              </div>
               <input type="checkbox" id="ceremonyToggle" class="toggle"
                      ${this.settings.ceremonyEnabled ? "checked" : ""} />
             </label>
 
             <!-- Autostart toggle -->
             <label class="control-row">
-              <span class="control-row__label">Автозапуск при старті системи</span>
+              <div class="control-row__info">
+                <span class="control-row__label">Автозапуск при старті системи</span>
+                <span class="control-row__description">Дозволяє програмі запускатися автоматично разом із системою.</span>
+              </div>
               <input type="checkbox" id="autostartToggle" class="toggle"
                      ${this.settings.autostartEnabled ? "checked" : ""} />
             </label>
@@ -145,7 +151,10 @@ export class App {
             <!-- Late start grace window -->
             <div class="control-row control-row--column">
               <div class="control-row__header">
-                <span class="control-row__label">Вікно допуску</span>
+                <div class="control-row__info">
+                  <span class="control-row__label">Вікно допуску</span>
+                  <span class="control-row__description">Час після 09:00, протягом якого церемонія все ще може розпочатися.</span>
+                </div>
                 <span class="control-row__value" id="graceValue">${this.settings.lateStartGraceMinutes} хв</span>
               </div>
               <input type="range" id="graceRange" class="slider"
@@ -154,21 +163,30 @@ export class App {
 
             <!-- Weekdays only toggle -->
             <label class="control-row">
-              <span class="control-row__label">Лише в будні</span>
+              <div class="control-row__info">
+                <span class="control-row__label">Лише в будні</span>
+                <span class="control-row__description">Вимикає автоматичну активацію у суботу та неділю.</span>
+              </div>
               <input type="checkbox" id="weekdaysToggle" class="toggle"
                      ${this.settings.weekdaysOnly ? "checked" : ""} />
              </label>
 
             <!-- System time toggle -->
             <label class="control-row">
-              <span class="control-row__label">Системний час</span>
+              <div class="control-row__info">
+                <span class="control-row__label">Системний час</span>
+                <span class="control-row__description">Використовувати локальний годинник замість точного часу NTP.</span>
+              </div>
               <input type="checkbox" id="systemTimeToggle" class="toggle"
                      ${this.settings.systemTimeOnly ? "checked" : ""} />
             </label>
 
             <!-- Skip tomorrow toggle -->
             <label class="control-row">
-              <span class="control-row__label">Пропустити завтра</span>
+              <div class="control-row__info">
+                <span class="control-row__label">Пропустити завтра</span>
+                <span class="control-row__description">Скасовує лише наступну заплановану церемонію (одноразово).</span>
+              </div>
               <input type="checkbox" id="skipToggle" class="toggle"
                      ${this.status.skipTomorrow ? "checked" : ""} />
             </label>
@@ -177,7 +195,10 @@ export class App {
 
             <!-- Audio preset -->
             <div class="control-row">
-              <span class="control-row__label">Режим супроводу</span>
+              <div class="control-row__info">
+                <span class="control-row__label">Режим супроводу</span>
+                <span class="control-row__description">Вибір аудіосупроводу: голос, метроном, дзвін або гімн.</span>
+              </div>
               <select id="presetSelect" class="select">
                 ${this.renderPresetOptions()}
               </select>
@@ -186,7 +207,10 @@ export class App {
             <!-- Volume -->
             <div class="control-row control-row--column">
               <div class="control-row__header">
-                <span class="control-row__label">Гучність</span>
+                <div class="control-row__info">
+                  <span class="control-row__label">Гучність</span>
+                  <span class="control-row__description">Рівень гучності для аудіо-пресетів програми.</span>
+                </div>
                 <span class="control-row__value" id="volumeValue">${this.settings.volume}%</span>
               </div>
               <input type="range" id="volumeRange" class="slider"
@@ -197,21 +221,30 @@ export class App {
 
             <!-- Volume priority toggle -->
             <label class="control-row">
-              <span class="control-row__label">Пріоритет гучності</span>
+              <div class="control-row__info">
+                <span class="control-row__label">Пріоритет гучності</span>
+                <span class="control-row__description">Примусово встановлює вибраний рівень під час церемонії.</span>
+              </div>
               <input type="checkbox" id="volumePriorityToggle" class="toggle"
                      ${this.settings.volumePriority ? "checked" : ""} />
             </label>
 
             <!-- Auto-unmute toggle -->
             <label class="control-row">
-              <span class="control-row__label">Авто-увімкнення звуку</span>
+              <div class="control-row__info">
+                <span class="control-row__label">Авто-увімкнення звуку</span>
+                <span class="control-row__description">Автоматично вмикає звук, якщо він був вимкнений у системі.</span>
+              </div>
               <input type="checkbox" id="autoUnmuteToggle" class="toggle"
                      ${this.settings.autoUnmute ? "checked" : ""} />
             </label>
 
             <!-- Pause other players -->
             <label class="control-row">
-              <span class="control-row__label">Пауза інших плеєрів</span>
+              <div class="control-row__info">
+                <span class="control-row__label">Пауза інших плеєрів</span>
+                <span class="control-row__description">Призупиняє музику та відео (Spotify, YouTube) на час церемонії.</span>
+              </div>
               <input type="checkbox" id="pauseToggle" class="toggle"
                      ${this.settings.pauseOtherPlayers ? "checked" : ""} />
             </label>
