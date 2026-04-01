@@ -202,6 +202,13 @@ export class App {
                      ${this.settings.volumePriority ? "checked" : ""} />
             </label>
 
+            <!-- Auto-unmute toggle -->
+            <label class="control-row">
+              <span class="control-row__label">Авто-увімкнення звуку</span>
+              <input type="checkbox" id="autoUnmuteToggle" class="toggle"
+                     ${this.settings.autoUnmute ? "checked" : ""} />
+            </label>
+
             <!-- Pause other players -->
             <label class="control-row">
               <span class="control-row__label">Пауза інших плеєрів</span>
@@ -371,6 +378,17 @@ export class App {
         this.settings = {
           ...this.settings,
           volumePriority: (e.target as HTMLInputElement).checked,
+        };
+        this.checkDirty();
+      }
+    );
+
+    this.q<HTMLInputElement>("#autoUnmuteToggle").addEventListener(
+      "change",
+      (e) => {
+        this.settings = {
+          ...this.settings,
+          autoUnmute: (e.target as HTMLInputElement).checked,
         };
         this.checkDirty();
       }
