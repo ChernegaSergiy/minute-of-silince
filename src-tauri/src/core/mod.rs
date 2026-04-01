@@ -57,7 +57,12 @@ impl CeremonyManager {
         // 2. Notify UI
         let _ = self.app.emit("ceremony-start", ());
 
-        // 3. Handle Volume and Mute
+        // 3. Pause players
+        if should_pause_players {
+            let _ = self.platform.pause_media();
+        }
+
+        // 4. Handle Volume and Mute
         if auto_unmute {
             // Save mute state and unmute if necessary
             if let Ok(muted) = self.platform.is_muted() {
@@ -74,11 +79,6 @@ impl CeremonyManager {
                 *PREVIOUS_VOLUME.lock().unwrap() = Some(vol);
                 let _ = self.platform.set_volume(target_volume);
             }
-        }
-
-        // 4. Pause players
-        if should_pause_players {
-            let _ = self.platform.pause_media();
         }
 
         // 5. Play Audio (Stop previous first)

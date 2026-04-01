@@ -9,7 +9,7 @@ pub mod volume {
     use crate::error::{AppError, Result};
     use windows::Win32::Media::Audio::Endpoints::IAudioEndpointVolume;
     use windows::Win32::Media::Audio::{
-        eCommunications, eRender, IMMDeviceEnumerator, MMDeviceEnumerator,
+        eConsole, eRender, IMMDeviceEnumerator, MMDeviceEnumerator,
     };
     use windows::Win32::System::Com::{CoCreateInstance, CLSCTX_INPROC_SERVER};
 
@@ -62,7 +62,7 @@ pub mod volume {
                     .map_err(|e| AppError::Platform(e.to_string()))?;
 
             let device = enumerator
-                .GetDefaultAudioEndpoint(eRender, eCommunications)
+                .GetDefaultAudioEndpoint(eRender, eConsole)
                 .map_err(|e| AppError::Platform(e.to_string()))?;
 
             let endpoint: IAudioEndpointVolume = device
