@@ -115,10 +115,8 @@ pub mod media {
                     .map_err(|e| AppError::Platform(e.to_string()))?;
 
                 if let Ok(status) = player.playback_status() {
-                    if status == "Playing" {
-                        if player.pause().is_ok() {
-                            paused.insert(name.to_string());
-                        }
+                    if status == "Playing" && player.pause().is_ok() {
+                        paused.insert(name.to_string());
                     }
                 }
             }
