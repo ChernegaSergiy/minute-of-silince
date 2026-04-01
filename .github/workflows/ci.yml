@@ -73,7 +73,7 @@ jobs:
 
       - name: Unit & integration tests
         working-directory: src-tauri
-        run: cargo test --all -- --skip ntp
+        run: cargo test --all
 
   build-release:
     name: Build & Release — ${{ matrix.os }}
