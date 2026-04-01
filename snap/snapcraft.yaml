@@ -1,0 +1,65 @@
+# Snapcraft configuration for minute-of-silence
+# For more information, see: https://snapcraft.io/docs/snapcraft-yaml-reference
+
+name: minute-of-silence
+base: core22
+version: '0.2.0'
+summary: Національна хвилина мовчання о 09:00
+description: |
+  Додаток для автоматизації загальнонаціональної хвилини мовчання.
+  Синхронізується через NTP, вмикає звук та призупиняє інші медіаплеєри
+  для вшанування пам'яті полеглих захисників та жертв війни.
+
+grade: stable
+confinement: strict
+
+parts:
+  minute-of-silence:
+    plugin: nil
+    source: .
+    # Build dependencies for Tauri on Linux
+    build-packages:
+      - libasound2-dev
+      - libgtk-3-dev
+      - libsoup-3.0-dev
+      - libwebkit2gtk-4.1-dev
+      - curl
+      - wget
+      - pkg-config
+      - libssl-dev
+    # Snap build tools
+    build-snaps:
+      - node/20/stable
+      - rustup
+    override-build: |
+      # Setup Rust environment
+      export PATH="$PATH:$HOME/.cargo/bin"
+      rustup default stable
+      
+      # Build the Tauri application (Frontend and Backend)
+      npm install
+      npm run tauri build -- --bundles deb
+      
+      # Move binary to the snap's bin directory
+      mkdir -p $SNAPCRAFT_PART_INSTALL/bin
+      cp src-tauri/target/release/minute-of-silence $SNAPCRAFT_PART_INSTALL/bin/
+      
+      # Copy desktop assets (icon)
+      mkdir -p $SNAPCRAFT_PART_INSTALL/usr/share/icons/hicolor/512x512/apps
+      cp src-tauri/icons/icon.png $SNAPCRAFT_PART_INSTALL/usr/share/icons/hicolor/512x512/apps/minute-of-silence.png
+
+apps:
+  minute-of-silence:
+    command: bin/minute-of-silence
+    # Use GNOME extension for GTK/GNOME desktop integration
+    extensions: [gnome]
+    # Required permissions (interfaces)
+    plugs:
+      - network        # For NTP synchronization
+      - audio-playback # For ceremony audio output (ALSA)
+      - mpris          # For pausing other media players via D-Bus
+      - desktop
+      - desktop-legacy
+      - x11
+      - wayland
+      - unity7
