@@ -26,3 +26,10 @@ logs/
 .env
 .env.local
 .env.*.local
+
+# Snapcraft
+parts/
+prime/
+stage/
+*.snap
+.snapcraft/
