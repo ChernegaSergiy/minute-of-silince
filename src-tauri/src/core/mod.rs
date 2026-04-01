@@ -13,6 +13,7 @@ use tauri::{AppHandle, Emitter, Manager};
 
 lazy_static::lazy_static! {
     static ref PREVIOUS_VOLUME: Mutex<Option<u8>> = Mutex::new(None);
+    static ref WAS_MUTED: Mutex<Option<bool>> = Mutex::new(None);
 }
 
 /// Orchestrator for the ceremony.
@@ -55,8 +56,17 @@ impl CeremonyManager {
         // 2. Notify UI
         let _ = self.app.emit("ceremony-start", ());
 
-        // 3. Handle Volume
+        // 3. Handle Volume and Mute
         if volume_priority {
+            // Save mute state and unmute if necessary
+            if let Ok(muted) = self.platform.is_muted() {
+                if muted {
+                    *WAS_MUTED.lock().unwrap() = Some(true);
+                    let _ = self.platform.set_mute(false);
+                }
+            }
+
+            // Save and set volume
             if let Ok(vol) = self.platform.get_volume() {
                 *PREVIOUS_VOLUME.lock().unwrap() = Some(vol);
                 let _ = self.platform.set_volume(target_volume);
@@ -73,7 +83,7 @@ impl CeremonyManager {
 
         let audio_engine = Arc::clone(&self.audio);
         let app_handle = self.app.clone();
-        let platform_handle = platform::get_platform(); // Need a fresh one for the thread or make it cloneable
+        let platform_handle = platform::get_platform();
 
         std::thread::spawn(move || {
             let _ = audio_engine.play_preset(preset, target_volume);
@@ -104,12 +114,20 @@ impl CeremonyManager {
             inner.ceremony_active = false;
         }
 
-        // Restore volume
+        // Restore volume and mute
         if volume_priority {
-            let prev = *PREVIOUS_VOLUME.lock().unwrap();
-            if let Some(vol) = prev {
+            // Restore volume
+            let prev_vol = *PREVIOUS_VOLUME.lock().unwrap();
+            if let Some(vol) = prev_vol {
                 let _ = platform.set_volume(vol);
                 *PREVIOUS_VOLUME.lock().unwrap() = None;
+            }
+
+            // Restore mute state if we changed it
+            let was_muted = *WAS_MUTED.lock().unwrap();
+            if let Some(true) = was_muted {
+                let _ = platform.set_mute(true);
+                *WAS_MUTED.lock().unwrap() = None;
             }
         }
 

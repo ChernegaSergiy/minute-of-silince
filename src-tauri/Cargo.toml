@@ -51,6 +51,10 @@ windows = { version = "0.61", features = [
     "Win32_System_Com",
 ] }
 
+[target.'cfg(target_os = "linux")'.dependencies]
+alsa = "0.9"
+zbus = "4.3"
+
 [profile.release]
 opt-level = "s"      # optimize for binary size
 lto = true

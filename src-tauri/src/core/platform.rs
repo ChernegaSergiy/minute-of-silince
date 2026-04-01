@@ -5,6 +5,8 @@ use crate::error::Result;
 pub trait Platform: Send + Sync {
     fn get_volume(&self) -> Result<u8>;
     fn set_volume(&self, level: u8) -> Result<()>;
+    fn is_muted(&self) -> Result<bool>;
+    fn set_mute(&self, mute: bool) -> Result<()>;
     fn pause_media(&self) -> Result<()>;
     fn resume_media(&self) -> Result<()>;
 }
@@ -19,6 +21,12 @@ impl Platform for WindowsPlatform {
     }
     fn set_volume(&self, level: u8) -> Result<()> {
         crate::platform_windows::volume::set_volume(level)
+    }
+    fn is_muted(&self) -> Result<bool> {
+        crate::platform_windows::volume::is_muted()
+    }
+    fn set_mute(&self, mute: bool) -> Result<()> {
+        crate::platform_windows::volume::set_mute(mute)
     }
     fn pause_media(&self) -> Result<()> {
         crate::platform_windows::media::pause_all()
@@ -38,6 +46,12 @@ impl Platform for LinuxPlatform {
     }
     fn set_volume(&self, level: u8) -> Result<()> {
         crate::platform_linux::volume::set_volume(level)
+    }
+    fn is_muted(&self) -> Result<bool> {
+        crate::platform_linux::volume::is_muted()
+    }
+    fn set_mute(&self, mute: bool) -> Result<()> {
+        crate::platform_linux::volume::set_mute(mute)
     }
     fn pause_media(&self) -> Result<()> {
         crate::platform_linux::media::pause_all()
