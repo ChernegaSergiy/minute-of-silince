@@ -46,6 +46,9 @@ parts:
       - node/20/stable
       - rustup
     override-build: |
+      # Prioritize GNOME SDK libraries to resolve symbol mismatches
+      export LD_LIBRARY_PATH="/snap/gnome-46-2404-sdk/current/usr/lib/$CRAFT_ARCH_TRIPLET_BUILD_FOR:$LD_LIBRARY_PATH"
+      
       # Setup Rust environment
       export PATH="$PATH:$HOME/.cargo/bin"
       rustup default stable
