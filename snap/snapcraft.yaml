@@ -52,7 +52,7 @@ parts:
     override-build: |
       # Priority to system libraries to avoid conflicts with GNOME SDK on Jammy
       export PKG_CONFIG_PATH="/usr/lib/$SNAPCRAFT_ARCH_TRIPLET/pkgconfig:/usr/share/pkgconfig"
-      export LIBRARY_PATH="/usr/lib/$SNAPCRAFT_ARCH_TRIPLET:$LIBRARY_PATH"
+      export LIBRARY_PATH="/usr/lib/$SNAPCRAFT_ARCH_TRIPLET${LIBRARY_PATH:+:$LIBRARY_PATH}"
       
       # Setup Rust environment
       export PATH="$PATH:$HOME/.cargo/bin"
