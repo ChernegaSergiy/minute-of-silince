@@ -46,16 +46,14 @@ parts:
       - node/20/stable
       - rustup
     override-build: |
-      # Prioritize GNOME SDK libraries to resolve symbol mismatches
-      export LD_LIBRARY_PATH="/snap/gnome-46-2404-sdk/current/usr/lib/$CRAFT_ARCH_TRIPLET_BUILD_FOR:$LD_LIBRARY_PATH"
-      
       # Setup Rust environment
       export PATH="$PATH:$HOME/.cargo/bin"
       rustup default stable
       
       # Build the Tauri application
       npm install
-      npm run tauri build -- --bundles deb
+      # Build only the binary, no need for .deb bundles inside snapcraft
+      npm run tauri build -- --bundles none
       
       # Move binary and resources to the snap's bin directory
       mkdir -p $SNAPCRAFT_PART_INSTALL/bin/audio
