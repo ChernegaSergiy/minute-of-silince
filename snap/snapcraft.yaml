@@ -31,12 +31,17 @@ parts:
   minute-of-silence:
     plugin: nil
     source: .
+    extensions: [gnome]
     # Build dependencies for Tauri on Linux
     build-packages:
       - libasound2-dev
       - libgtk-3-dev
       - libsoup-3.0-dev
       - libwebkit2gtk-4.1-dev
+      - libayatana-appindicator3-dev
+      - libsecret-1-dev
+      - libharfbuzz-dev
+      - librsvg2-dev
       - curl
       - wget
       - pkg-config
