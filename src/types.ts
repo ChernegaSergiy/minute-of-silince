@@ -17,6 +17,7 @@ export interface Settings {
   preset: AudioPreset;
   volume: number; // 0–100
   pauseOtherPlayers: boolean;
+  showVisualOverlay: boolean;
   systemTimeOnly: boolean;
   volumePriority: boolean;
   autoUnmute: boolean;
@@ -53,6 +54,7 @@ export const DEFAULT_SETTINGS: Settings = {
   preset: "voice_metronome",
   volume: 80,
   pauseOtherPlayers: true,
+  showVisualOverlay: true,
   systemTimeOnly: false,
   volumePriority: false,
   autoUnmute: false,
