@@ -9,6 +9,21 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.3.1] - 2026-04-03
+
+### Fixed
+- Resolved Critical Segmentation Fault in Snap package by removing duplicate runtime libraries.
+- Fixed `libpxbackend` loading error by adding `glib-networking` to stage-packages.
+- Corrected Snap build environment to properly link against GNOME SDK on Ubuntu 24.04 (core24).
+
+### Added
+- Integrated `.desktop` entry for proper application visibility in Linux app menus.
+- Automatic exclusion of Snap build artifacts and logs in `.gitignore`.
+
+### Changed
+- Refocused Snap support on `amd64` architecture for better stability and testing.
+- Bumped project version to 0.3.1 across all configuration files.
+
 ## [0.3.0] - 2026-04-02
 
 ### Added
