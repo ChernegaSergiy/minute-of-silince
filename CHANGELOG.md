@@ -9,6 +9,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.4.0] - 2026-04-03
+
+### Added
+- Visual ceremony overlay with brutalist animations and styles for a more immersive experience.
+- `show_visual_overlay` toggle in settings to enable or disable the ceremonial screen.
+- Comprehensive Flatpak support with dedicated manifests for Flathub submission.
+- AppStream metadata and desktop entry for better integration with Linux software centers.
+
+### Changed
+- Upgraded Flatpak runtime to GNOME 50 for improved performance and modern libraries.
+- Bumped project version to 0.4.0 across all configuration files.
+
 ## [0.3.1] - 2026-04-03
 
 ### Fixed
