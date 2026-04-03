@@ -27,7 +27,11 @@ pub fn run() {
     tauri::Builder::default()
         .plugin(tauri_plugin_autostart::init(
             tauri_plugin_autostart::MacosLauncher::LaunchAgent,
-            None,
+            if std::env::var("SNAP").is_ok() {
+                Some(vec!["minute-of-silence", "--hidden"])
+            } else {
+                Some(vec!["--hidden"])
+            },
         ))
         .plugin(tauri_plugin_notification::init())
         .plugin(tauri_plugin_shell::init())
@@ -48,6 +52,13 @@ pub fn run() {
             // Build the system-tray icon.
             tray::build_tray(app)?;
 
+            // If started with --hidden (e.g. from autostart), hide the main window immediately.
+            if std::env::args().any(|arg| arg == "--hidden") {
+                if let Some(window) = app.get_webview_window("main") {
+                    window.hide()?;
+                }
+            }
+
             // Hide from taskbar; the app lives in the tray only.
             #[cfg(target_os = "windows")]
             {
@@ -64,6 +75,7 @@ pub fn run() {
 
             Ok(())
         })
+
         .invoke_handler(tauri::generate_handler![
             commands::get_settings,
             commands::save_settings,

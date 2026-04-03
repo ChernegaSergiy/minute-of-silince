@@ -75,6 +75,7 @@ parts:
 apps:
   minute-of-silence:
     command: bin/minute-of-silence
+    autostart: minute-of-silence.desktop
     extensions: [gnome]
     # Required permissions (interfaces)
     plugs:

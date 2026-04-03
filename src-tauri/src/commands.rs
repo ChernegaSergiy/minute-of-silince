@@ -30,13 +30,9 @@ pub fn save_settings(app: AppHandle, state: State<'_, AppState>, settings: Setti
         use tauri_plugin_autostart::ManagerExt;
         let autostart_manager = app.autolaunch();
         if settings.autostart_enabled {
-            autostart_manager
-                .enable()
-                .map_err(|e: tauri_plugin_autostart::Error| AppError::Platform(e.to_string()))?;
+            let _ = autostart_manager.enable();
         } else {
-            autostart_manager
-                .disable()
-                .map_err(|e: tauri_plugin_autostart::Error| AppError::Platform(e.to_string()))?;
+            let _ = autostart_manager.disable();
         }
     }
 
