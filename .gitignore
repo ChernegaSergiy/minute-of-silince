@@ -33,3 +33,5 @@ prime/
 stage/
 *.snap
 .snapcraft/
+*.snap
+snapcraft-*.txt
