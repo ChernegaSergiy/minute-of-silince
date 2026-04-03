@@ -1,5 +1,6 @@
 # Minute of Silence
 
+[![minute-of-silence](https://snapcraft.io/minute-of-silence/badge.svg)](https://snapcraft.io/minute-of-silence)
 [![CI](https://github.com/ChernegaSergiy/minute-of-silence/actions/workflows/ci.yml/badge.svg)](https://github.com/ChernegaSergiy/minute-of-silence/actions)
 [![License: CSSM Unlimited License v2.0](https://img.shields.io/badge/License-CSSM%20Unlimited%20License%20v2.0-blue.svg?logo=opensourceinitiative)](LICENSE)
 [![Platform](https://img.shields.io/badge/Platform-Windows%20%7C%20Linux-black.svg?logo=rust)](https://github.com/ChernegaSergiy/minute-of-silence/releases)
