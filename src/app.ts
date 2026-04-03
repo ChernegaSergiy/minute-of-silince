@@ -55,11 +55,15 @@ export class App {
   }
 
   private initOverlay(): void {
-    onCeremonyStart(() => this.showOverlay());
+    onCeremonyStart(() => {
+      if (this.settings.showVisualOverlay) {
+        this.showOverlay();
+      }
+    });
     onCeremonyEnd(() => this.hideOverlay());
     
     // Initial check in case app started during ceremony
-    if (this.status.ceremonyActive) {
+    if (this.status.ceremonyActive && this.settings.showVisualOverlay) {
       this.showOverlay();
     }
   }
@@ -274,6 +278,16 @@ export class App {
                      ${this.settings.pauseOtherPlayers ? "checked" : ""} />
             </label>
 
+            <!-- Visual overlay toggle -->
+            <label class="control-row">
+              <div class="control-row__info">
+                <span class="control-row__label">Візуальний оверлей</span>
+                <span class="control-row__description">Показувати повноекранний екран вшанування під час церемонії.</span>
+              </div>
+              <input type="checkbox" id="overlayToggle" class="toggle"
+                     ${this.settings.showVisualOverlay ? "checked" : ""} />
+            </label>
+
             <!-- Meta / debug info -->
             <div class="meta">
               <span>Остання церемонія: <span id="lastActivationValue">${this.status.lastActivation ?? "—"}</span></span>
@@ -484,6 +498,14 @@ export class App {
       this.settings = {
         ...this.settings,
         pauseOtherPlayers: (e.target as HTMLInputElement).checked,
+      };
+      this.checkDirty();
+    });
+
+    this.q<HTMLInputElement>("#overlayToggle").addEventListener("change", (e) => {
+      this.settings = {
+        ...this.settings,
+        showVisualOverlay: (e.target as HTMLInputElement).checked,
       };
       this.checkDirty();
     });
