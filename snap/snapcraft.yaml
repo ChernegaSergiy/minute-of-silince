@@ -23,7 +23,6 @@ confinement: strict
 
 platforms:
   amd64:
-  arm64:
 
 parts:
   minute-of-silence:
