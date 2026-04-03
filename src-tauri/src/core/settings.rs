@@ -31,6 +31,9 @@ pub struct Settings {
     /// Pause other media players before the ceremony.
     pub pause_other_players: bool,
 
+    /// Show a visual overlay window when the ceremony starts.
+    pub show_visual_overlay: bool,
+
     /// Use system time instead of NTP.
     pub system_time_only: bool,
 
@@ -57,6 +60,7 @@ impl Default for Settings {
             preset: AudioPreset::VoiceMetronome,
             volume: 80,
             pause_other_players: true,
+            show_visual_overlay: true,
             system_time_only: false,
             volume_priority: false,
             auto_unmute: false,
