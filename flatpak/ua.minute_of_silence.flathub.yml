@@ -1,0 +1,41 @@
+app-id: ua.minute_of_silence
+runtime: org.gnome.Platform
+runtime-version: '46'
+sdk: org.gnome.Sdk
+sdk-extensions:
+  - org.freedesktop.Sdk.Extension.rust-stable
+  - org.freedesktop.Sdk.Extension.node20
+command: minute-of-silence
+finish-args:
+  - --socket=fallback-x11
+  - --socket=wayland
+  - --device=dri
+  - --share=ipc
+  - --share=network
+  - --socket=pulseaudio
+  - --talk-name=org.mpris.MediaPlayer2.*
+  - --talk-name=org.freedesktop.Notifications
+  - --metadata=X-DConf=comm/org/gnome/
+
+modules:
+  - name: minute-of-silence
+    buildsystem: simple
+    build-commands:
+      - /usr/lib/sdk/node20/enable.sh
+      - /usr/lib/sdk/rust-stable/enable.sh
+      - npm install
+      - npm run tauri build -- --no-bundle
+      - mkdir -p /app/bin/audio
+      - cp src-tauri/target/release/minute-of-silence /app/bin/
+      - cp src-tauri/audio/*.ogg /app/bin/audio/
+      - mkdir -p /app/share/applications
+      - mkdir -p /app/share/metainfo
+      - mkdir -p /app/share/icons/hicolor/512x512/apps
+      - cp flatpak/ua.minute_of_silence.desktop /app/share/applications/
+      - cp flatpak/ua.minute_of_silence.metainfo.xml /app/share/metainfo/
+      - cp src-tauri/icons/icon.png /app/share/icons/hicolor/512x512/apps/ua.minute_of_silence.png
+    sources:
+      - type: git
+        url: https://github.com/ChernegaSergiy/minute-of-silence.git
+        tag: v0.3.1
+        commit: 31b39e7928d4570bf6c371c001ab42fb07043e4f
