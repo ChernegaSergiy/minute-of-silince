@@ -76,7 +76,7 @@ pub mod volume {
 
 pub mod output {
     use crate::error::{AppError, Result};
-    use windows::core::{Interface, GUID, HRESULT, PCWSTR};
+    use windows::core::{GUID, HRESULT, PCWSTR};
     use windows::Win32::Media::Audio::{
         eCommunications, eConsole, eMultimedia, eRender, ERole, IMMDeviceEnumerator,
         MMDeviceEnumerator, DEVICE_STATE_ACTIVE,
@@ -169,10 +169,14 @@ pub mod output {
     /// Internal helper to call IPolicyConfig
     fn set_default_device_api(id: &str) -> Result<()> {
         unsafe {
-            let policy_config: *mut IPolicyConfig =
+            // We use IUnknown as a generic COM interface to satisfy trait bounds of CoCreateInstance
+            let unknown: windows::core::IUnknown =
                 CoCreateInstance(&IPOLICYCONFIG_GUID, None, CLSCTX_INPROC_SERVER).map_err(|e| {
                     AppError::Platform(format!("IPolicyConfig creation failed: {e}"))
                 })?;
+
+            // Cast the raw pointer to our manual IPolicyConfig structure
+            let policy_config = unknown.as_raw() as *mut IPolicyConfig;
 
             let id_u16: Vec<u16> = id.encode_utf16().chain(std::iter::once(0)).collect();
             let pcwstr = PCWSTR(id_u16.as_ptr());
