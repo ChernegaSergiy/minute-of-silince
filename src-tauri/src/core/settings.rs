@@ -43,6 +43,9 @@ pub struct Settings {
     /// Automatically unmute system if muted during ceremony.
     pub auto_unmute: bool,
 
+    /// Force audio output to system speakers (experimental).
+    pub force_speaker: bool,
+
     /// NTP server hostname (used when system_time_only is false).
     pub ntp_server: String,
 
@@ -64,6 +67,7 @@ impl Default for Settings {
             system_time_only: false,
             volume_priority: false,
             auto_unmute: false,
+            force_speaker: false,
             ntp_server: "pool.ntp.org".to_string(),
             late_start_grace_minutes: 1,
         }

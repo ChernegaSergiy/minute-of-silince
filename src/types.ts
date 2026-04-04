@@ -21,6 +21,7 @@ export interface Settings {
   systemTimeOnly: boolean;
   volumePriority: boolean;
   autoUnmute: boolean;
+  forceSpeaker: boolean;
   ntpServer: string;
   lateStartGraceMinutes: number; // 0–15
 }
@@ -58,6 +59,7 @@ export const DEFAULT_SETTINGS: Settings = {
   systemTimeOnly: false,
   volumePriority: false,
   autoUnmute: false,
+  forceSpeaker: false,
   ntpServer: "pool.ntp.org",
   lateStartGraceMinutes: 1,
 };
