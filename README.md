@@ -48,6 +48,8 @@ Download the `.msi` or `.exe` installer from the [Releases](https://github.com/C
 
 ### Linux (Ubuntu / Debian)
 
+[![Get it from the Snap Store](https://snapcraft.io/en/dark/install.svg)](https://snapcraft.io/minute-of-silence)
+
 ```bash
 # Debian package
 sudo dpkg -i minute-of-silence_0.4.0_amd64.deb
