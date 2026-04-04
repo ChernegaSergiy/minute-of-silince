@@ -9,6 +9,22 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.4.1] - 2026-04-04
+
+### Fixed
+- Resolved 'Connection refused' error on Snap autostart by using native Snap command wrapper.
+- Fixed Snap build validation by switching to a Proprietary license in snapcraft.yaml.
+- Simplified autostart logic and resolved duplicate argument issues in Linux environments.
+
+### Added
+- Rich README layout with application screenshots for better visual documentation.
+- Official screenshot assets stored in the repository.
+
+### Changed
+- Bumped project version to 0.4.1 across all configuration files.
+- Synchronized Cargo.lock and project dependencies.
+- Improved code style and formatting in src-tauri/src/lib.rs.
+
 ## [0.4.0] - 2026-04-03
 
 ### Added
