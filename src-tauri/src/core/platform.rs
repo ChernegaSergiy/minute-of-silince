@@ -9,6 +9,8 @@ pub trait Platform: Send + Sync {
     fn set_mute(&self, mute: bool) -> Result<()>;
     fn pause_media(&self) -> Result<()>;
     fn resume_media(&self) -> Result<()>;
+    fn force_speakers(&self) -> Result<Option<String>>;
+    fn restore_output(&self, device_id: &str) -> Result<()>;
 }
 
 #[cfg(target_os = "windows")]
@@ -34,6 +36,12 @@ impl Platform for WindowsPlatform {
     fn resume_media(&self) -> Result<()> {
         crate::platform_windows::media::resume_all()
     }
+    fn force_speakers(&self) -> Result<Option<String>> {
+        crate::platform_windows::output::force_speakers()
+    }
+    fn restore_output(&self, device_id: &str) -> Result<()> {
+        crate::platform_windows::output::restore_output(device_id)
+    }
 }
 
 #[cfg(target_os = "linux")]
@@ -58,6 +66,12 @@ impl Platform for LinuxPlatform {
     }
     fn resume_media(&self) -> Result<()> {
         crate::platform_linux::media::resume_all()
+    }
+    fn force_speakers(&self) -> Result<Option<String>> {
+        Ok(None) // Placeholder for Linux
+    }
+    fn restore_output(&self, _device_id: &str) -> Result<()> {
+        Ok(()) // Placeholder for Linux
     }
 }
 
