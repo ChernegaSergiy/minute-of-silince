@@ -100,13 +100,22 @@ pub mod output {
         pub vtbl: *const IPolicyConfigVtbl,
     }
 /// Force the system to use built-in speakers if available.
-pub fn force_speakers() -> Result<()> {
+/// Returns the ID of the previously default device so it can be restored.
+pub fn force_speakers() -> Result<Option<String>> {
     log::info!("Attempting to force audio to speakers via IPolicyConfig...");
     unsafe {
         let enumerator: IMMDeviceEnumerator =
             CoCreateInstance(&MMDeviceEnumerator, None, CLSCTX_INPROC_SERVER)
                 .map_err(|e| AppError::Platform(format!("Enumerator failed: {e}")))?;
 
+        // 1. Get current default device ID to return it for later restoration
+        let previous_default = enumerator
+            .GetDefaultAudioEndpoint(eRender, eConsole)
+            .ok()
+            .and_then(|d| d.GetId().ok())
+            .and_then(|id| id.to_string().ok());
+
+        // 2. Find speakers
         let collection = enumerator
             .EnumAudioEndpoints(eRender, DEVICE_STATE_ACTIVE)
             .map_err(|e| AppError::Platform(format!("Enum endpoints failed: {e}")))?;
@@ -119,41 +128,55 @@ pub fn force_speakers() -> Result<()> {
             let id = device.GetId().map_err(|e| AppError::Platform(format!("GetId failed: {e}")))?;
             let id_str = id.to_string().map_err(|e| AppError::Platform(e.to_string()))?;
 
-            // Note: In a production environment, we should check PKEY_Device_FormFactor.
-            // For this implementation, we search for common keywords.
             if id_str.to_lowercase().contains("speaker") || id_str.to_lowercase().contains("internal") {
                 speaker_id = Some(id_str);
                 break;
             }
         }
 
+        // 3. Switch to speakers if found and different from current
         if let Some(id) = speaker_id {
+            if Some(id.clone()) == previous_default {
+                log::info!("Speakers are already the default device");
+                return Ok(None); // No need to restore if nothing changed
+            }
+
             log::info!("Found speakers: {}. Activating...", id);
-
-            let policy_config: *mut IPolicyConfig = CoCreateInstance(
-                &IPOLICYCONFIG_GUID,
-                None,
-                CLSCTX_INPROC_SERVER,
-            ).map_err(|e| AppError::Platform(format!("IPolicyConfig creation failed: {e}")))?;
-
-            let id_u16: Vec<u16> = id.encode_utf16().chain(std::iter::once(0)).collect();
-            let pcwstr = PCWSTR(id_u16.as_ptr());
-
-            // Set as default for all roles
-            ((*(*policy_config).vtbl).set_default_endpoint)(policy_config as *mut usize, pcwstr, eConsole);
-            ((*(*policy_config).vtbl).set_default_endpoint)(policy_config as *mut usize, pcwstr, eMultimedia);
-            ((*(*policy_config).vtbl).set_default_endpoint)(policy_config as *mut usize, pcwstr, eCommunications);
-
+            set_default_device_api(&id)?;
             log::info!("Audio output successfully redirected to speakers");
+            Ok(previous_default)
         } else {
             log::warn!("No speakers found among active audio endpoints");
+            Ok(None)
         }
+    }
+}
 
+/// Restore audio output to a specific device by its ID.
+pub fn restore_output(device_id: &str) -> Result<()> {
+    log::info!("Restoring audio output to previous device: {}", device_id);
+    set_default_device_api(device_id)
+}
+
+/// Internal helper to call IPolicyConfig
+fn set_default_device_api(id: &str) -> Result<()> {
+    unsafe {
+        let policy_config: *mut IPolicyConfig = CoCreateInstance(
+            &IPOLICYCONFIG_GUID,
+            None,
+            CLSCTX_INPROC_SERVER,
+        ).map_err(|e| AppError::Platform(format!("IPolicyConfig creation failed: {e}")))?;
+
+        let id_u16: Vec<u16> = id.encode_utf16().chain(std::iter::once(0)).collect();
+        let pcwstr = PCWSTR(id_u16.as_ptr());
+
+        ((*(*policy_config).vtbl).set_default_endpoint)(policy_config as *mut usize, pcwstr, eConsole);
+        ((*(*policy_config).vtbl).set_default_endpoint)(policy_config as *mut usize, pcwstr, eMultimedia);
+        ((*(*policy_config).vtbl).set_default_endpoint)(policy_config as *mut usize, pcwstr, eCommunications);
         Ok(())
     }
 }
 }
-
 pub mod media {
     //! Pause and resume other media players using the Windows multimedia API.
     //!
