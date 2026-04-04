@@ -75,7 +75,6 @@ pub fn run() {
 
             Ok(())
         })
-
         .invoke_handler(tauri::generate_handler![
             commands::get_settings,
             commands::save_settings,
