@@ -35,3 +35,6 @@ stage/
 .snapcraft/
 *.snap
 snapcraft-*.txt
+
+# Windows SDK packages and generated files
+.winapp
