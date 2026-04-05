@@ -76,13 +76,12 @@ pub mod volume {
 
 pub mod output {
     use crate::error::{AppError, Result};
-    use windows::core::{Interface, GUID, HRESULT, PCWSTR};
+    use windows::core::{Interface, PROPERTYKEY, GUID, HRESULT, PCWSTR};
     use windows::Win32::Media::Audio::{
         eCommunications, eConsole, eMultimedia, eRender, ERole, IMMDeviceEnumerator,
         MMDeviceEnumerator, DEVICE_STATE_ACTIVE,
     };
     use windows::Win32::System::Com::{CoCreateInstance, CLSCTX_INPROC_SERVER, STGM_READ};
-    use windows::Win32::System::PropertiesSystem::PROPERTYKEY;
 
     // Undocumented IPolicyConfig interface GUID
     const IPOLICYCONFIG_GUID: GUID = GUID::from_u128(0x870af99c_171d_4f15_af0d_e63df40c2bc9);
