@@ -74,56 +74,57 @@ pub mod volume {
 }
 
 pub mod media {
-    //! Pause other media players using the Windows multimedia API.
-    //!
-    //! Sends VK_MEDIA_PLAY_PAUSE to pause all media. Media is NOT resumed
-    //! after ceremony — user controls their audio manually.
-
-    use windows::Win32::UI::Input::KeyboardAndMouse::{
-        SendInput, INPUT, INPUT_KEYBOARD, KEYEVENTF_KEYUP, VK_MEDIA_PLAY_PAUSE,
+    use windows::core::Interface;
+    use windows::Win32::Media::Audio::{
+        eConsole, eRender, AudioSessionStateActive, IAudioClient, IAudioSessionControl,
+        IAudioSessionManager2, IMMDeviceEnumerator, MMDeviceEnumerator,
     };
+    use windows::Win32::System::Com::{CoCreateInstance, CLSCTX_INPROC_SERVER};
 
     use crate::error::{AppError, Result};
 
     pub fn pause_all() -> Result<()> {
-        send_media_key()
-    }
+        unsafe {
+            let enumerator: IMMDeviceEnumerator =
+                CoCreateInstance(&MMDeviceEnumerator, None, CLSCTX_INPROC_SERVER)
+                    .map_err(|e| AppError::Platform(e.to_string()))?;
 
-    fn send_media_key() -> Result<()> {
-        let key_down = INPUT {
-            r#type: INPUT_KEYBOARD,
-            Anonymous: windows::Win32::UI::Input::KeyboardAndMouse::INPUT_0 {
-                ki: windows::Win32::UI::Input::KeyboardAndMouse::KEYBDINPUT {
-                    wVk: VK_MEDIA_PLAY_PAUSE,
-                    wScan: 0,
-                    dwFlags: windows::Win32::UI::Input::KeyboardAndMouse::KEYBD_EVENT_FLAGS(0),
-                    time: 0,
-                    dwExtraInfo: 0,
-                },
-            },
-        };
+            let device = enumerator
+                .GetDefaultAudioEndpoint(eRender, eConsole)
+                .map_err(|e| AppError::Platform(e.to_string()))?;
 
-        let key_up = INPUT {
-            r#type: INPUT_KEYBOARD,
-            Anonymous: windows::Win32::UI::Input::KeyboardAndMouse::INPUT_0 {
-                ki: windows::Win32::UI::Input::KeyboardAndMouse::KEYBDINPUT {
-                    wVk: VK_MEDIA_PLAY_PAUSE,
-                    wScan: 0,
-                    dwFlags: KEYEVENTF_KEYUP,
-                    time: 0,
-                    dwExtraInfo: 0,
-                },
-            },
-        };
+            let session_manager: IAudioSessionManager2 = device
+                .Activate(CLSCTX_INPROC_SERVER, None)
+                .map_err(|e| AppError::Platform(e.to_string()))?;
 
-        let inputs = [key_down, key_up];
-        let result = unsafe { SendInput(&inputs, std::mem::size_of::<INPUT>() as i32) };
+            let session_enumerator = session_manager
+                .GetSessionEnumerator()
+                .map_err(|e: windows::core::Error| AppError::Platform(e.to_string()))?;
 
-        if result == 0 {
-            Err(AppError::Platform(
-                "SendInput failed: no inputs were sent".into(),
-            ))
-        } else {
+            let count = session_enumerator
+                .GetCount()
+                .map_err(|e: windows::core::Error| AppError::Platform(e.to_string()))?;
+
+            for i in 0..count {
+                let session: IAudioSessionControl = session_enumerator
+                    .GetSession(i)
+                    .map_err(|e: windows::core::Error| AppError::Platform(e.to_string()))?;
+
+                let state = session
+                    .GetState()
+                    .map_err(|e: windows::core::Error| AppError::Platform(e.to_string()))?;
+
+                if state == AudioSessionStateActive {
+                    let audio_client: IAudioClient = session
+                        .cast()
+                        .map_err(|e: windows::core::Error| AppError::Platform(e.to_string()))?;
+
+                    audio_client
+                        .Stop()
+                        .map_err(|e: windows::core::Error| AppError::Platform(e.to_string()))?;
+                }
+            }
+
             Ok(())
         }
     }
