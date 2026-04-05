@@ -313,3 +313,103 @@ pub mod power {
         wparam == PBT_APMRESUMESUSPEND as usize || wparam == PBT_APMRESUMEAUTOMATIC as usize
     }
 }
+
+/// Temporary diagnostic command — paste into src-tauri/src/commands.rs
+/// and add to invoke_handler in lib.rs as `commands::list_audio_devices`
+/// Remove after diagnosing.
+
+#[tauri::command]
+pub fn list_audio_devices() -> Vec<String> {
+    #[cfg(target_os = "windows")]
+    {
+        use windows::Win32::Foundation::PROPERTYKEY;
+        use windows::Win32::Media::Audio::{
+            eRender, IMMDeviceEnumerator, MMDeviceEnumerator, DEVICE_STATE_ACTIVE,
+        };
+        use windows::Win32::System::Com::{CoCreateInstance, CLSCTX_INPROC_SERVER, STGM_READ};
+
+        let form_factor_pkey = PROPERTYKEY {
+            fmtid: windows::core::GUID::from_u128(0x1da5d803_d492_4edd_8c23_e0c0ffee7f0e),
+            pid: 0,
+        };
+
+        // PKEY_Device_FriendlyName: {A45C254E-DF1C-4EFD-8020-67D146A850E0}, pid=14
+        let friendly_name_pkey = PROPERTYKEY {
+            fmtid: windows::core::GUID::from_u128(0xa45c254e_df1c_4efd_8020_67d146a850e0),
+            pid: 14,
+        };
+
+        unsafe {
+            let Ok(enumerator) = CoCreateInstance::<_, IMMDeviceEnumerator>(
+                &MMDeviceEnumerator,
+                None,
+                CLSCTX_INPROC_SERVER,
+            ) else {
+                return vec!["ERROR: CoCreateInstance failed".to_string()];
+            };
+
+            let Ok(collection) = enumerator.EnumAudioEndpoints(eRender, DEVICE_STATE_ACTIVE)
+            else {
+                return vec!["ERROR: EnumAudioEndpoints failed".to_string()];
+            };
+
+            let Ok(count) = collection.GetCount() else {
+                return vec!["ERROR: GetCount failed".to_string()];
+            };
+
+            let mut results = Vec::new();
+
+            for i in 0..count {
+                let Ok(device) = collection.Item(i) else {
+                    continue;
+                };
+
+                let id = device
+                    .GetId()
+                    .ok()
+                    .and_then(|id| id.to_string().ok())
+                    .unwrap_or_else(|| "<no id>".to_string());
+
+                let props = device.OpenPropertyStore(STGM_READ).ok();
+
+                let form_factor: u32 = props
+                    .as_ref()
+                    .and_then(|p| p.GetValue(&form_factor_pkey).ok())
+                    .map(|v| v.Anonymous.Anonymous.Anonymous.ulVal)
+                    .unwrap_or(999);
+
+                let friendly_name: String = props
+                    .as_ref()
+                    .and_then(|p| p.GetValue(&friendly_name_pkey).ok())
+                    .and_then(|v| {
+                        // VT_LPWSTR = 31
+                        let vt = v.Anonymous.Anonymous.vt.0;
+                        if vt == 31 {
+                            let ptr = v.Anonymous.Anonymous.Anonymous.pwszVal;
+                            if !ptr.is_null() {
+                                return ptr.to_string().ok();
+                            }
+                        }
+                        None
+                    })
+                    .unwrap_or_else(|| "<no name>".to_string());
+
+                results.push(format!(
+                    "FormFactor={} | Name={} | ID={}",
+                    form_factor, friendly_name, id
+                ));
+            }
+
+            if results.is_empty() {
+                results.push("No active render devices found".to_string());
+            }
+
+            results
+        }
+    }
+
+    #[cfg(not(target_os = "windows"))]
+    {
+        vec!["Not supported on this platform".to_string()]
+    }
+}
