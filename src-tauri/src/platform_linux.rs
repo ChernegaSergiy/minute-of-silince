@@ -2,13 +2,6 @@
 
 use crate::error::{AppError, Result};
 use alsa::mixer::{Mixer, Selem, SelemId};
-use std::collections::HashSet;
-use std::sync::Mutex;
-use zbus::proxy;
-
-lazy_static::lazy_static! {
-    static ref PAUSED_PLAYERS: Mutex<HashSet<String>> = Mutex::new(HashSet::new());
-}
 
 pub mod volume {
     use super::*;
@@ -103,9 +96,6 @@ pub mod media {
             .list_names()
             .map_err(|e| AppError::Platform(e.to_string()))?;
 
-        let mut paused = PAUSED_PLAYERS.lock().unwrap();
-        paused.clear();
-
         for name in names {
             if name.starts_with("org.mpris.MediaPlayer2.") {
                 let player = MediaPlayer2PlayerProxyBlocking::builder(&conn)
@@ -115,30 +105,12 @@ pub mod media {
                     .map_err(|e| AppError::Platform(e.to_string()))?;
 
                 if let Ok(status) = player.playback_status() {
-                    if status == "Playing" && player.pause().is_ok() {
-                        paused.insert(name.to_string());
+                    if status == "Playing" {
+                        let _ = player.pause();
                     }
                 }
             }
         }
-        Ok(())
-    }
-
-    pub fn resume_all() -> Result<()> {
-        let conn = Connection::session().map_err(|e| AppError::Platform(e.to_string()))?;
-        let mut paused = PAUSED_PLAYERS.lock().unwrap();
-
-        for name in paused.iter() {
-            let player = MediaPlayer2PlayerProxyBlocking::builder(&conn)
-                .destination(name.as_str())
-                .map_err(|e| AppError::Platform(e.to_string()))?
-                .build()
-                .map_err(|e| AppError::Platform(e.to_string()))?;
-
-            let _ = player.play();
-        }
-
-        paused.clear();
         Ok(())
     }
 }
