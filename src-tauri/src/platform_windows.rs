@@ -76,7 +76,7 @@ pub mod volume {
 
 pub mod output {
     use crate::error::{AppError, Result};
-    use windows::core::{Interface, PROPERTYKEY, GUID, HRESULT, PCWSTR};
+    use windows::core::{Interface, GUID, HRESULT, PCWSTR, PROPERTYKEY};
     use windows::Win32::Media::Audio::{
         eCommunications, eConsole, eMultimedia, eRender, ERole, IMMDeviceEnumerator,
         MMDeviceEnumerator, DEVICE_STATE_ACTIVE,
