@@ -75,6 +75,7 @@ pub mod volume {
 
 pub mod media {
     use log::{error, info};
+    use std::thread;
     use windows::Media::Control::{
         GlobalSystemMediaTransportControlsSessionManager,
         GlobalSystemMediaTransportControlsSessionPlaybackStatus,
@@ -84,18 +85,6 @@ pub mod media {
     use crate::error::{AppError, Result};
 
     pub fn pause_all() -> Result<()> {
-        unsafe {
-            let _ = CoInitializeEx(None, COINIT_MULTITHREADED);
-        }
-
-        let result = pause_all_inner();
-
-        unsafe { CoUninitialize() }
-
-        result
-    }
-
-    fn pause_all_inner() -> Result<()> {
         let manager = GlobalSystemMediaTransportControlsSessionManager::RequestAsync()
             .map_err(|e| AppError::Platform(e.to_string()))?
             .get()
@@ -111,7 +100,7 @@ pub mod media {
 
         info!("Found {} media sessions", count);
 
-        let mut pause_ops = Vec::new();
+        let mut handles = Vec::new();
 
         for i in 0..count {
             if let Ok(session) = sessions.GetAt(i) {
@@ -135,23 +124,21 @@ pub mod media {
                 };
 
                 if status == GlobalSystemMediaTransportControlsSessionPlaybackStatus::Playing {
-                    info!("Queuing pause for session {}...", i);
-                    match session.TryPauseAsync() {
-                        Ok(op) => pause_ops.push((i, op)),
-                        Err(e) => error!("TryPauseAsync failed for session {}: {:?}", i, e),
-                    }
+                    info!("Spawning thread to pause session {}...", i);
+                    let handle = thread::spawn(move || unsafe {
+                        let _ = CoInitializeEx(None, COINIT_MULTITHREADED);
+                        let _ = session.TryPauseAsync().and_then(|op| op.get());
+                        CoUninitialize();
+                    });
+                    handles.push(handle);
                 }
             } else {
                 error!("Failed to get session at index {}", i);
             }
         }
 
-        for (i, op) in pause_ops {
-            match op.get() {
-                Ok(true) => info!("Successfully paused session {}", i),
-                Ok(false) => error!("Pause rejected by app for session {}", i),
-                Err(e) => error!("Pause await failed for session {}: {:?}", i, e),
-            }
+        for handle in handles {
+            let _ = handle.join();
         }
 
         Ok(())
