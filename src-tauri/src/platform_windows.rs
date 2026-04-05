@@ -74,73 +74,24 @@ pub mod volume {
 }
 
 pub mod media {
-    use log::{error, info};
-    use std::thread;
-    use windows::Media::Control::{
-        GlobalSystemMediaTransportControlsSessionManager,
-        GlobalSystemMediaTransportControlsSessionPlaybackStatus,
-    };
-    use windows::Win32::System::Com::{CoInitializeEx, CoUninitialize, COINIT_MULTITHREADED};
+    use log::info;
+    use windows::Win32::Foundation::{LPARAM, WPARAM};
+    use windows::Win32::UI::WindowsAndMessaging::{SendMessageW, HWND_BROADCAST, WM_APPCOMMAND};
 
-    use crate::error::{AppError, Result};
+    use crate::error::Result;
+
+    const APPCOMMAND_MEDIA_PLAY_PAUSE: LPARAM = LPARAM(0xE0000);
 
     pub fn pause_all() -> Result<()> {
-        let manager = GlobalSystemMediaTransportControlsSessionManager::RequestAsync()
-            .map_err(|e| AppError::Platform(e.to_string()))?
-            .get()
-            .map_err(|e| AppError::Platform(e.to_string()))?;
-
-        let sessions = manager
-            .GetSessions()
-            .map_err(|e| AppError::Platform(e.to_string()))?;
-
-        let count = sessions
-            .Size()
-            .map_err(|e| AppError::Platform(e.to_string()))?;
-
-        info!("Found {} media sessions", count);
-
-        let mut handles = Vec::new();
-
-        for i in 0..count {
-            if let Ok(session) = sessions.GetAt(i) {
-                let app_id = session.SourceAppUserModelId().unwrap_or_default();
-                info!("Session {}: AppId={}", i, app_id);
-
-                let playback_info = match session.GetPlaybackInfo() {
-                    Ok(info) => info,
-                    Err(e) => {
-                        error!("Failed to get playback info for session {}: {:?}", i, e);
-                        continue;
-                    }
-                };
-
-                let status = match playback_info.PlaybackStatus() {
-                    Ok(s) => s,
-                    Err(e) => {
-                        error!("Failed to get playback status for session {}: {:?}", i, e);
-                        continue;
-                    }
-                };
-
-                if status == GlobalSystemMediaTransportControlsSessionPlaybackStatus::Playing {
-                    info!("Spawning thread to pause session {}...", i);
-                    let handle = thread::spawn(move || unsafe {
-                        let _ = CoInitializeEx(None, COINIT_MULTITHREADED);
-                        let _ = session.TryPauseAsync().and_then(|op| op.get());
-                        CoUninitialize();
-                    });
-                    handles.push(handle);
-                }
-            } else {
-                error!("Failed to get session at index {}", i);
-            }
+        info!("Sending VK_MEDIA_PLAY_PAUSE to all windows");
+        unsafe {
+            SendMessageW(
+                HWND_BROADCAST,
+                WM_APPCOMMAND,
+                Some(WPARAM(0)),
+                Some(APPCOMMAND_MEDIA_PLAY_PAUSE),
+            );
         }
-
-        for handle in handles {
-            let _ = handle.join();
-        }
-
         Ok(())
     }
 }
