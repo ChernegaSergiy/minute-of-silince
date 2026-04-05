@@ -74,6 +74,7 @@ pub mod volume {
 }
 
 pub mod media {
+    use log::{error, info};
     use windows::Media::Control::{
         GlobalSystemMediaTransportControlsSessionManager,
         GlobalSystemMediaTransportControlsSessionPlaybackStatus,
@@ -95,17 +96,44 @@ pub mod media {
             .Size()
             .map_err(|e| AppError::Platform(e.to_string()))?;
 
+        info!("Found {} media sessions", count);
+
         for i in 0..count {
             if let Ok(session) = sessions.GetAt(i) {
-                let playback_info = session
-                    .GetPlaybackInfo()
-                    .map_err(|e| AppError::Platform(e.to_string()))?;
-                let status = playback_info
-                    .PlaybackStatus()
-                    .map_err(|e| AppError::Platform(e.to_string()))?;
+                let app_id = session.SourceAppUserModelId().unwrap_or_default();
+                info!("Session {}: AppId={}", i, app_id);
+
+                let playback_info = match session.GetPlaybackInfo() {
+                    Ok(info) => info,
+                    Err(e) => {
+                        error!("Failed to get playback info: {:?}", e);
+                        continue;
+                    }
+                };
+
+                let status = match playback_info.PlaybackStatus() {
+                    Ok(s) => s,
+                    Err(e) => {
+                        error!("Failed to get playback status: {:?}", e);
+                        continue;
+                    }
+                };
+
+                info!("  Status: {:?}", status);
+
                 if status == GlobalSystemMediaTransportControlsSessionPlaybackStatus::Playing {
-                    let _ = session.TryPauseAsync().and_then(|op| op.get());
+                    info!("  Pausing session {}...", i);
+                    match session.TryPauseAsync() {
+                        Ok(op) => match op.get() {
+                            Ok(true) => info!("  Successfully paused"),
+                            Ok(false) => error!("  Pause rejected by app"),
+                            Err(e) => error!("  Pause failed: {:?}", e),
+                        },
+                        Err(e) => error!("  TryPauseAsync failed: {:?}", e),
+                    }
                 }
+            } else {
+                error!("Failed to get session at index {}", i);
             }
         }
 
