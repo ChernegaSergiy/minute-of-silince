@@ -2,6 +2,7 @@
 
 use crate::error::{AppError, Result};
 use alsa::mixer::{Mixer, Selem, SelemId};
+use zbus::proxy;
 
 pub mod volume {
     use super::*;
