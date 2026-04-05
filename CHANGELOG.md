@@ -9,6 +9,21 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.4.2] - 2026-04-05
+
+### Changed
+- Windows media pause: switched from `SendInput(VK_MEDIA_PLAY_PAUSE)` to `WM_APPCOMMAND(APPCOMMAND_MEDIA_PAUSE)` for more reliable pausing.
+- Media players no longer resume after the ceremony ends — they stay paused.
+
+### Fixed
+- Fixed missing `zbus::proxy` import in platform_linux.rs.
+- Removed accidentally committed support-bot PHP files from the repository.
+
+### Added
+- MSIX packaging support via `winapp` CLI tool.
+- Application assets (icons, tiles) for Microsoft Store distribution.
+- `appxmanifest.xml` and `winapp.yaml` configuration files.
+
 ## [0.4.1] - 2026-04-04
 
 ### Fixed
