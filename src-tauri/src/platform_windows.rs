@@ -348,8 +348,7 @@ pub fn list_audio_devices() -> Vec<String> {
                 return vec!["ERROR: CoCreateInstance failed".to_string()];
             };
 
-            let Ok(collection) = enumerator.EnumAudioEndpoints(eRender, DEVICE_STATE_ACTIVE)
-            else {
+            let Ok(collection) = enumerator.EnumAudioEndpoints(eRender, DEVICE_STATE_ACTIVE) else {
                 return vec!["ERROR: EnumAudioEndpoints failed".to_string()];
             };
 
