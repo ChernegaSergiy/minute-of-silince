@@ -128,7 +128,7 @@ pub mod output {
                 let device = collection
                     .Item(i)
                     .map_err(|e| AppError::Platform(format!("Item failed: {e}")))?;
-                
+
                 let id_str = device
                     .GetId()
                     .map_err(|e| AppError::Platform(format!("GetId failed: {e}")))?
@@ -141,7 +141,9 @@ pub mod output {
                     .and_then(|p| {
                         // PKEY_AudioEndpoint_FormFactor: {1DA5D803-D492-4EDD-8C23-E0C0FFEE7F0E}, 0
                         let pkey = windows::Win32::Devices::Properties::PROPERTYKEY {
-                            fmtid: windows::core::GUID::from_u128(0x1da5d803_d492_4edd_8c23_e0c0ffee7f0e),
+                            fmtid: windows::core::GUID::from_u128(
+                                0x1da5d803_d492_4edd_8c23_e0c0ffee7f0e,
+                            ),
                             pid: 0,
                         };
                         p.GetValue(&pkey).ok()
@@ -149,13 +151,20 @@ pub mod output {
                     .and_then(|v| unsafe { v.Anonymous.Anonymous.Anonymous.uiVal.into() })
                     .unwrap_or(0u32);
 
-                log::info!("Checking device ID: {} | FormFactor: {}", id_str, form_factor);
+                log::info!(
+                    "Checking device ID: {} | FormFactor: {}",
+                    id_str,
+                    form_factor
+                );
 
-                // FormFactor values: 
+                // FormFactor values:
                 // 2 = Speakers, 8 = BuiltInSpeaker
                 if form_factor == 2 || form_factor == 8 {
                     speaker_id = Some(id_str);
-                    log::info!("Technical match for speaker found via FormFactor: {}", form_factor);
+                    log::info!(
+                        "Technical match for speaker found via FormFactor: {}",
+                        form_factor
+                    );
                     break;
                 }
             }
