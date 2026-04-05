@@ -91,10 +91,11 @@ pub mod media {
             .GetSessions()
             .map_err(|e| AppError::Platform(e.to_string()))?;
 
-        for i in 0..sessions
+        let count = sessions
             .Size()
-            .map_err(|e| AppError::Platform(e.to_string()))?
-        {
+            .map_err(|e| AppError::Platform(e.to_string()))?;
+
+        for i in 0..count {
             if let Ok(session) = sessions.GetAt(i) {
                 let playback_info = session
                     .GetPlaybackInfo()
@@ -103,7 +104,7 @@ pub mod media {
                     .PlaybackStatus()
                     .map_err(|e| AppError::Platform(e.to_string()))?;
                 if status == GlobalSystemMediaTransportControlsSessionPlaybackStatus::Playing {
-                    let _ = session.TryPauseAsync();
+                    let _ = session.TryPauseAsync().and_then(|op| op.get());
                 }
             }
         }
