@@ -34,13 +34,7 @@ impl CeremonyManager {
     }
 
     pub async fn run_ceremony(&self) {
-        let (
-            should_pause_players,
-            volume_priority,
-            auto_unmute,
-            target_volume,
-            preset,
-        ) = {
+        let (should_pause_players, volume_priority, auto_unmute, target_volume, preset) = {
             let state = self.app.state::<AppState>();
             let inner = state.lock();
             (
