@@ -37,12 +37,16 @@
       uap10:TrustLevel="mediumIL"
       uap10:RuntimeBehavior="packagedClassicApp">
       <uap:VisualElements
-        DisplayName="minute-of-silence"
+        DisplayName="Хвилина мовчання"
         Description="Додаток для автоматизації загальнонаціональної хвилини мовчання о 09:00."
-        BackgroundColor="transparent"
+        BackgroundColor="#1a1a2e"
         Square150x150Logo="Assets\MedTile.png"
         Square44x44Logo="Assets\AppList.png">
-        <uap:DefaultTile Wide310x150Logo="Assets\WideTile.png" />
+        <uap:DefaultTile 
+          Wide310x150Logo="Assets\WideTile.png" 
+          Square310x310Logo="Assets\icon.png"
+          Square71x71Logo="Assets\icon.png"
+          Square70x70Logo="Assets\icon.png" />
       </uap:VisualElements>
     </Application>
   </Applications>
