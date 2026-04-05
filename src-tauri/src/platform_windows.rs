@@ -79,10 +79,23 @@ pub mod media {
         GlobalSystemMediaTransportControlsSessionManager,
         GlobalSystemMediaTransportControlsSessionPlaybackStatus,
     };
+    use windows::Win32::System::Com::{CoInitializeEx, CoUninitialize, COINIT_MULTITHREADED};
 
     use crate::error::{AppError, Result};
 
     pub fn pause_all() -> Result<()> {
+        unsafe {
+            let _ = CoInitializeEx(None, COINIT_MULTITHREADED);
+        }
+
+        let result = pause_all_inner();
+
+        unsafe { CoUninitialize() }
+
+        result
+    }
+
+    fn pause_all_inner() -> Result<()> {
         let manager = GlobalSystemMediaTransportControlsSessionManager::RequestAsync()
             .map_err(|e| AppError::Platform(e.to_string()))?
             .get()
@@ -98,6 +111,8 @@ pub mod media {
 
         info!("Found {} media sessions", count);
 
+        let mut pause_ops = Vec::new();
+
         for i in 0..count {
             if let Ok(session) = sessions.GetAt(i) {
                 let app_id = session.SourceAppUserModelId().unwrap_or_default();
@@ -106,7 +121,7 @@ pub mod media {
                 let playback_info = match session.GetPlaybackInfo() {
                     Ok(info) => info,
                     Err(e) => {
-                        error!("Failed to get playback info: {:?}", e);
+                        error!("Failed to get playback info for session {}: {:?}", i, e);
                         continue;
                     }
                 };
@@ -114,26 +129,28 @@ pub mod media {
                 let status = match playback_info.PlaybackStatus() {
                     Ok(s) => s,
                     Err(e) => {
-                        error!("Failed to get playback status: {:?}", e);
+                        error!("Failed to get playback status for session {}: {:?}", i, e);
                         continue;
                     }
                 };
 
-                info!("  Status: {:?}", status);
-
                 if status == GlobalSystemMediaTransportControlsSessionPlaybackStatus::Playing {
-                    info!("  Pausing session {}...", i);
+                    info!("Queuing pause for session {}...", i);
                     match session.TryPauseAsync() {
-                        Ok(op) => match op.get() {
-                            Ok(true) => info!("  Successfully paused"),
-                            Ok(false) => error!("  Pause rejected by app"),
-                            Err(e) => error!("  Pause failed: {:?}", e),
-                        },
-                        Err(e) => error!("  TryPauseAsync failed: {:?}", e),
+                        Ok(op) => pause_ops.push((i, op)),
+                        Err(e) => error!("TryPauseAsync failed for session {}: {:?}", i, e),
                     }
                 }
             } else {
                 error!("Failed to get session at index {}", i);
+            }
+        }
+
+        for (i, op) in pause_ops {
+            match op.get() {
+                Ok(true) => info!("Successfully paused session {}", i),
+                Ok(false) => error!("Pause rejected by app for session {}", i),
+                Err(e) => error!("Pause await failed for session {}: {:?}", i, e),
             }
         }
 
