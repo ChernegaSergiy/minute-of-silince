@@ -133,7 +133,8 @@ minute-of-silence/
 +-- public/                      # Static assets (logo, etc.)
 +-- .github/
 |   +-- workflows/ci.yml         # CI/CD pipeline (lint, test, build)
-|   \-- ISSUE_TEMPLATE/          # Bug report and feature request forms
+|   +-- ISSUE_TEMPLATE/          # Bug report and feature request forms
+|   \-- dependabot.yml           # Automated dependency updates
 +-- CHANGELOG.md
 +-- CONTRIBUTING.md
 \-- index.html                   # App shell with embedded CSS
