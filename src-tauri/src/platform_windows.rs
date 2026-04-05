@@ -82,6 +82,7 @@ pub mod output {
         MMDeviceEnumerator, DEVICE_STATE_ACTIVE,
     };
     use windows::Win32::System::Com::{CoCreateInstance, CLSCTX_INPROC_SERVER};
+    use windows::Win32::UI::Shell::PropertiesSystem::STGM_READ;
 
     // Undocumented IPolicyConfig interface GUID
     const IPOLICYCONFIG_GUID: GUID = GUID::from_u128(0x870af99c_171d_4f15_af0d_e63df40c2bc9);
@@ -127,17 +128,34 @@ pub mod output {
                 let device = collection
                     .Item(i)
                     .map_err(|e| AppError::Platform(format!("Item failed: {e}")))?;
-                let id = device
+                
+                let id_str = device
                     .GetId()
-                    .map_err(|e| AppError::Platform(format!("GetId failed: {e}")))?;
-                let id_str = id
+                    .map_err(|e| AppError::Platform(format!("GetId failed: {e}")))?
                     .to_string()
                     .map_err(|e| AppError::Platform(e.to_string()))?;
 
-                if id_str.to_lowercase().contains("speaker")
-                    || id_str.to_lowercase().contains("internal")
-                {
+                // Use FormFactor to identify speakers technically (language-independent)
+                let props = device.OpenPropertyStore(STGM_READ).ok();
+                let form_factor = props
+                    .and_then(|p| {
+                        // PKEY_AudioEndpoint_FormFactor: {1DA5D803-D492-4EDD-8C23-E0C0FFEE7F0E}, 0
+                        let pkey = windows::Win32::Devices::Properties::PROPERTYKEY {
+                            fmtid: windows::core::GUID::from_u128(0x1da5d803_d492_4edd_8c23_e0c0ffee7f0e),
+                            pid: 0,
+                        };
+                        p.GetValue(&pkey).ok()
+                    })
+                    .and_then(|v| unsafe { v.Anonymous.Anonymous.Anonymous.uiVal.into() })
+                    .unwrap_or(0u32);
+
+                log::info!("Checking device ID: {} | FormFactor: {}", id_str, form_factor);
+
+                // FormFactor values: 
+                // 2 = Speakers, 8 = BuiltInSpeaker
+                if form_factor == 2 || form_factor == 8 {
                     speaker_id = Some(id_str);
+                    log::info!("Technical match for speaker found via FormFactor: {}", form_factor);
                     break;
                 }
             }
