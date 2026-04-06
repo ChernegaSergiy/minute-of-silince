@@ -37,5 +37,5 @@ modules:
     sources:
       - type: git
         url: https://github.com/ChernegaSergiy/minute-of-silence.git
-        tag: v0.4.2
-        commit: 31b39e7928d4570bf6c371c001ab42fb07043e4f
+        tag: v0.5.0
+        commit: 9afa8e76
