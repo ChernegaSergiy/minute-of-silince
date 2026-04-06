@@ -23,7 +23,9 @@ export interface Settings {
   autoUnmute: boolean;
   ntpServer: string;
   lateStartGraceMinutes: number; // 0–15
-  /** Minutes before 09:00 to show a reminder notification. 0 = disabled. */
+  /** Enable reminder notifications. */
+  reminderEnabled: boolean;
+  /** Minutes before 09:00 to show reminder. 0 = immediately. */
   reminderMinutesBefore: number; // 0–10
 }
 
@@ -62,5 +64,6 @@ export const DEFAULT_SETTINGS: Settings = {
   autoUnmute: false,
   ntpServer: "pool.ntp.org",
   lateStartGraceMinutes: 1,
+  reminderEnabled: false,
   reminderMinutesBefore: 5,
 };
