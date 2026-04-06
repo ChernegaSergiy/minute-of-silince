@@ -98,7 +98,7 @@ export class App {
     if (ntpEl) {
       const ntpStatus = this.status.lastNtpSync ?? "—";
       ntpEl.textContent = ntpStatus;
-      
+
       // Hide sync button if NTP is disabled in the backend status
       if (syncBtn) {
         if (ntpStatus.includes("Вимкнено")) {
@@ -108,10 +108,12 @@ export class App {
         }
       }
     }
+
     const ceremonyEl = document.getElementById("lastActivationValue");
     if (ceremonyEl) {
       ceremonyEl.textContent = this.status.lastActivation ?? "—";
     }
+
     const badge = document.getElementById("statusBadge");
     if (badge) {
       badge.textContent = this.status.ceremonyActive ? "● АКТИВНА ЦЕРЕМОНІЯ" : "○ ОЧІКУВАННЯ";
@@ -219,6 +221,19 @@ export class App {
               <input type="checkbox" id="skipToggle" class="toggle"
                      ${this.status.skipTomorrow ? "checked" : ""} />
             </label>
+
+            <hr class="divider" />
+
+            <!-- Reminder notification -->
+            <div class="control-row">
+              <div class="control-row__info">
+                <span class="control-row__label">Нагадування</span>
+                <span class="control-row__description">Системне сповіщення перед церемонією. «Вимк.» — не надсилати.</span>
+              </div>
+              <select id="reminderSelect" class="select" style="width: 80px">
+                ${this.renderReminderOptions()}
+              </select>
+            </div>
 
             <hr class="divider" />
 
@@ -331,6 +346,20 @@ export class App {
     `;
   }
 
+  /** Build <option> list for the reminder select (0 = вимк, 1–10 хв). */
+  private renderReminderOptions(): string {
+    const current = this.settings.reminderMinutesBefore ?? 0;
+    const options: string[] = [
+      `<option value="0" ${current === 0 ? "selected" : ""}>Вимк.</option>`,
+    ];
+    for (let m = 1; m <= 10; m++) {
+      options.push(
+        `<option value="${m}" ${current === m ? "selected" : ""}>${m} хв</option>`
+      );
+    }
+    return options.join("");
+  }
+
   private renderPresetOptions(): string {
     return (Object.keys(PRESET_LABELS) as Array<keyof typeof PRESET_LABELS>)
       .map(
@@ -386,33 +415,31 @@ export class App {
       footer.classList.add("hidden");
     });
 
+
     // About link
     this.q<HTMLButtonElement>("#githubLinkBtn").addEventListener("click", async () => {
       await open("https://github.com/ChernegaSergiy/minute-of-silence");
     });
-
-    this.q<HTMLInputElement>("#ceremonyToggle").addEventListener(
-      "change",
-      (e) => {
-        this.settings = {
-          ...this.settings,
-          ceremonyEnabled: (e.target as HTMLInputElement).checked,
-        };
-        this.checkDirty();
-      }
-    );
-
-    this.q<HTMLInputElement>("#autostartToggle").addEventListener(
-      "change",
-      (e) => {
-        this.settings = {
-          ...this.settings,
-          autostartEnabled: (e.target as HTMLInputElement).checked,
-        };
-        this.checkDirty();
-      }
-    );
-
+ 
+    // Ceremony toggle
+    this.q<HTMLInputElement>("#ceremonyToggle").addEventListener("change", (e) => {
+      this.settings = {
+        ...this.settings,
+        ceremonyEnabled: (e.target as HTMLInputElement).checked,
+      };
+      this.checkDirty();
+    });
+ 
+    // Autostart toggle
+    this.q<HTMLInputElement>("#autostartToggle").addEventListener("change", (e) => {
+      this.settings = {
+        ...this.settings,
+        autostartEnabled: (e.target as HTMLInputElement).checked,
+      };
+      this.checkDirty();
+    });
+ 
+    // Grace window slider
     const graceRange = this.q<HTMLInputElement>("#graceRange");
     const graceValue = this.q<HTMLElement>("#graceValue");
     graceRange.addEventListener("input", () => {
@@ -421,51 +448,26 @@ export class App {
       this.settings = { ...this.settings, lateStartGraceMinutes: v };
       this.checkDirty();
     });
-
-    this.q<HTMLInputElement>("#weekdaysToggle").addEventListener(
-      "change",
-      (e) => {
-        this.settings = {
-          ...this.settings,
-          weekdaysOnly: (e.target as HTMLInputElement).checked,
-        };
-        this.checkDirty();
-      }
-    );
-
-    this.q<HTMLInputElement>("#systemTimeToggle").addEventListener(
-      "change",
-      (e) => {
-        this.settings = {
-          ...this.settings,
-          systemTimeOnly: (e.target as HTMLInputElement).checked,
-        };
-        this.checkDirty();
-      }
-    );
-
-    this.q<HTMLInputElement>("#volumePriorityToggle").addEventListener(
-      "change",
-      (e) => {
-        this.settings = {
-          ...this.settings,
-          volumePriority: (e.target as HTMLInputElement).checked,
-        };
-        this.checkDirty();
-      }
-    );
-
-    this.q<HTMLInputElement>("#autoUnmuteToggle").addEventListener(
-      "change",
-      (e) => {
-        this.settings = {
-          ...this.settings,
-          autoUnmute: (e.target as HTMLInputElement).checked,
-        };
-        this.checkDirty();
-      }
-    );
-
+ 
+    // Weekdays toggle
+    this.q<HTMLInputElement>("#weekdaysToggle").addEventListener("change", (e) => {
+      this.settings = {
+        ...this.settings,
+        weekdaysOnly: (e.target as HTMLInputElement).checked,
+      };
+      this.checkDirty();
+    });
+ 
+    // System time toggle
+    this.q<HTMLInputElement>("#systemTimeToggle").addEventListener("change", (e) => {
+      this.settings = {
+        ...this.settings,
+        systemTimeOnly: (e.target as HTMLInputElement).checked,
+      };
+      this.checkDirty();
+    });
+ 
+    // Skip toggle (immediate, no save needed)
     this.q<HTMLInputElement>("#skipToggle").addEventListener("change", (e) => {
       if ((e.target as HTMLInputElement).checked) {
         skipNext();
@@ -473,18 +475,24 @@ export class App {
         unskipNext();
       }
     });
-
-    this.q<HTMLSelectElement>("#presetSelect").addEventListener(
-      "change",
-      (e) => {
-        this.settings = {
-          ...this.settings,
-          preset: (e.target as HTMLSelectElement).value as Settings["preset"],
-        };
-        this.checkDirty();
-      }
-    );
-
+ 
+    // Reminder select
+    this.q<HTMLSelectElement>("#reminderSelect").addEventListener("change", (e) => {
+      const v = parseInt((e.target as HTMLSelectElement).value, 10);
+      this.settings = { ...this.settings, reminderMinutesBefore: v };
+      this.checkDirty();
+    });
+ 
+    // Preset select
+    this.q<HTMLSelectElement>("#presetSelect").addEventListener("change", (e) => {
+      this.settings = {
+        ...this.settings,
+        preset: (e.target as HTMLSelectElement).value as Settings["preset"],
+      };
+      this.checkDirty();
+    });
+ 
+    // Volume slider
     const volumeRange = this.q<HTMLInputElement>("#volumeRange");
     const volumeValue = this.q<HTMLElement>("#volumeValue");
     volumeRange.addEventListener("input", () => {
@@ -493,7 +501,26 @@ export class App {
       this.settings = { ...this.settings, volume: v };
       this.checkDirty();
     });
-
+ 
+    // Volume priority toggle
+    this.q<HTMLInputElement>("#volumePriorityToggle").addEventListener("change", (e) => {
+      this.settings = {
+        ...this.settings,
+        volumePriority: (e.target as HTMLInputElement).checked,
+      };
+      this.checkDirty();
+    });
+ 
+    // Auto-unmute toggle
+    this.q<HTMLInputElement>("#autoUnmuteToggle").addEventListener("change", (e) => {
+      this.settings = {
+        ...this.settings,
+        autoUnmute: (e.target as HTMLInputElement).checked,
+      };
+      this.checkDirty();
+    });
+ 
+    // Pause other players toggle
     this.q<HTMLInputElement>("#pauseToggle").addEventListener("change", (e) => {
       this.settings = {
         ...this.settings,
@@ -501,7 +528,8 @@ export class App {
       };
       this.checkDirty();
     });
-
+ 
+    // Visual overlay toggle
     this.q<HTMLInputElement>("#overlayToggle").addEventListener("change", (e) => {
       this.settings = {
         ...this.settings,
@@ -509,26 +537,29 @@ export class App {
       };
       this.checkDirty();
     });
-
+ 
+    // Save button
     this.q<HTMLButtonElement>("#saveBtn").addEventListener("click", async () => {
       await saveSettings(this.settings);
-      this.cleanSettings = { ...this.settings }; // Update original state after save
-      await this.refreshStatus(); // Immediately update status UI (NTP, activation info, etc)
+      this.cleanSettings = { ...this.settings };
+      await this.refreshStatus();
       this.setDirty(false);
     });
-
+ 
+    // Test button
     this.q<HTMLButtonElement>("#testBtn").addEventListener("click", async () => {
       console.log("Test button clicked, triggering ceremony...");
       await triggerCeremonyNow();
     });
-
+ 
+    // Manual NTP sync button
     this.q<HTMLButtonElement>("#syncNtpBtn").addEventListener("click", async (e) => {
       const btn = e.target as HTMLButtonElement;
       const ntpEl = document.getElementById("ntpSyncValue");
-      
+ 
       btn.disabled = true;
       if (ntpEl) ntpEl.textContent = "Синхронізація...";
-      
+ 
       try {
         const { syncNtpNow } = await import("./api");
         this.status = await syncNtpNow();
@@ -540,27 +571,27 @@ export class App {
         btn.disabled = false;
       }
     });
-
+ 
     // Disable default context menu globally for a native app feel
     window.addEventListener("contextmenu", (e) => e.preventDefault());
   }
-
+ 
   private async subscribeToBackendEvents(): Promise<void> {
     await onCeremonyStart(async () => {
       console.log("Ceremony start event received");
       this.refreshStatus();
     });
-
+ 
     await onCeremonyEnd(() => {
       console.log("Ceremony end event received");
       this.refreshStatus();
     });
-
+ 
     await listen("ntp-synced", () => {
       console.log("NTP synced event received");
       this.refreshStatus();
     });
-
+ 
     await listen("status-updated", () => {
       console.log("Status updated event received");
       this.refreshStatus();
