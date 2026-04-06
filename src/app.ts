@@ -52,6 +52,7 @@ export class App {
     this.initOverlay();
     this.refreshStatus();
     this.startStatusPolling();
+    this.updateReminderMinutesVisibility(this.settings.reminderEnabled);
   }
 
   private initOverlay(): void {
@@ -225,10 +226,19 @@ export class App {
             <hr class="divider" />
 
             <!-- Reminder notification -->
-            <div class="control-row">
+            <label class="control-row">
               <div class="control-row__info">
                 <span class="control-row__label">Нагадування</span>
-                <span class="control-row__description">Системне сповіщення перед церемонією. «Вимк.» — не надсилати.</span>
+                <span class="control-row__description">Системне сповіщення перед церемонією.</span>
+              </div>
+              <input type="checkbox" id="reminderToggle" class="toggle"
+                     ${this.settings.reminderEnabled ? "checked" : ""} />
+            </label>
+
+            <!-- Reminder minutes (visible when reminder is enabled) -->
+            <div class="control-row" id="reminderMinutesRow">
+              <div class="control-row__info">
+                <span class="control-row__label">Через</span>
               </div>
               <select id="reminderSelect" class="select" style="width: 80px">
                 ${this.renderReminderOptions()}
@@ -346,15 +356,13 @@ export class App {
     `;
   }
 
-  /** Build <option> list for the reminder select (0 = вимк, 1–10 хв). */
+  /** Build <option> list for the reminder select (0–10 min). */
   private renderReminderOptions(): string {
     const current = this.settings.reminderMinutesBefore ?? 0;
-    const options: string[] = [
-      `<option value="0" ${current === 0 ? "selected" : ""}>Вимк.</option>`,
-    ];
-    for (let m = 1; m <= 10; m++) {
+    const options: string[] = [];
+    for (let m = 0; m <= 10; m++) {
       options.push(
-        `<option value="${m}" ${current === m ? "selected" : ""}>${m} хв</option>`
+        `<option value="${m}" ${current === m ? "selected" : ""}>${m === 0 ? "Одразу" : m + " хв"}</option>`
       );
     }
     return options.join("");
@@ -476,6 +484,14 @@ export class App {
       }
     });
  
+    // Reminder toggle
+    this.q<HTMLInputElement>("#reminderToggle").addEventListener("change", (e) => {
+      const checked = (e.target as HTMLInputElement).checked;
+      this.settings = { ...this.settings, reminderEnabled: checked };
+      this.updateReminderMinutesVisibility(checked);
+      this.checkDirty();
+    });
+
     // Reminder select
     this.q<HTMLSelectElement>("#reminderSelect").addEventListener("change", (e) => {
       const v = parseInt((e.target as HTMLSelectElement).value, 10);
@@ -604,5 +620,12 @@ export class App {
     const el = this.root.querySelector<T>(selector);
     if (!el) throw new Error(`Element not found: ${selector}`);
     return el;
+  }
+
+  private updateReminderMinutesVisibility(enabled: boolean): void {
+    const row = document.getElementById("reminderMinutesRow");
+    if (row) {
+      row.classList.toggle("hidden", !enabled);
+    }
   }
 }
