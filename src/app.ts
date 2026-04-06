@@ -223,8 +223,6 @@ export class App {
                      ${this.status.skipTomorrow ? "checked" : ""} />
             </label>
 
-            <hr class="divider" />
-
             <!-- Reminder notification -->
             <label class="control-row">
               <div class="control-row__info">
