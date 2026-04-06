@@ -14,7 +14,7 @@
   <Identity
     Name="minute-of-silence"
     Publisher="CN=Serhii Cherneha"
-    Version="0.5.0.0" />
+    Version="0.5.1.0" />
 
   <Properties>
     <DisplayName>minute-of-silence</DisplayName>
