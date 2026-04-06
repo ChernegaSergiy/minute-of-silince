@@ -49,6 +49,10 @@ pub struct Settings {
     /// If the system wakes from sleep after 09:00, activate if within this
     /// many minutes of the scheduled time (0 = never activate late).
     pub late_start_grace_minutes: u8,
+
+    /// Show a system notification N minutes before the ceremony (0 = disabled).
+    /// Valid range: 0–10.
+    pub reminder_minutes_before: u8,
 }
 
 impl Default for Settings {
@@ -66,6 +70,7 @@ impl Default for Settings {
             auto_unmute: false,
             ntp_server: "pool.ntp.org".to_string(),
             late_start_grace_minutes: 1,
+            reminder_minutes_before: 5,
         }
     }
 }
