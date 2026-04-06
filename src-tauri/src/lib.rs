@@ -33,6 +33,7 @@ pub fn run() {
         .plugin(tauri_plugin_shell::init())
         .plugin(tauri_plugin_single_instance::init(|app, _args, _cwd| {
             let _ = app.get_webview_window("main").map(|w| {
+                let _ = w.unminimize();
                 let _ = w.show();
                 let _ = w.set_focus();
             });
