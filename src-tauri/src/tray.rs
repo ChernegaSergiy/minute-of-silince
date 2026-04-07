@@ -17,8 +17,14 @@ pub fn build_tray(app: &App) -> tauri::Result<()> {
 
     let menu = Menu::with_items(app, &[&open_i, &skip_i, &sep, &quit_i])?;
 
+    let icon = app.default_window_icon().cloned().unwrap_or_else(|| {
+        log::warn!("Default window icon not found, tray may have no icon");
+        // Fallback or handle appropriately - for now we use a placeholder or let it fail gracefully
+        tauri::image::Image::new(&[], 0, 0)
+    });
+
     TrayIconBuilder::with_id("main")
-        .icon(app.default_window_icon().unwrap().clone())
+        .icon(icon)
         .menu(&menu)
         .tooltip("Хвилина мовчання")
         .on_menu_event(|app, event| match event.id.as_ref() {

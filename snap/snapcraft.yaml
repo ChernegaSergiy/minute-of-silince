@@ -85,6 +85,7 @@ apps:
       - mpris          # For pausing other media players via D-Bus
       - desktop
       - desktop-legacy
+      - autostart      # Required for dynamic autostart registration
       - x11
       - wayland
       - unity7

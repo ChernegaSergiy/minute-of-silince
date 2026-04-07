@@ -27,12 +27,18 @@ pub fn save_settings(app: AppHandle, state: State<'_, AppState>, settings: Setti
     // Apply autostart setting via the plugin.
     #[cfg(not(test))]
     {
-        use tauri_plugin_autostart::ManagerExt;
-        let autostart_manager = app.autolaunch();
-        if settings.autostart_enabled {
-            let _ = autostart_manager.enable();
-        } else {
-            let _ = autostart_manager.disable();
+        // On Linux/Snap, we rely on the native Snap autostart feature configured in snapcraft.yaml.
+        // The plugin would otherwise create a non-functional .desktop file inside the sandbox.
+        let is_snap = std::env::var("SNAP").is_ok();
+
+        if !is_snap {
+            use tauri_plugin_autostart::ManagerExt;
+            let autostart_manager = app.autolaunch();
+            if settings.autostart_enabled {
+                let _ = autostart_manager.enable();
+            } else {
+                let _ = autostart_manager.disable();
+            }
         }
     }
 
