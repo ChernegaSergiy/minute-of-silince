@@ -45,6 +45,7 @@ parts:
       - glib-networking
       - libasound2-plugins
       - libpulse0
+      - librsvg2-common
     override-build: |
       # Setup Rust environment
       export PATH="$PATH:$HOME/.cargo/bin"
@@ -71,8 +72,8 @@ apps:
     extensions: [gnome]
     environment:
       TAURI_ENV_RESOURCES_PATH: $SNAP/bin
-      # ALSA bridge settings for PulseAudio
-      ALSA_CONFIG_PATH: /snap/gnome-46-2404-sdk/current/usr/share/alsa/alsa.conf
+      # ALSA bridge settings for PulseAudio (using runtime paths)
+      ALSA_CONFIG_PATH: $SNAP/gnome-platform/usr/share/alsa/alsa.conf
       ALSA_PLUGIN_DIR: $SNAP/gnome-platform/usr/lib/$CRAFT_ARCH_TRIPLET/alsa-lib
     # Required permissions (interfaces)
     plugs:
