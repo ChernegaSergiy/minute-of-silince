@@ -51,7 +51,8 @@ jobs:
             libappindicator3-dev \
             librsvg2-dev \
             patchelf \
-            libasound2-dev
+            libasound2-dev \
+            libjack-dev
 
       - name: Install Rust stable
         uses: dtolnay/rust-toolchain@stable
@@ -105,7 +106,8 @@ jobs:
             libappindicator3-dev \
             librsvg2-dev \
             patchelf \
-            libasound2-dev
+            libasound2-dev \
+            libjack-dev
 
       - name: Install Rust stable
         uses: dtolnay/rust-toolchain@stable
