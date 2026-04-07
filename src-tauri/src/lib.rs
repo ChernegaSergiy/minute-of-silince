@@ -53,10 +53,7 @@ pub fn run() {
         .setup(|app| {
             // Set the backend locale to match the system locale
             let locale = sys_locale::get_locale().unwrap_or_else(|| "uk".to_string());
-            let lang = locale
-                .split(['-', '_'])
-                .next()
-                .unwrap_or("uk");
+            let lang = locale.split(['-', '_']).next().unwrap_or("uk");
             rust_i18n::set_locale(lang);
             log::info!("Backend locale set to: {}, source: {}", lang, locale);
 
