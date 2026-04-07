@@ -127,3 +127,24 @@ jobs:
           releaseName: "Nightly build"
           releaseDraft: true
           prerelease: true
+
+  build-snap:
+    name: Build Snap Package
+    needs: [frontend-checks, backend-checks]
+    if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/develop'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: recursive
+          fetch-depth: 0
+
+      - name: Build Snap
+        uses: snapcore/action-build@v1
+        id: build
+
+      - name: Upload Snap Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: minute-of-silence-snap
+          path: ${{ steps.build.outputs.snap }}
