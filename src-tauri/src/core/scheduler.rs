@@ -124,8 +124,8 @@ impl CeremonyScheduler {
             .app
             .notification()
             .builder()
-            .title(t!("notification_title"))
-            .body(&body)
+            .title(t!("notification_title").to_string())
+            .body(body.to_string())
             .show();
 
         match result {
