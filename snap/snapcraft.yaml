@@ -32,6 +32,7 @@ parts:
     build-packages:
       - libasound2-dev
       - libayatana-appindicator3-dev
+      - libjack-dev
       - curl
       - wget
       - pkg-config
