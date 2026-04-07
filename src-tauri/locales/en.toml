@@ -1,0 +1,9 @@
+# English translations
+open = "Open"
+skip_next = "Skip tomorrow"
+unskip_next = "Restore tomorrow"
+quit = "Quit"
+tray_tooltip = "Minute of Silence"
+notification_title = "Minute of Silence"
+notification_body_start = "A new minute of silence is beginning"
+notification_body_reminder = "In %{mins} min the minute of silence at 09:00 will begin"
