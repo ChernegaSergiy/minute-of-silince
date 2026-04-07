@@ -253,12 +253,15 @@ impl AudioEngine {
             .ok();
 
         // 2. Try relative to the executable (common in Snap bin/)
-        let exe_path = std::env::current_exe().ok().and_then(|p| {
-            p.parent().map(|d| d.join("audio").join(filename))
-        });
+        let exe_path = std::env::current_exe()
+            .ok()
+            .and_then(|p| p.parent().map(|d| d.join("audio").join(filename)));
 
         // 3. Try hardcoded Snap layout path
-        let layout_path = Some(PathBuf::from(format!("/usr/lib/minute-of-silence/audio/{}", filename)));
+        let layout_path = Some(PathBuf::from(format!(
+            "/usr/lib/minute-of-silence/audio/{}",
+            filename
+        )));
 
         let candidates = vec![tauri_path, exe_path, layout_path];
 
@@ -270,7 +273,13 @@ impl AudioEngine {
             log::debug!("Audio not found at: {:?}", candidate);
         }
 
-        log::error!("Audio resource {} not found in any candidate path", filename);
-        Err(AppError::Audio(format!("Audio file not found: {}", filename)))
+        log::error!(
+            "Audio resource {} not found in any candidate path",
+            filename
+        );
+        Err(AppError::Audio(format!(
+            "Audio file not found: {}",
+            filename
+        )))
     }
 }
