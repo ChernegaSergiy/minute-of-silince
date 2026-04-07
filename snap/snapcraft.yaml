@@ -36,6 +36,9 @@ parts:
       - rustup
     stage-packages:
       - glib-networking
+      - libasound2
+      - libasound2-plugins
+      - libpulse0
     override-build: |
       # Setup Rust environment
       export PATH="$PATH:$HOME/.cargo/bin"
@@ -54,6 +57,10 @@ parts:
       # Copy desktop assets
       mkdir -p $SNAPCRAFT_PART_INSTALL/usr/share/icons/hicolor/512x512/apps
       cp src-tauri/icons/icon.png $SNAPCRAFT_PART_INSTALL/usr/share/icons/hicolor/512x512/apps/minute-of-silence.png
+      
+      # Copy custom ALSA config
+      mkdir -p $SNAPCRAFT_PART_INSTALL/etc
+      cp snap/local/alsa.conf $SNAPCRAFT_PART_INSTALL/etc/alsa.conf
 
 apps:
   minute-of-silence:
@@ -62,8 +69,7 @@ apps:
     extensions: [gnome]
     environment:
       TAURI_ENV_RESOURCES_PATH: $SNAP/bin
-      # Point ALSA to the configuration provided by the gnome-46-2404 extension
-      ALSA_CONFIG_PATH: $SNAP/gnome-platform/usr/share/alsa/alsa.conf
+      ALSA_CONFIG_PATH: $SNAP/etc/alsa.conf
     # Required permissions (interfaces)
     plugs:
       - network        # For NTP synchronization
