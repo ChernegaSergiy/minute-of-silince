@@ -23,6 +23,7 @@ import { listen } from "@tauri-apps/api/event";
 import { open } from "@tauri-apps/plugin-shell";
 import type { Settings, StatusSnapshot } from "./types";
 import { PRESET_LABELS } from "./types";
+import { t } from "./i18n";
 
 export class App {
   private root: HTMLElement;
@@ -102,7 +103,7 @@ export class App {
 
       // Hide sync button if NTP is disabled in the backend status
       if (syncBtn) {
-        if (ntpStatus.includes("Вимкнено")) {
+        if (ntpStatus.includes(t("status.ntp_disabled"))) {
           syncBtn.classList.add("hidden");
         } else {
           syncBtn.classList.remove("hidden");
@@ -117,7 +118,7 @@ export class App {
 
     const badge = document.getElementById("statusBadge");
     if (badge) {
-      badge.textContent = this.status.ceremonyActive ? "● АКТИВНА ЦЕРЕМОНІЯ" : "○ ОЧІКУВАННЯ";
+      badge.textContent = this.status.ceremonyActive ? t("status.active") : t("status.waiting");
       if (this.status.ceremonyActive) {
         badge.classList.add("status-badge--active");
       } else {
