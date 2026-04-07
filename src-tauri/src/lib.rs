@@ -11,6 +11,9 @@ mod tray;
 
 use tauri::Manager;
 
+// Initialize i18n
+rust_i18n::i18n!("locales");
+
 pub use core::settings::{AudioPreset, Settings};
 
 pub use error::{AppError, Result};
