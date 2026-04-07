@@ -45,7 +45,6 @@ parts:
       - libasound2
       - libasound2-plugins
       - libpulse0
-      - liboss-salsa2
     override-build: |
       # Set SDK path based on architecture
       SDK_PATH="/snap/gnome-46-2404-sdk/current/usr/lib/$CRAFT_ARCH_TRIPLET"
@@ -85,6 +84,9 @@ apps:
       TAURI_ENV_RESOURCES_PATH: $SNAP/bin
       ALSA_CONFIG_PATH: $SNAP/usr/share/alsa/alsa.conf
       ALSA_PLUGIN_DIR: $SNAP/usr/lib/$CRAFT_ARCH_TRIPLET/alsa-lib
+      # Use pulse by default to avoid attempts to load OSS or other missing libs
+      ALSA_PCM_DEFAULT: pulse
+      ALSA_CTL_DEFAULT: pulse
     # Required permissions (interfaces)
     plugs:
       - network        # For NTP synchronization
