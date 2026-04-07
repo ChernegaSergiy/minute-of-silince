@@ -142,15 +142,15 @@ export class App {
     this.root.innerHTML = `
       <div class="window">
         <header class="window__header">
-          <span class="window__title">ХВИЛИНА МОВЧАННЯ</span>
-          <span class="window__version">v${import.meta.env.PACKAGE_VERSION}</span>
+          <span class="window__title">${t("header.title")}</span>
+          <span class="window__version">${t("header.version", { version: import.meta.env.PACKAGE_VERSION })}</span>
         </header>
 
         <main class="window__body">
           <!-- Tab navigation -->
           <nav class="tabs">
-            <button class="tab-btn tab-btn--active" id="settingsTabBtn">НАЛАШТУВАННЯ</button>
-            <button class="tab-btn" id="aboutTabBtn">ПРО ПРОГРАМУ</button>
+            <button class="tab-btn tab-btn--active" id="settingsTabBtn">${t("tabs.settings")}</button>
+            <button class="tab-btn" id="aboutTabBtn">${t("tabs.about")}</button>
           </nav>
 
           <!-- Settings Tab Content -->
@@ -158,14 +158,14 @@ export class App {
             <!-- Status badge -->
             <div class="status-badge ${this.status.ceremonyActive ? "status-badge--active" : ""}"
                  id="statusBadge">
-              ${this.status.ceremonyActive ? "● АКТИВНА ЦЕРЕМОНІЯ" : "○ ОЧІКУВАННЯ"}
+              ${this.status.ceremonyActive ? t("status.active") : t("status.waiting")}
             </div>
 
             <!-- Ceremony enabled toggle -->
             <label class="control-row">
               <div class="control-row__info">
-                <span class="control-row__label">Церемонія о 09:00</span>
-                <span class="control-row__description">Автоматично активує пам'ятні заходи кожного дня о 9-й ранку.</span>
+                <span class="control-row__label">${t("controls.ceremony.label")}</span>
+                <span class="control-row__description">${t("controls.ceremony.description")}</span>
               </div>
               <input type="checkbox" id="ceremonyToggle" class="toggle"
                      ${this.settings.ceremonyEnabled ? "checked" : ""} />
@@ -174,8 +174,8 @@ export class App {
             <!-- Autostart toggle -->
             <label class="control-row">
               <div class="control-row__info">
-                <span class="control-row__label">Автозапуск при старті системи</span>
-                <span class="control-row__description">Дозволяє програмі запускатися автоматично разом із системою.</span>
+                <span class="control-row__label">${t("controls.autostart.label")}</span>
+                <span class="control-row__description">${t("controls.autostart.description")}</span>
               </div>
               <input type="checkbox" id="autostartToggle" class="toggle"
                      ${this.settings.autostartEnabled ? "checked" : ""} />
@@ -185,10 +185,10 @@ export class App {
             <div class="control-row control-row--column">
               <div class="control-row__header">
                 <div class="control-row__info">
-                  <span class="control-row__label">Вікно допуску</span>
-                  <span class="control-row__description">Час після 09:00, протягом якого церемонія все ще може розпочатися.</span>
+                  <span class="control-row__label">${t("controls.grace.label")}</span>
+                  <span class="control-row__description">${t("controls.grace.description")}</span>
                 </div>
-                <span class="control-row__value" id="graceValue">${this.settings.lateStartGraceMinutes} хв</span>
+                <span class="control-row__value" id="graceValue">${this.settings.lateStartGraceMinutes} ${t("controls.grace.unit")}</span>
               </div>
               <input type="range" id="graceRange" class="slider"
                      min="0" max="5" value="${this.settings.lateStartGraceMinutes}" />
@@ -197,8 +197,8 @@ export class App {
             <!-- Weekdays only toggle -->
             <label class="control-row">
               <div class="control-row__info">
-                <span class="control-row__label">Лише в будні</span>
-                <span class="control-row__description">Вимикає автоматичну активацію у суботу та неділю.</span>
+                <span class="control-row__label">${t("controls.weekdays.label")}</span>
+                <span class="control-row__description">${t("controls.weekdays.description")}</span>
               </div>
               <input type="checkbox" id="weekdaysToggle" class="toggle"
                      ${this.settings.weekdaysOnly ? "checked" : ""} />
@@ -207,8 +207,8 @@ export class App {
             <!-- System time toggle -->
             <label class="control-row">
               <div class="control-row__info">
-                <span class="control-row__label">Системний час</span>
-                <span class="control-row__description">Використовувати локальний годинник замість точного часу NTP.</span>
+                <span class="control-row__label">${t("controls.system_time.label")}</span>
+                <span class="control-row__description">${t("controls.system_time.description")}</span>
               </div>
               <input type="checkbox" id="systemTimeToggle" class="toggle"
                      ${this.settings.systemTimeOnly ? "checked" : ""} />
@@ -217,8 +217,8 @@ export class App {
             <!-- Skip tomorrow toggle -->
             <label class="control-row">
               <div class="control-row__info">
-                <span class="control-row__label">Пропустити завтра</span>
-                <span class="control-row__description">Скасовує лише наступну заплановану церемонію (одноразово).</span>
+                <span class="control-row__label">${t("controls.skip_tomorrow.label")}</span>
+                <span class="control-row__description">${t("controls.skip_tomorrow.description")}</span>
               </div>
               <input type="checkbox" id="skipToggle" class="toggle"
                      ${this.status.skipTomorrow ? "checked" : ""} />
@@ -227,8 +227,8 @@ export class App {
             <!-- Reminder notification -->
             <label class="control-row">
               <div class="control-row__info">
-                <span class="control-row__label">Нагадування</span>
-                <span class="control-row__description">Системне сповіщення перед церемонією.</span>
+                <span class="control-row__label">${t("controls.reminder.label")}</span>
+                <span class="control-row__description">${t("controls.reminder.description")}</span>
               </div>
               <input type="checkbox" id="reminderToggle" class="toggle"
                      ${this.settings.reminderEnabled ? "checked" : ""} />
@@ -237,7 +237,7 @@ export class App {
             <!-- Reminder minutes (visible when reminder is enabled) -->
             <div class="control-row" id="reminderMinutesRow">
               <div class="control-row__info">
-                <span class="control-row__label">Через</span>
+                <span class="control-row__label">${t("controls.reminder.in")}</span>
               </div>
               <select id="reminderSelect" class="select" style="width: 80px">
                 ${this.renderReminderOptions()}
@@ -249,8 +249,8 @@ export class App {
             <!-- Audio preset -->
             <div class="control-row">
               <div class="control-row__info">
-                <span class="control-row__label">Режим супроводу</span>
-                <span class="control-row__description">Вибір аудіосупроводу: голос, метроном, дзвін або гімн.</span>
+                <span class="control-row__label">${t("controls.audio_mode.label")}</span>
+                <span class="control-row__description">${t("controls.audio_mode.description")}</span>
               </div>
               <select id="presetSelect" class="select">
                 ${this.renderPresetOptions()}
@@ -261,8 +261,8 @@ export class App {
             <div class="control-row control-row--column">
               <div class="control-row__header">
                 <div class="control-row__info">
-                  <span class="control-row__label">Гучність</span>
-                  <span class="control-row__description">Рівень гучності для аудіо-пресетів програми.</span>
+                  <span class="control-row__label">${t("controls.volume.label")}</span>
+                  <span class="control-row__description">${t("controls.volume.description")}</span>
                 </div>
                 <span class="control-row__value" id="volumeValue">${this.settings.volume}%</span>
               </div>
@@ -275,8 +275,8 @@ export class App {
             <!-- Volume priority toggle -->
             <label class="control-row">
               <div class="control-row__info">
-                <span class="control-row__label">Пріоритет гучності</span>
-                <span class="control-row__description">Примусово встановлює вибраний рівень під час церемонії.</span>
+                <span class="control-row__label">${t("controls.volume_priority.label")}</span>
+                <span class="control-row__description">${t("controls.volume_priority.description")}</span>
               </div>
               <input type="checkbox" id="volumePriorityToggle" class="toggle"
                      ${this.settings.volumePriority ? "checked" : ""} />
@@ -285,8 +285,8 @@ export class App {
             <!-- Auto-unmute toggle -->
             <label class="control-row">
               <div class="control-row__info">
-                <span class="control-row__label">Автоувімкнення звуку</span>
-                <span class="control-row__description">Автоматично вмикає звук, якщо він був вимкнений у системі.</span>
+                <span class="control-row__label">${t("controls.auto_unmute.label")}</span>
+                <span class="control-row__description">${t("controls.auto_unmute.description")}</span>
               </div>
               <input type="checkbox" id="autoUnmuteToggle" class="toggle"
                      ${this.settings.autoUnmute ? "checked" : ""} />
@@ -295,8 +295,8 @@ export class App {
             <!-- Pause other players -->
             <label class="control-row">
               <div class="control-row__info">
-                <span class="control-row__label">Пауза інших плеєрів</span>
-                <span class="control-row__description">Призупиняє музику та відео (Spotify, YouTube) на час церемонії.</span>
+                <span class="control-row__label">${t("controls.pause.label")}</span>
+                <span class="control-row__description">${t("controls.pause.description")}</span>
               </div>
               <input type="checkbox" id="pauseToggle" class="toggle"
                      ${this.settings.pauseOtherPlayers ? "checked" : ""} />
@@ -305,8 +305,8 @@ export class App {
             <!-- Visual overlay toggle -->
             <label class="control-row">
               <div class="control-row__info">
-                <span class="control-row__label">Візуальний оверлей</span>
-                <span class="control-row__description">Показувати повноекранний екран вшанування під час церемонії.</span>
+                <span class="control-row__label">${t("controls.overlay.label")}</span>
+                <span class="control-row__description">${t("controls.overlay.description")}</span>
               </div>
               <input type="checkbox" id="overlayToggle" class="toggle"
                      ${this.settings.showVisualOverlay ? "checked" : ""} />
@@ -314,11 +314,11 @@ export class App {
 
             <!-- Meta / debug info -->
             <div class="meta">
-              <span>Остання церемонія: <span id="lastActivationValue">${this.status.lastActivation ?? "—"}</span></span>
+              <span>${t("status.last_ceremony")} <span id="lastActivationValue">${this.status.lastActivation ?? "—"}</span></span>
               <div class="meta-row">
-                <span>Синхронізація NTP: <span id="ntpSyncValue">${this.status.lastNtpSync ?? "—"}</span></span>
+                <span>${t("status.ntp_sync")} <span id="ntpSyncValue">${this.status.lastNtpSync ?? "—"}</span></span>
                 <button class="btn btn--link" id="syncNtpBtn">
-                  СИНХРОНІЗУВАТИ
+                  ${t("buttons.sync")}
                 </button>
               </div>
             </div>
@@ -328,28 +328,28 @@ export class App {
           <div id="aboutTabContent" class="tab-content">
             <img src="/logo.png" style="display: block; margin: 16px auto; max-width: 80px; height: auto;" alt="Logo" />
             <div class="meta" style="font-size: 11px; gap: 12px; margin-top: 10px;">
-              <p>Додаток створено для вшанування пам'яті полеглих захисників та жертв війни.</p>
-          ...
+              <p>${t("about.description")}</p>
+
               <div class="meta-row" style="flex-direction: column; align-items: flex-start; gap: 4px;">
-                <span>ВЕРСІЯ: v${import.meta.env.PACKAGE_VERSION}</span>
-                <span>ЛІЦЕНЗІЯ: CSSM Unlimited License v2.0</span>
+                <span>${t("about.version")} v${import.meta.env.PACKAGE_VERSION}</span>
+                <span>${t("about.license")}</span>
               </div>
 
               <div class="meta-row" style="flex-direction: column; align-items: flex-start; gap: 4px;">
-                <span>КОД (GITHUB):</span>
+                <span>${t("about.github")}</span>
                 <button class="btn btn--link" id="githubLinkBtn" style="margin: 0;">github.com/ChernegaSergiy/minute-of-silence</button>
               </div>
 
               <p style="opacity: 0.5; font-size: 9px; margin-top: 10px;">
-                Ми щодня о 09:00 згадуємо всіх, чиї життя забрала війна. Слава Героям.
+                ${t("about.slava")}
               </p>
             </div>
           </div>
         </main>
 
         <footer class="window__footer" id="windowFooter">
-          <button class="btn btn--ghost" id="testBtn">ТЕСТ</button>
-          <button class="btn btn--primary" id="saveBtn">ЗБЕРЕГТИ</button>
+          <button class="btn btn--ghost" id="testBtn">${t("buttons.test")}</button>
+          <button class="btn btn--primary" id="saveBtn">${t("buttons.save")}</button>
         </footer>
       </div>
     `;
@@ -361,7 +361,7 @@ export class App {
     const options: string[] = [];
     for (let m = 0; m <= 10; m++) {
       options.push(
-        `<option value="${m}" ${current === m ? "selected" : ""}>${m === 0 ? "Одразу" : m + " хв"}</option>`
+        `<option value="${m}" ${current === m ? "selected" : ""}>${m === 0 ? t("controls.reminder.immediately") : m + " " + t("controls.grace.unit")}</option>`
       );
     }
     return options.join("");
@@ -383,10 +383,10 @@ export class App {
     if (saveBtn) {
       if (dirty) {
         saveBtn.classList.add("btn--dirty");
-        saveBtn.textContent = "ЗБЕРЕГТИ *";
+        saveBtn.textContent = t("buttons.save_dirty");
       } else {
         saveBtn.classList.remove("btn--dirty");
-        saveBtn.textContent = "ЗБЕРЕГТИ";
+        saveBtn.textContent = t("buttons.save");
       }
     }
   }
@@ -451,7 +451,7 @@ export class App {
     const graceValue = this.q<HTMLElement>("#graceValue");
     graceRange.addEventListener("input", () => {
       const v = parseInt(graceRange.value, 10);
-      graceValue.textContent = `${v} хв`;
+      graceValue.textContent = `${v} ${t("controls.grace.unit")}`;
       this.settings = { ...this.settings, lateStartGraceMinutes: v };
       this.checkDirty();
     });
@@ -573,7 +573,7 @@ export class App {
       const ntpEl = document.getElementById("ntpSyncValue");
  
       btn.disabled = true;
-      if (ntpEl) ntpEl.textContent = "Синхронізація...";
+      if (ntpEl) ntpEl.textContent = t("status.ntp_syncing");
  
       try {
         const { syncNtpNow } = await import("./api");
@@ -581,7 +581,7 @@ export class App {
         this.updateStatusUI();
       } catch (err) {
         console.error("Manual NTP sync failed:", err);
-        if (ntpEl) ntpEl.textContent = "Помилка";
+        if (ntpEl) ntpEl.textContent = t("status.ntp_error");
       } finally {
         btn.disabled = false;
       }
