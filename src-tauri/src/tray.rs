@@ -1,11 +1,11 @@
 //! System-tray icon setup and context-menu event handling.
 
+use rust_i18n::t;
 use tauri::{
     menu::{Menu, MenuItem, PredefinedMenuItem},
     tray::{MouseButton, MouseButtonState, TrayIconBuilder, TrayIconEvent},
     App, Emitter, Manager,
 };
-use rust_i18n::t;
 
 use crate::AppState;
 
