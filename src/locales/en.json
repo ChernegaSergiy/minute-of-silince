@@ -1,0 +1,89 @@
+{
+  "header": {
+    "title": "MINUTE OF SILENCE",
+    "version": "v{{version}}"
+  },
+  "tabs": {
+    "settings": "SETTINGS",
+    "about": "ABOUT"
+  },
+  "status": {
+    "active": "● ACTIVE CEREMONY",
+    "waiting": "○ WAITING",
+    "last_ceremony": "Last ceremony:",
+    "ntp_sync": "NTP synchronization:",
+    "ntp_disabled": "Disabled",
+    "ntp_syncing": "Synchronizing...",
+    "ntp_error": "Error"
+  },
+  "controls": {
+    "ceremony": {
+      "label": "Ceremony at 09:00",
+      "description": "Automatically activates memorial events every day at 9 AM."
+    },
+    "autostart": {
+      "label": "Autostart on system boot",
+      "description": "Allows the program to start automatically with the system."
+    },
+    "grace": {
+      "label": "Grace window",
+      "description": "Time after 09:00 during which the ceremony can still start.",
+      "unit": "min"
+    },
+    "weekdays": {
+      "label": "Weekdays only",
+      "description": "Disables automatic activation on Saturdays and Sundays."
+    },
+    "system_time": {
+      "label": "System time",
+      "description": "Use local clock instead of accurate NTP time."
+    },
+    "skip_tomorrow": {
+      "label": "Skip tomorrow",
+      "description": "Cancels only the next scheduled ceremony (one-time)."
+    },
+    "reminder": {
+      "label": "Reminder",
+      "description": "System notification before the ceremony.",
+      "in": "In",
+      "immediately": "Immediately"
+    },
+    "audio_mode": {
+      "label": "Companion mode",
+      "description": "Select audio accompaniment: voice, metronome, bell, or anthem."
+    },
+    "volume": {
+      "label": "Volume",
+      "description": "Volume level for the application's audio presets."
+    },
+    "volume_priority": {
+      "label": "Volume priority",
+      "description": "Forces the selected level during the ceremony."
+    },
+    "auto_unmute": {
+      "label": "Auto-unmute",
+      "description": "Automatically enables sound if it was muted in the system."
+    },
+    "pause": {
+      "label": "Pause other players",
+      "description": "Pauses music and video (Spotify, YouTube) during the ceremony."
+    },
+    "overlay": {
+      "label": "Visual overlay",
+      "description": "Show full-screen memorial overlay during the ceremony."
+    }
+  },
+  "buttons": {
+    "sync": "SYNCHRONIZE",
+    "test": "TEST",
+    "save": "SAVE",
+    "save_dirty": "SAVE *"
+  },
+  "about": {
+    "description": "The application was created to honor the memory of fallen defenders and victims of war.",
+    "version": "VERSION:",
+    "license": "LICENSE: CSSM Unlimited License v2.0",
+    "github": "CODE (GITHUB):",
+    "slava": "Every day at 09:00 we remember everyone whose lives were taken by the war. Glory to the Heroes."
+  }
+}
