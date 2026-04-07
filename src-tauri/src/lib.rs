@@ -52,10 +52,10 @@ pub fn run() {
         )
         .setup(|app| {
             // Set the backend locale to match the system locale
-            let locale = app.locale().unwrap_or_else(|| "uk".to_string());
-            let lang = locale.split('-').next().unwrap_or("uk");
+            let locale = sys_locale::get_locale().unwrap_or_else(|| "uk".to_string());
+            let lang = locale.split(|c| c == '-' || c == '_').next().unwrap_or("uk");
             rust_i18n::set_locale(lang);
-            log::info!("Backend locale set to: {}, full locale: {}", lang, locale);
+            log::info!("Backend locale set to: {}, source: {}", lang, locale);
 
             let settings = Settings::load_or_default();
             app.manage(AppState::new_with_settings(
