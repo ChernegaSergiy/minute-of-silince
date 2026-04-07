@@ -1,5 +1,5 @@
 # Snapcraft configuration for minute-of-silence
-# For more information, see: https://snapcraft.io/docs/snapcraft-yaml-reference
+# This is the idiomatic way for core24 with gnome extension.
 
 name: minute-of-silence
 title: Хвилина мовчання
@@ -12,12 +12,6 @@ description: |
   для вшанування пам'яті полеглих захисників та жертв війни.
 
 license: Proprietary
-contact: https://github.com/ChernegaSergiy/minute-of-silence/issues
-issues: https://github.com/ChernegaSergiy/minute-of-silence/issues
-website: https://github.com/ChernegaSergiy/minute-of-silence
-source-code: https://github.com/ChernegaSergiy/minute-of-silence
-donation: https://savelife.in.ua/donate/
-
 grade: stable
 confinement: strict
 
@@ -28,7 +22,7 @@ parts:
   minute-of-silence:
     plugin: nil
     source: .
-    # Build dependencies for Tauri on Linux
+    # Build dependencies for Tauri on Linux (Noble)
     build-packages:
       - libasound2-dev
       - libayatana-appindicator3-dev
@@ -42,35 +36,22 @@ parts:
       - rustup
     stage-packages:
       - glib-networking
-      - librsvg2-common
-      - libasound2
     override-build: |
-      # Set SDK path based on architecture
-      SDK_PATH="/snap/gnome-46-2404-sdk/current/usr/lib/$CRAFT_ARCH_TRIPLET"
-      
-      # Fix linker for Rust by providing explicit library search paths
-      export RUSTFLAGS="-L $SDK_PATH -L /usr/lib/$CRAFT_ARCH_TRIPLET"
-      
-      # Also set standard linker variables
-      export LIBRARY_PATH="$SDK_PATH${LIBRARY_PATH:+:$LIBRARY_PATH}"
-      export LD_LIBRARY_PATH="$SDK_PATH${LD_LIBRARY_PATH:+:$LD_LIBRARY_PATH}"
-      export PKG_CONFIG_PATH="$SDK_PATH/pkgconfig:/snap/gnome-46-2404-sdk/current/usr/share/pkgconfig${PKG_CONFIG_PATH:+:$PKG_CONFIG_PATH}"
-      
       # Setup Rust environment
       export PATH="$PATH:$HOME/.cargo/bin"
       rustup default stable
       
       # Build the Tauri application
       npm install
-      # Build only the binary, skip all bundling (deb, appimage, etc.)
+      # Build only the binary, skip all bundling
       npm run tauri build -- --no-bundle
       
-      # Move binary and resources to the snap's bin directory
+      # Move binary and resources
       mkdir -p $SNAPCRAFT_PART_INSTALL/bin/audio
       cp src-tauri/target/release/minute-of-silence $SNAPCRAFT_PART_INSTALL/bin/
       cp src-tauri/audio/*.ogg $SNAPCRAFT_PART_INSTALL/bin/audio/
       
-      # Copy desktop assets (icon)
+      # Copy desktop assets
       mkdir -p $SNAPCRAFT_PART_INSTALL/usr/share/icons/hicolor/512x512/apps
       cp src-tauri/icons/icon.png $SNAPCRAFT_PART_INSTALL/usr/share/icons/hicolor/512x512/apps/minute-of-silence.png
 
@@ -81,7 +62,8 @@ apps:
     extensions: [gnome]
     environment:
       TAURI_ENV_RESOURCES_PATH: $SNAP/bin
-      ALSA_CONFIG_PATH: /usr/share/alsa/alsa.conf
+      # Point ALSA to the configuration provided by the gnome-46-2404 extension
+      ALSA_CONFIG_PATH: $SNAP/gnome-platform/usr/share/alsa/alsa.conf
     # Required permissions (interfaces)
     plugs:
       - network        # For NTP synchronization
@@ -94,10 +76,4 @@ apps:
       - wayland
       - unity7
       - opengl         # For WebKit/GPU acceleration
-      - gsettings      # To access system settings (removes many GTK warnings)
-
-layout:
-  /usr/share/alsa:
-    bind: $SNAP/gnome-platform/usr/share/alsa
-  /usr/lib/${CRAFT_ARCH_TRIPLET}/alsa-lib:
-    bind: $SNAP/gnome-platform/usr/lib/${CRAFT_ARCH_TRIPLET}/alsa-lib
+      - gsettings      # To access system settings
