@@ -48,7 +48,26 @@ pub fn run() {
                 .build(),
         )
         .setup(|app| {
-            app.manage(AppState::new(app.handle().clone()));
+            let settings = Settings::load_or_default();
+            app.manage(AppState::new_with_settings(
+                app.handle().clone(),
+                settings.clone(),
+            ));
+
+            // Synchronise autostart state with the plugin (skip on Snap/Flatpak where handled by package manager).
+            #[cfg(not(test))]
+            {
+                let is_snap = std::env::var("SNAP").is_ok();
+                if !is_snap {
+                    use tauri_plugin_autostart::ManagerExt;
+                    let autostart_manager = app.autolaunch();
+                    if settings.autostart_enabled {
+                        let _ = autostart_manager.enable();
+                    } else {
+                        let _ = autostart_manager.disable();
+                    }
+                }
+            }
 
             // Build the system-tray icon.
             tray::build_tray(app)?;

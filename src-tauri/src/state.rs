@@ -39,8 +39,17 @@ impl Default for Inner {
 impl AppState {
     pub fn new(app_handle: AppHandle) -> Self {
         let settings = Settings::load_or_default();
+        Self::new_with_settings(app_handle, settings)
+    }
+
+    pub fn new_with_settings(app_handle: AppHandle, settings: Settings) -> Self {
         Self {
-            inner: Arc::new(Mutex::new(Inner::default())),
+            inner: Arc::new(Mutex::new(Inner {
+                settings: settings.clone(),
+                skip_date: None,
+                ceremony_active: false,
+                last_activation: None,
+            })),
             ntp_service: NtpService::new(settings.ntp_server.clone()),
             audio: Arc::new(AudioEngine::new(app_handle)),
         }
