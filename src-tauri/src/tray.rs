@@ -5,28 +5,28 @@ use tauri::{
     tray::{MouseButton, MouseButtonState, TrayIconBuilder, TrayIconEvent},
     App, Emitter, Manager,
 };
+use rust_i18n::t;
 
 use crate::AppState;
 
 /// Build and register the system-tray icon for `app`.
 pub fn build_tray(app: &App) -> tauri::Result<()> {
-    let open_i = MenuItem::with_id(app, "open", "Відкрити", true, None::<&str>)?;
-    let skip_i = MenuItem::with_id(app, "skip_next", "Пропустити завтра", true, None::<&str>)?;
+    let open_i = MenuItem::with_id(app, "open", t!("open"), true, None::<&str>)?;
+    let skip_i = MenuItem::with_id(app, "skip_next", t!("skip_next"), true, None::<&str>)?;
     let sep = PredefinedMenuItem::separator(app)?;
-    let quit_i = MenuItem::with_id(app, "quit", "Вийти", true, None::<&str>)?;
+    let quit_i = MenuItem::with_id(app, "quit", t!("quit"), true, None::<&str>)?;
 
     let menu = Menu::with_items(app, &[&open_i, &skip_i, &sep, &quit_i])?;
 
     let icon = app.default_window_icon().cloned().unwrap_or_else(|| {
         log::warn!("Default window icon not found, tray may have no icon");
-        // Fallback or handle appropriately - for now we use a placeholder or let it fail gracefully
         tauri::image::Image::new(&[], 0, 0)
     });
 
     TrayIconBuilder::with_id("main")
         .icon(icon)
         .menu(&menu)
-        .tooltip("Хвилина мовчання")
+        .tooltip(t!("tray_tooltip"))
         .on_menu_event(|app, event| match event.id.as_ref() {
             "open" => {
                 if let Some(window) = app.get_webview_window("main") {
