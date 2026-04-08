@@ -1,18 +1,19 @@
 use crate::error::Result;
 
-/// Interface for platform-specific operations.
+#[tauri::async_trait]
 pub trait Platform: Send + Sync {
     fn get_volume(&self) -> Result<u8>;
     fn set_volume(&self, level: u8) -> Result<()>;
     fn is_muted(&self) -> Result<bool>;
     fn set_mute(&self, mute: bool) -> Result<()>;
-    fn pause_media(&self) -> Result<()>;
+    async fn pause_media(&self) -> Result<()>;
 }
 
 #[cfg(target_os = "windows")]
 pub struct WindowsPlatform;
 
 #[cfg(target_os = "windows")]
+#[tauri::async_trait]
 impl Platform for WindowsPlatform {
     fn get_volume(&self) -> Result<u8> {
         crate::platform_windows::volume::get_volume()
@@ -26,8 +27,8 @@ impl Platform for WindowsPlatform {
     fn set_mute(&self, mute: bool) -> Result<()> {
         crate::platform_windows::volume::set_mute(mute)
     }
-    fn pause_media(&self) -> Result<()> {
-        crate::platform_windows::media::pause_all()
+    async fn pause_media(&self) -> Result<()> {
+        crate::platform_windows::media::pause_all().await
     }
 }
 
@@ -35,6 +36,7 @@ impl Platform for WindowsPlatform {
 pub struct LinuxPlatform;
 
 #[cfg(target_os = "linux")]
+#[tauri::async_trait]
 impl Platform for LinuxPlatform {
     fn get_volume(&self) -> Result<u8> {
         crate::platform_linux::volume::get_volume()
@@ -48,8 +50,8 @@ impl Platform for LinuxPlatform {
     fn set_mute(&self, mute: bool) -> Result<()> {
         crate::platform_linux::volume::set_mute(mute)
     }
-    fn pause_media(&self) -> Result<()> {
-        crate::platform_linux::media::pause_all()
+    async fn pause_media(&self) -> Result<()> {
+        crate::platform_linux::media::pause_all().await
     }
 }
 

@@ -59,7 +59,7 @@ impl CeremonyManager {
 
         // 3. Pause players
         if should_pause_players {
-            let _ = self.platform.pause_media();
+            let _ = self.platform.pause_media().await;
         }
 
         // 4. Handle Volume and Mute
