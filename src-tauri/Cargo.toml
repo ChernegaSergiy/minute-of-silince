@@ -55,7 +55,7 @@ windows = { version = "0.61.3", features = [
 ] }
 
 [target.'cfg(target_os = "linux")'.dependencies]
-alsa = "0.9"
+alsa = "0.10"
 zbus = "4.3"
 cpal = { version = "0.15", features = ["jack"], default-features = false }
 

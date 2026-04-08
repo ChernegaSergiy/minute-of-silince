@@ -2675,7 +2675,7 @@ dependencies = [
 name = "minute-of-silence"
 version = "0.5.1"
 dependencies = [
- "alsa 0.9.1",
+ "alsa 0.10.0",
  "anyhow",
  "chrono",
  "chrono-tz",
