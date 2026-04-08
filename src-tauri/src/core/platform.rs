@@ -1,6 +1,6 @@
 use crate::error::Result;
 
-#[tauri::async_trait]
+#[async_trait::async_trait]
 pub trait Platform: Send + Sync {
     fn get_volume(&self) -> Result<u8>;
     fn set_volume(&self, level: u8) -> Result<()>;
@@ -13,7 +13,7 @@ pub trait Platform: Send + Sync {
 pub struct WindowsPlatform;
 
 #[cfg(target_os = "windows")]
-#[tauri::async_trait]
+#[async_trait::async_trait]
 impl Platform for WindowsPlatform {
     fn get_volume(&self) -> Result<u8> {
         crate::platform_windows::volume::get_volume()
@@ -36,7 +36,7 @@ impl Platform for WindowsPlatform {
 pub struct LinuxPlatform;
 
 #[cfg(target_os = "linux")]
-#[tauri::async_trait]
+#[async_trait::async_trait]
 impl Platform for LinuxPlatform {
     fn get_volume(&self) -> Result<u8> {
         crate::platform_linux::volume::get_volume()

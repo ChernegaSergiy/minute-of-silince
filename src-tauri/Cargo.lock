@@ -2527,6 +2527,7 @@ version = "0.5.1"
 dependencies = [
  "alsa",
  "anyhow",
+ "async-trait",
  "chrono",
  "chrono-tz",
  "cpal",
