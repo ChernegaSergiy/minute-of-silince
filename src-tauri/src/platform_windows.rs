@@ -75,20 +75,24 @@ pub mod volume {
 
 pub mod media {
     use log::{error, info};
+    use windows::Foundation::Collections::IVectorView;
     use windows::Media::Control::{
+        GlobalSystemMediaTransportControlsSession,
         GlobalSystemMediaTransportControlsSessionManager,
+        GlobalSystemMediaTransportControlsSessionPlaybackInfo,
         GlobalSystemMediaTransportControlsSessionPlaybackStatus,
     };
 
     use crate::error::{AppError, Result};
 
     pub fn pause_all() -> Result<()> {
-        let manager = GlobalSystemMediaTransportControlsSessionManager::RequestAsync()
-            .map_err(|e| AppError::Platform(e.to_string()))?
-            .get()
-            .map_err(|e| AppError::Platform(e.to_string()))?;
+        let manager = windows_future::block_on(
+            GlobalSystemMediaTransportControlsSessionManager::RequestAsync()
+                .map_err(|e| AppError::Platform(e.to_string()))?,
+        )
+        .map_err(|e| AppError::Platform(e.to_string()))?;
 
-        let sessions = manager
+        let sessions: IVectorView<GlobalSystemMediaTransportControlsSession> = manager
             .GetSessions()
             .map_err(|e| AppError::Platform(e.to_string()))?;
 
@@ -103,13 +107,14 @@ pub mod media {
                 let app_id = session.SourceAppUserModelId().unwrap_or_default();
                 info!("Session {}: AppId={}", i, app_id);
 
-                let playback_info = match session.GetPlaybackInfo() {
-                    Ok(info) => info,
-                    Err(e) => {
-                        error!("Failed to get playback info for session {}: {:?}", i, e);
-                        continue;
-                    }
-                };
+                let playback_info: GlobalSystemMediaTransportControlsSessionPlaybackInfo =
+                    match session.GetPlaybackInfo() {
+                        Ok(info) => info,
+                        Err(e) => {
+                            error!("Failed to get playback info for session {}: {:?}", i, e);
+                            continue;
+                        }
+                    };
 
                 let status = match playback_info.PlaybackStatus() {
                     Ok(s) => s,
@@ -121,12 +126,7 @@ pub mod media {
 
                 if status == GlobalSystemMediaTransportControlsSessionPlaybackStatus::Playing {
                     info!("Pausing session {}...", i);
-                    if let Err(e) = session
-                        .TryPauseAsync()
-                        .map_err(|e| AppError::Platform(e.to_string()))
-                    {
-                        error!("Failed to pause session {}: {:?}", i, e);
-                    }
+                    let _ = session.TryPauseAsync();
                 }
             }
         }
