@@ -2699,6 +2699,7 @@ dependencies = [
  "thiserror 2.0.18",
  "tokio",
  "windows 0.62.2",
+ "windows-future 0.3.2",
  "zbus 4.4.0",
 ]
 
