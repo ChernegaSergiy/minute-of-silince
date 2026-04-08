@@ -59,7 +59,7 @@ windows-future = "0.2.1"
 [target.'cfg(target_os = "linux")'.dependencies]
 alsa = "0.10"
 zbus = "5.14"
-cpal = { version = "0.15", features = ["jack"], default-features = false }
+cpal = { version = "0.17", features = ["jack"], default-features = false }
 
 [profile.release]
 opt-level = "s"      # optimize for binary size
