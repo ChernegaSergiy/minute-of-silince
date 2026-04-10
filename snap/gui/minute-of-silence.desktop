@@ -2,7 +2,7 @@
 Name=Хвилина мовчання
 Comment=Національна хвилина мовчання о 09:00
 Exec=minute-of-silence --hidden
-Icon=icon
+Icon=minute-of-silence
 Terminal=false
 Type=Application
 Categories=Utility;Clock;
