@@ -2,10 +2,10 @@
 Name=Хвилина мовчання
 Comment=Національна хвилина мовчання о 09:00
 Exec=minute-of-silence
-Icon=ua.minute_of_silence
+Icon=minute-of-silence
 Terminal=false
 Type=Application
 Categories=Utility;Clock;
 StartupNotify=true
 StartupWMClass=minute-of-silence
-X-Flatpak=ua.minute_of_silence
+X-Flatpak=minute-of-silence

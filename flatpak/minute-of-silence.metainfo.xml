@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <component type="desktop-application">
-  <id>ua.minute_of_silence</id>
+  <id>minute-of-silence</id>
   <metadata_license>CC0-1.0</metadata_license>
   <project_license>LicenseRef-CSSM-Unlimited-2.0</project_license>
   <name>Хвилина мовчання</name>
@@ -14,7 +14,7 @@
     </p>
   </description>
 
-  <launchable type="desktop-id">ua.minute_of_silence.desktop</launchable>
+  <launchable type="desktop-id">minute-of-silence.desktop</launchable>
 
   <url type="homepage">https://github.com/ChernegaSergiy/minute-of-silence</url>
   <url type="bugtracker">https://github.com/ChernegaSergiy/minute-of-silence/issues</url>
