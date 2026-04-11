@@ -62,11 +62,17 @@ parts:
       # Copy custom minimal ALSA config (Pulse redirect)
       mkdir -p $SNAPCRAFT_PART_INSTALL/etc
       cp snap/local/asound.conf $SNAPCRAFT_PART_INSTALL/etc/asound.conf
+      
+      # Install desktop file
+      mkdir -p $SNAPCRAFT_PART_INSTALL/usr/share/applications
+      cp snap/gui/minute-of-silence.desktop $SNAPCRAFT_PART_INSTALL/usr/share/applications/
 
 apps:
   minute-of-silence:
     command: bin/minute-of-silence
     extensions: [gnome]
+    desktop: usr/share/applications/minute-of-silence.desktop
+    autostart: minute-of-silence.desktop
     environment:
       TAURI_ENV_RESOURCES_PATH: $SNAP/bin
       # Direct redirection to PulseAudio via minimal config
