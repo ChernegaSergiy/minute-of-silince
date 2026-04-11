@@ -44,8 +44,6 @@ parts:
       - rustup
     stage-packages:
       - libasound2-plugins
-      - librsvg2-common
-      - glib-networking
     override-build: |
       # Setup Rust environment
       export PATH="$PATH:$HOME/.cargo/bin"
@@ -69,6 +67,7 @@ apps:
   minute-of-silence:
     command: bin/minute-of-silence
     extensions: [gnome]
+    desktop: snap/gui/minute-of-silence.desktop
     environment:
       TAURI_ENV_RESOURCES_PATH: $SNAP/bin
       # Direct redirection to PulseAudio via minimal config
@@ -83,7 +82,6 @@ apps:
       - desktop-legacy
       - x11
       - wayland
-      - unity7
       - opengl         # For WebKit/GPU acceleration
       - gsettings      # To access system settings
       - hardware-observe
