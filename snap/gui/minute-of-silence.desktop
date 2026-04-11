@@ -2,9 +2,9 @@
 Name=Хвилина мовчання
 Comment=Національна хвилина мовчання о 09:00
 Exec=minute-of-silence --hidden
-Icon=minute-of-silence
+Icon=${SNAP}/meta/gui/minute-of-silence.png
 Terminal=false
 Type=Application
 Categories=Utility;Clock;
 StartupNotify=true
-StartupWMClass=minute-of-silence
+StartupWMClass=Minute of Silence
