@@ -26,7 +26,7 @@ pub fn save_settings(app: AppHandle, state: State<'_, AppState>, settings: Setti
 
     // Apply autostart setting via the plugin.
     #[cfg(not(test))]
-    {
+    if std::env::var("SNAP").is_err() {
         use tauri_plugin_autostart::ManagerExt;
         let autostart_manager = app.autolaunch();
         if settings.autostart_enabled {
