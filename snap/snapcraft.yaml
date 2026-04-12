@@ -94,7 +94,6 @@ apps:
       - shared-memory
       - screen-inhibit-control
       - upower-observe
-      - autostart
 
 layout:
   # Map internal Snap paths to where Tauri expects resources on Linux
