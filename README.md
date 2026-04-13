@@ -44,7 +44,9 @@ Minute of Silence is a lightweight desktop application built with [Tauri 2](http
 
 ### Windows
 
-Download the `.msi` or `.exe` installer from the [Releases](https://github.com/ChernegaSergiy/minute-of-silence/releases) page and run it. The application will start in the system tray. Autostart can be enabled in the settings.
+[![Get it from Microsoft](https://get.microsoft.com/images/en-us%20dark.svg)](https://apps.microsoft.com/detail/9N6P3X0KDD5W)
+
+Alternatively, you can download the `.msi` or `.exe` installer from the [Releases](https://github.com/ChernegaSergiy/minute-of-silence/releases) page. The application will start in the system tray, and autostart can be enabled in the settings.
 
 ### Linux (Ubuntu / Debian)
 
