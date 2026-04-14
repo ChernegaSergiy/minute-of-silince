@@ -21,6 +21,7 @@ import {
 
 import { listen } from "@tauri-apps/api/event";
 import { open } from "@tauri-apps/plugin-shell";
+import { getVersion } from "@tauri-apps/api/app";
 import type { Settings, StatusSnapshot } from "./types";
 import { PRESET_LABELS } from "./types";
 import { t } from "./i18n";
@@ -30,6 +31,7 @@ export class App {
   private settings!: Settings;
   private cleanSettings!: Settings;
   private status!: StatusSnapshot;
+  private version: string = "...";
 
   constructor(root: HTMLElement) {
     this.root = root;
@@ -42,6 +44,7 @@ export class App {
         getStatus(),
       ]);
       this.cleanSettings = { ...this.settings };
+      this.version = await getVersion();
     } catch (err) {
       console.error("Failed to load initial data from backend:", err);
       return;
@@ -143,7 +146,7 @@ export class App {
       <div class="window">
         <header class="window__header">
           <span class="window__title">${t("header.title")}</span>
-          <span class="window__version">${t("header.version", { version: import.meta.env.PACKAGE_VERSION })}</span>
+          <span class="window__version">${t("header.version", { version: this.version })}</span>
         </header>
 
         <main class="window__body">
@@ -331,7 +334,7 @@ export class App {
               <p>${t("about.description")}</p>
 
               <div class="meta-row" style="flex-direction: column; align-items: flex-start; gap: 4px;">
-                <span>${t("about.version")} v${import.meta.env.PACKAGE_VERSION}</span>
+                <span>${t("about.version")} v${this.version}</span>
                 <span>${t("about.license")}</span>
               </div>
 

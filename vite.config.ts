@@ -4,9 +4,6 @@ const host = process.env.TAURI_DEV_HOST;
 
 export default defineConfig({
   base: "./",
-  define: {
-    "import.meta.env.PACKAGE_VERSION": JSON.stringify(process.env.npm_package_version),
-  },
 
   build: {
     outDir: "dist",

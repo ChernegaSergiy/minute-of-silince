@@ -1,7 +1,7 @@
 /// <reference types="vite/client" />
 
 interface ImportMetaEnv {
-  readonly PACKAGE_VERSION: string;
+  readonly [key: string]: string;
 }
 
 interface ImportMeta {
