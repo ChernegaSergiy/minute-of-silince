@@ -242,44 +242,22 @@ impl AudioEngine {
     }
 
     /// Resolves the absolute path to an audio resource using Tauri's path resolver.
+    /// Works on all platforms: EXE, MSI, MSIX, AppImage, Snap.
     fn get_path(&self, filename: &str) -> Result<PathBuf> {
         let resource_path = format!("audio/{}", filename);
 
-        // 1. Try Tauri's standard resource resolver
-        let tauri_path = self
+        let path = self
             .app_handle
             .path()
             .resolve(&resource_path, tauri::path::BaseDirectory::Resource)
-            .ok();
+            .map_err(|e| {
+                AppError::Audio(format!(
+                    "Failed to resolve audio path '{}': {}",
+                    filename, e
+                ))
+            })?;
 
-        // 2. Try relative to the executable (common in Snap bin/)
-        let exe_path = std::env::current_exe()
-            .ok()
-            .and_then(|p| p.parent().map(|d| d.join("audio").join(filename)));
-
-        // 3. Try hardcoded Snap layout path
-        let layout_path = Some(PathBuf::from(format!(
-            "/usr/lib/minute-of-silence/audio/{}",
-            filename
-        )));
-
-        let candidates = vec![tauri_path, exe_path, layout_path];
-
-        for candidate in candidates.into_iter().flatten() {
-            if candidate.exists() {
-                log::info!("Found audio at: {:?}", candidate);
-                return Ok(candidate);
-            }
-            log::debug!("Audio not found at: {:?}", candidate);
-        }
-
-        log::error!(
-            "Audio resource {} not found in any candidate path",
-            filename
-        );
-        Err(AppError::Audio(format!(
-            "Audio file not found: {}",
-            filename
-        )))
+        log::info!("Audio resource path: {:?}", path);
+        Ok(path)
     }
 }
