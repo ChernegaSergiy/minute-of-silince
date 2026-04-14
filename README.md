@@ -131,7 +131,8 @@ minute-of-silence/
 |   +-- audio/                   # Source audio files (.ogg)
 |   \-- tests/                   # Rust integration tests
 +-- docs/
-|   \-- architecture.md          # System design and data flow
+|   +-- architecture.md          # System design and data flow
+|   \-- images/                  # Documentation images (screenshots)
 +-- public/                      # Static assets (logo, etc.)
 +-- .github/
 |   +-- workflows/ci.yml         # CI/CD pipeline (lint, test, build)
