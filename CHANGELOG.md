@@ -9,6 +9,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.5.3] - 2026-04-14
+
+### Fixed
+- Audio playback in MSIX packages: switched to Tauri's native path resolver for cross-platform resource paths.
+
+### Refactored
+- Frontend version display now uses Tauri's `getVersion()` API instead of duplicating version in `package.json`.
+
 ## [0.5.2] - 2026-04-14
 
 ### Added
