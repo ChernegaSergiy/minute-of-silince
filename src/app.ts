@@ -390,7 +390,7 @@ export class App {
         (key) =>
           `<option value="${key}" ${
             this.settings.preset === key ? "selected" : ""
-          }>${t("presets." + key)}</option>`
+          }>${t("controls.presets." + key)}</option>`
       )
       .join("");
   }
