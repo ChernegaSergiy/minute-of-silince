@@ -49,6 +49,7 @@ export const PRESET_LABELS: Record<AudioPreset, string> = {
   metronome_anthem: "Метроном + гімн",
   bell_silence_bell: "Дзвін + тиша + дзвін",
   bell_metronome_bell: "Дзвін + метроном + дзвін",
+  silence: "Тиша",
 };
 
 export const DEFAULT_SETTINGS: Settings = {
