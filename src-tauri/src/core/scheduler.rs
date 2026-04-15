@@ -54,7 +54,6 @@ impl CeremonyScheduler {
                 let mins = inner.settings.reminder_minutes_before;
 
                 if !inner.settings.reminder_enabled
-                    || mins == 0
                     || !inner.settings.ceremony_enabled
                     || inner.skip_date == Some(today)
                     || inner.last_activation.map(|dt| dt.date_naive()) == Some(today)
@@ -63,9 +62,13 @@ impl CeremonyScheduler {
                     None
                 } else {
                     let ceremony_time = NaiveTime::from_hms_opt(9, 0, 0).unwrap();
-                    // Safe subtraction: reminder_at is always before 09:00
-                    // (mins is 1–10, so at minimum 08:50)
-                    let remind_at = ceremony_time - chrono::Duration::minutes(mins as i64);
+                    // For "immediately" (mins == 0), remind_at is 09:00
+                    // For scheduled reminders (mins > 0), remind_at is before 09:00
+                    let remind_at = if mins == 0 {
+                        ceremony_time
+                    } else {
+                        ceremony_time - chrono::Duration::minutes(mins as i64)
+                    };
 
                     let fire = now_time.hour() == remind_at.hour()
                         && now_time.minute() == remind_at.minute()
