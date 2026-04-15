@@ -41,18 +41,6 @@ export interface StatusSnapshot {
 
 // UI helpers
 
-export const PRESET_LABELS: Record<AudioPreset, string> = {
-  voice_metronome: "Голос + метроном",
-  metronome_only: "Метроном",
-  voice_silence_bell: "Голос + тиша + дзвін",
-  voice_silence: "Голос + тиша",
-  voice_metronome_anthem: "Голос + метроном + гімн",
-  metronome_anthem: "Метроном + гімн",
-  bell_silence_bell: "Дзвін + тиша + дзвін",
-  bell_metronome_bell: "Дзвін + метроном + дзвін",
-  silence: "Тиша",
-};
-
 export const DEFAULT_SETTINGS: Settings = {
   ceremonyEnabled: true,
   autostartEnabled: true,

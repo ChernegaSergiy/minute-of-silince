@@ -23,7 +23,6 @@ import { listen } from "@tauri-apps/api/event";
 import { open } from "@tauri-apps/plugin-shell";
 import { getVersion } from "@tauri-apps/api/app";
 import type { Settings, StatusSnapshot } from "./types";
-import { PRESET_LABELS } from "./types";
 import { t } from "./i18n";
 
 export class App {
@@ -376,8 +375,18 @@ export class App {
   }
 
   private renderPresetOptions(): string {
-    return (Object.keys(PRESET_LABELS) as Array<keyof typeof PRESET_LABELS>)
-      .map(
+    const presets: Array<"voice_metronome" | "metronome_only" | "voice_silence_bell" | "voice_silence" | "voice_metronome_anthem" | "metronome_anthem" | "bell_silence_bell" | "bell_metronome_bell" | "silence"> = [
+      "voice_metronome",
+      "metronome_only",
+      "voice_silence_bell",
+      "voice_silence",
+      "voice_metronome_anthem",
+      "metronome_anthem",
+      "bell_silence_bell",
+      "bell_metronome_bell",
+      "silence",
+    ];
+    return presets.map(
         (key) =>
           `<option value="${key}" ${
             this.settings.preset === key ? "selected" : ""
