@@ -158,3 +158,7 @@ Please make sure to update tests as appropriate and adhere to the existing codin
 ## License
 
 This project is licensed under the CSSM Unlimited License v2.0 (CSSM-ULv2). See the [LICENSE](LICENSE) file for details.
+
+## Acknowledgments
+
+- Inspired by the [Bohdan Hdal's Minute of Silence app](https://bohdan.com.ua/memoryminute)
