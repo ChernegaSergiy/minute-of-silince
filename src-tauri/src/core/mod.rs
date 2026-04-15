@@ -7,6 +7,7 @@ pub mod settings;
 
 use crate::core::audio::AudioEngine;
 use crate::core::platform::Platform;
+use crate::core::settings::AudioPreset;
 use crate::state::AppState;
 use std::sync::{Arc, Mutex};
 use tauri::{AppHandle, Emitter, Manager};
@@ -62,8 +63,8 @@ impl CeremonyManager {
             let _ = self.platform.pause_media().await;
         }
 
-        // 4. Handle Volume and Mute
-        if auto_unmute {
+        // 4. Handle Volume and Mute (skip for Silence preset)
+        if auto_unmute && preset != AudioPreset::Silence {
             // Save mute state and unmute if necessary
             if let Ok(muted) = self.platform.is_muted() {
                 if muted {
@@ -73,7 +74,7 @@ impl CeremonyManager {
             }
         }
 
-        if volume_priority {
+        if volume_priority && preset != AudioPreset::Silence {
             // Save and set volume
             if let Ok(vol) = self.platform.get_volume() {
                 *PREVIOUS_VOLUME.lock().unwrap() = Some(vol);
