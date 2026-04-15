@@ -9,6 +9,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.6.0] - 2026-04-15
+
+### Added
+- Acknowledgments: Added credits to Bohdan Hdal's original mobile app in README.md and About tab.
+
+### Dependencies
+- Updated Rust dependencies: rust-i18n 4.0 (up to 3x performance improvement), windows-future 0.3.2, tokio 1.52. MSRV updated to Rust 1.80.
+
 ## [0.5.3] - 2026-04-14
 
 ### Fixed
