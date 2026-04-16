@@ -14,6 +14,7 @@ import {
   saveSettings,
   skipNext,
   unskipNext,
+  syncNtpNow,
   triggerCeremonyNow,
   onCeremonyStart,
   onCeremonyEnd,
@@ -598,7 +599,6 @@ export class App {
       if (ntpEl) ntpEl.textContent = t("status.ntp_syncing");
  
       try {
-        const { syncNtpNow } = await import("./api");
         this.status = await syncNtpNow();
         this.updateStatusUI();
       } catch (err) {
