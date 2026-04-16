@@ -112,12 +112,14 @@ impl CeremonyScheduler {
                     let last_activated = inner.last_activation.map(|dt| dt.date_naive());
                     if last_activated == Some(today) || inner.skip_date == Some(today) {
                         false
-                    } else if self.is_within_window(now_time, ceremony_time, grace_minutes) {
-                        true
                     } else if Self::preset_has_announcement(inner.settings.preset) {
+                        // Compensation window: [09:00 - duration, 09:00)
                         let window_start = ceremony_time
                             - chrono::Duration::seconds(self.announcement_duration.as_secs() as i64);
                         now_time >= window_start && now_time < ceremony_time
+                    } else if self.is_within_window(now_time, ceremony_time, grace_minutes) {
+                        // Grace window: [09:00, 09:00 + grace)
+                        true
                     } else {
                         false
                     }
