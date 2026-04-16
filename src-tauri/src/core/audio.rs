@@ -1,6 +1,6 @@
 //! Backend audio playback engine.
 
-use rodio::{Decoder, DeviceSinkBuilder, Player};
+use rodio::{Decoder, DeviceSinkBuilder, Player, Source};
 use std::fs::File;
 use std::io::BufReader;
 use std::path::PathBuf;
@@ -57,6 +57,14 @@ impl AudioEngine {
             thread::sleep(Duration::from_millis(50));
         }
         false
+    }
+
+    pub fn get_duration(&self, filename: &str) -> Result<Duration> {
+        let path = self.get_path(filename)?;
+        let source = Decoder::new(BufReader::new(File::open(&path)?))
+            .map_err(|e| AppError::Audio(format!("Failed to decode audio file: {}", e)))?;
+        let duration = source.total_duration().unwrap_or(Duration::ZERO);
+        Ok(duration)
     }
 
     pub fn play_preset(&self, preset: AudioPreset, volume: u8) -> Result<()> {
