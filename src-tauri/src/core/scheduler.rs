@@ -186,10 +186,6 @@ impl CeremonyScheduler {
         )
     }
 
-    fn get_announcement_duration(&self) -> Duration {
-        self.announcement_duration
-    }
-
     fn get_synchronized_now(&self) -> chrono::DateTime<Local> {
         let state = self.app.state::<AppState>();
         let ntp_offset = state.ntp_service.get_offset();
