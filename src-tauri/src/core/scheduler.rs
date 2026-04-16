@@ -2,10 +2,12 @@
 
 use chrono::{Local, NaiveDate, NaiveTime, Timelike};
 use std::sync::Arc;
+use std::time::Duration;
 use tauri::{AppHandle, Emitter, Manager};
 use tauri_plugin_notification::NotificationExt;
 
 use crate::core::audio::AudioEngine;
+use crate::core::settings::AudioPreset;
 use crate::core::CeremonyManager;
 use crate::state::AppState;
 
@@ -95,12 +97,20 @@ impl CeremonyScheduler {
                 if !inner.settings.ceremony_enabled {
                     false
                 } else if !inner.ceremony_active {
-                    let ceremony_time = NaiveTime::from_hms_opt(9, 0, 0).unwrap();
                     let grace_minutes = inner.settings.late_start_grace_minutes;
+                    let ceremony_time = NaiveTime::from_hms_opt(9, 0, 0).unwrap();
 
-                    if self.is_within_window(now_time, ceremony_time, grace_minutes) {
-                        let last_activated = inner.last_activation.map(|dt| dt.date_naive());
-                        last_activated != Some(today) && inner.skip_date != Some(today)
+                    // Check if already triggered today
+                    let last_activated = inner.last_activation.map(|dt| dt.date_naive());
+                    if last_activated == Some(today) || inner.skip_date == Some(today) {
+                        false
+                    } else if self.is_within_window(now_time, ceremony_time, grace_minutes) {
+                        true
+                    } else if Self::preset_has_announcement(inner.settings.preset) {
+                        let announcement_duration = self.get_announcement_duration();
+                        let window_start = ceremony_time
+                            - chrono::Duration::seconds(announcement_duration.as_secs() as i64);
+                        now_time >= window_start && now_time < ceremony_time
                     } else {
                         false
                     }
@@ -157,6 +167,22 @@ impl CeremonyScheduler {
         }
         let elapsed_secs = (now - target).num_seconds();
         elapsed_secs <= (grace_minutes as i64) * 60
+    }
+
+    fn preset_has_announcement(preset: AudioPreset) -> bool {
+        matches!(
+            preset,
+            AudioPreset::VoiceMetronome
+                | AudioPreset::VoiceSilenceBell
+                | AudioPreset::VoiceSilence
+                | AudioPreset::VoiceMetronomeAnthem
+        )
+    }
+
+    fn get_announcement_duration(&self) -> Duration {
+        self.audio
+            .get_duration("announcement.ogg")
+            .unwrap_or(Duration::ZERO)
     }
 
     fn get_synchronized_now(&self) -> chrono::DateTime<Local> {
