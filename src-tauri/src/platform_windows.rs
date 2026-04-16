@@ -145,3 +145,72 @@ pub mod power {
         wparam == PBT_APMRESUMESUSPEND as usize || wparam == PBT_APMRESUMEAUTOMATIC as usize
     }
 }
+
+pub mod autostart {
+    #[allow(dead_code)]
+    pub fn is_running_as_msix() -> bool {
+        windows::ApplicationModel::Package::Current().is_ok()
+    }
+
+    #[allow(dead_code)]
+    pub fn configure(enabled: bool) {
+        std::thread::spawn(move || {
+            let rt = tokio::runtime::Builder::new_current_thread()
+                .enable_all()
+                .build()
+                .expect("Failed to create tokio runtime for MSIX autostart");
+
+            rt.block_on(async {
+                use windows::core::HSTRING;
+                use windows::ApplicationModel::StartupTask;
+
+                let task_id = HSTRING::from("MinuteOfSilenceStartup");
+
+                let op = match StartupTask::GetAsync(&task_id) {
+                    Ok(op) => op,
+                    Err(e) => {
+                        log::warn!("Failed to get MSIX startup task: {:?}", e);
+                        return;
+                    }
+                };
+                let task = match op.await {
+                    Ok(t) => t,
+                    Err(e) => {
+                        log::warn!("Failed to await MSIX startup task: {:?}", e);
+                        return;
+                    }
+                };
+
+                if enabled {
+                    match task.State() {
+                        Ok(state) => {
+                            if state == windows::ApplicationModel::StartupTaskState::Enabled {
+                                log::info!("MSIX autostart already enabled");
+                            } else {
+                                let enable_op = match task.RequestEnableAsync() {
+                                    Ok(op) => op,
+                                    Err(e) => {
+                                        log::warn!("Failed to request MSIX autostart: {:?}", e);
+                                        return;
+                                    }
+                                };
+                                match enable_op.await {
+                                    Ok(_) => log::info!("MSIX autostart enabled"),
+                                    Err(e) => {
+                                        log::warn!("Failed to enable MSIX autostart: {:?}", e)
+                                    }
+                                }
+                            }
+                        }
+                        Err(e) => log::warn!("Failed to get MSIX autostart state: {:?}", e),
+                    }
+                } else {
+                    match task.Disable() {
+                        Ok(_) => log::info!("MSIX autostart disabled"),
+                        Err(e) => log::warn!("Failed to disable MSIX autostart: {:?}", e),
+                    }
+                }
+            });
+        });
+    }
+}
