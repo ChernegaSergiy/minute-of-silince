@@ -9,7 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-## [0.6.3] - 2026-04-16
+## [0.6.3] - 2026-04-17
 
 ### Added
 - Precise timing for presets with voice announcement to ensure silence starts at exactly 09:00.
@@ -17,6 +17,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 - Audio duration detection now uses symphonia for accurate OGG metadata reading.
 - Updated Linux audio dependencies: alsa 0.11 and cpal 0.17.3.
+
+### Fixed
+- Removed unnecessary dynamic import of syncNtpNow in frontend.
 
 ### Removed
 - Unused audio files from the package.
