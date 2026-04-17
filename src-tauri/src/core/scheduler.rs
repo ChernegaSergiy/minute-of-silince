@@ -16,6 +16,7 @@ pub struct CeremonyScheduler {
     app: AppHandle,
     audio: Arc<AudioEngine>,
     announcement_duration: Duration,
+    bell_duration: Duration,
 }
 
 impl CeremonyScheduler {
@@ -24,14 +25,17 @@ impl CeremonyScheduler {
         let announcement_duration = audio
             .get_duration("announcement.ogg")
             .unwrap_or(Duration::ZERO);
+        let bell_duration = audio.get_duration("bell.ogg").unwrap_or(Duration::ZERO);
         log::info!(
             "Announcement duration: {:.2}s",
             announcement_duration.as_secs_f32()
         );
+        log::info!("Bell duration: {:.2}s", bell_duration.as_secs_f32());
         Self {
             app,
             audio,
             announcement_duration,
+            bell_duration,
         }
     }
 
@@ -116,25 +120,34 @@ impl CeremonyScheduler {
                     let last_activated = inner.last_activation.map(|dt| dt.date_naive());
                     if last_activated == Some(today) || inner.skip_date == Some(today) {
                         false
-                    } else if Self::preset_has_announcement(inner.settings.preset) {
-                        // Compensation window: [09:00 - duration, 09:00)
-                        let window_start = ceremony_time
-                            - chrono::Duration::seconds(self.announcement_duration.as_secs() as i64);
-                        let should = now_time >= window_start && now_time < ceremony_time;
-                        if now_time.hour() == 8 && now_time.minute() == 59 {
-                            log::info!(
-                                "Compensation check: now={}, window_start={}, should_trigger={}",
-                                now_time,
-                                window_start,
-                                should
-                            );
-                        }
-                        should
-                    } else if self.is_within_window(now_time, ceremony_time, grace_minutes) {
-                        // Grace window: [09:00, 09:00 + grace)
-                        true
                     } else {
-                        false
+                        let compensation = Self::get_compensation_duration(
+                            inner.settings.preset,
+                            self.announcement_duration,
+                            self.bell_duration,
+                        );
+                        if compensation > Duration::ZERO {
+                            // Compensation window: [09:00 - duration, 09:00)
+                            let window_start = ceremony_time
+                                - chrono::Duration::seconds(compensation.as_secs() as i64);
+                            let should = now_time >= window_start && now_time < ceremony_time;
+                            if now_time.hour() == 8 && now_time.minute() == 59 {
+                                log::info!(
+                                    "Compensation check: preset={:?}, compensation={:.2}s, now={}, window_start={}, should_trigger={}",
+                                    inner.settings.preset,
+                                    compensation.as_secs_f32(),
+                                    now_time,
+                                    window_start,
+                                    should
+                                );
+                            }
+                            should
+                        } else if self.is_within_window(now_time, ceremony_time, grace_minutes) {
+                            // Grace window: [09:00, 09:00 + grace)
+                            true
+                        } else {
+                            false
+                        }
                     }
                 } else {
                     false
@@ -200,6 +213,27 @@ impl CeremonyScheduler {
                 | AudioPreset::VoiceSilence
                 | AudioPreset::VoiceMetronomeAnthem
         )
+    }
+
+    fn preset_has_bell(preset: AudioPreset) -> bool {
+        matches!(
+            preset,
+            AudioPreset::BellSilenceBell | AudioPreset::BellMetronomeBell
+        )
+    }
+
+    fn get_compensation_duration(
+        preset: AudioPreset,
+        announcement_duration: Duration,
+        bell_duration: Duration,
+    ) -> Duration {
+        if Self::preset_has_announcement(preset) {
+            announcement_duration
+        } else if Self::preset_has_bell(preset) {
+            bell_duration
+        } else {
+            Duration::ZERO
+        }
     }
 
     fn get_synchronized_now(&self) -> chrono::DateTime<Local> {
