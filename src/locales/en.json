@@ -54,11 +54,11 @@
     },
     "voice": {
       "label": "Announcement voice",
-      "description": "Select voice for the pre-ceremony announcement.",
+      "description": "Select voice for the pre-ceremony announcement. Some voices have only the announcement without the ending.",
       "bohdan_hdal": "Bohdan Hdal",
       "sonia_sotnyk": "Sonia Sotnyk (Vshanui)",
       "dania_khomutovskyi": "Dania Khomutovskyi (Vshanui)",
-      "air_alert": "From Air Alert app (no 'Slava Ukrajini')"
+      "air_alert": "From Air Alert app"
     },
     "presets": {
       "voice_metronome": "Voice + metronome",
