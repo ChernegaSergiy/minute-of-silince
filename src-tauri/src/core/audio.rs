@@ -126,7 +126,8 @@ impl AudioEngine {
                 if self.is_stopped(start_counter) {
                     return Ok(());
                 }
-                let announcement = self.get_path("announcement.ogg")?;
+                let announcement_file = self.get_announcement_filename(voice);
+                let announcement = self.get_path(&announcement_file)?;
                 let metronome = self.get_path("metronome.ogg")?;
 
                 if let Ok(source) = Decoder::new(BufReader::new(File::open(&announcement)?)) {
@@ -149,7 +150,8 @@ impl AudioEngine {
                 if self.is_stopped(start_counter) {
                     return Ok(());
                 }
-                let announcement = self.get_path("announcement.ogg")?;
+                let announcement_file = self.get_announcement_filename(voice);
+                let announcement = self.get_path(&announcement_file)?;
                 let bell = self.get_path("bell.ogg")?;
 
                 if let Ok(source) = Decoder::new(BufReader::new(File::open(&announcement)?)) {
@@ -171,7 +173,8 @@ impl AudioEngine {
                 if self.is_stopped(start_counter) {
                     return Ok(());
                 }
-                let announcement = self.get_path("announcement.ogg")?;
+                let announcement_file = self.get_announcement_filename(voice);
+                let announcement = self.get_path(&announcement_file)?;
                 if let Ok(source) = Decoder::new(BufReader::new(File::open(&announcement)?)) {
                     player.append(source);
                 }
@@ -187,7 +190,8 @@ impl AudioEngine {
                 if self.is_stopped(start_counter) {
                     return Ok(());
                 }
-                let announcement = self.get_path("announcement.ogg")?;
+                let announcement_file = self.get_announcement_filename(voice);
+                let announcement = self.get_path(&announcement_file)?;
                 let metronome = self.get_path("metronome.ogg")?;
                 let anthem = self.get_path("anthem.ogg")?;
 
@@ -295,6 +299,12 @@ impl AudioEngine {
 
         self.wait_player_interruptible(&player, start_counter);
         Ok(())
+    }
+
+    fn get_announcement_filename(&self, voice: AnnouncementVoice) -> String {
+        match voice {
+            AnnouncementVoice::BohdanHdal => "announcement.ogg".to_string(),
+        }
     }
 
     /// Resolves the absolute path to an audio resource using Tauri's path resolver.
