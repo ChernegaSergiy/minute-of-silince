@@ -133,6 +133,14 @@ impl AudioEngine {
                 if let Ok(source) = Decoder::new(BufReader::new(File::open(&announcement)?)) {
                     player.append(source);
                 }
+
+                if self.wait_player_interruptible(&player, start_counter) {
+                    return Ok(());
+                }
+                if self.sleep_interruptible(Duration::from_secs(1), start_counter) {
+                    return Ok(());
+                }
+
                 if let Ok(source) = Decoder::new(BufReader::new(File::open(&metronome)?)) {
                     player.append(source);
                 }
@@ -239,6 +247,7 @@ impl AudioEngine {
                     if let Ok(source) = Decoder::new(BufReader::new(File::open(&metronome)?)) {
                         player.append(source);
                     }
+                    self.wait_player_interruptible(&player, start_counter);
                     return Ok(());
                 }
 
