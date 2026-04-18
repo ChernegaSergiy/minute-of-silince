@@ -55,7 +55,8 @@
     "voice": {
       "label": "Announcement voice",
       "description": "Select voice for the pre-ceremony announcement.",
-      "bohdan_hdal": "Bohdan Hdal"
+      "bohdan_hdal": "Bohdan Hdal",
+      "air_alert": "From Air Alert app"
     },
     "presets": {
       "voice_metronome": "Voice + metronome",
