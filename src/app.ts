@@ -390,12 +390,13 @@ export class App {
   }
 
   private renderPresetOptions(): string {
-    const presets: Array<"voice_metronome" | "metronome_only" | "voice_silence_bell" | "voice_silence" | "voice_metronome_anthem" | "metronome_anthem" | "bell_silence_bell" | "bell_metronome_bell" | "silence"> = [
+    const presets: Array<"voice_metronome" | "metronome_only" | "voice_silence_bell" | "voice_silence" | "voice_metronome_anthem" | "voice_metronome_ending" | "metronome_anthem" | "bell_silence_bell" | "bell_metronome_bell" | "silence"> = [
       "voice_metronome",
       "metronome_only",
       "voice_silence_bell",
       "voice_silence",
       "voice_metronome_anthem",
+      "voice_metronome_ending",
       "metronome_anthem",
       "bell_silence_bell",
       "bell_metronome_bell",

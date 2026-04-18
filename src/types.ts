@@ -10,6 +10,7 @@ export type AudioPreset =
   | "voice_silence_bell"
   | "voice_silence"
   | "voice_metronome_anthem"
+  | "voice_metronome_ending"
   | "metronome_anthem"
   | "bell_silence_bell"
   | "bell_metronome_bell"
