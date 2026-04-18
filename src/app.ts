@@ -268,6 +268,8 @@ export class App {
               </div>
               <select id="voiceSelect" class="select">
                 <option value="bohdan_hdal" ${this.settings.announcementVoice === "bohdan_hdal" ? "selected" : ""}>${t("controls.voice.bohdan_hdal")}</option>
+                <option value="sonia_sotnyk" ${this.settings.announcementVoice === "sonia_sotnyk" ? "selected" : ""}>${t("controls.voice.sonia_sotnyk")}</option>
+                <option value="dania_khomutovskyi" ${this.settings.announcementVoice === "dania_khomutovskyi" ? "selected" : ""}>${t("controls.voice.dania_khomutovskyi")}</option>
                 <option value="air_alert" ${this.settings.announcementVoice === "air_alert" ? "selected" : ""}>${t("controls.voice.air_alert")}</option>
               </select>
             </div>

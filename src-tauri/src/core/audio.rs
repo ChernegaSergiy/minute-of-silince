@@ -304,6 +304,8 @@ impl AudioEngine {
     fn get_announcement_filename(&self, voice: AnnouncementVoice) -> String {
         match voice {
             AnnouncementVoice::BohdanHdal => "announcement.ogg".to_string(),
+            AnnouncementVoice::SoniaSotnyk => "announcement_sotnyk.ogg".to_string(),
+            AnnouncementVoice::DaniaKhomutovskyi => "announcement_khomutovskyi.ogg".to_string(),
             AnnouncementVoice::AirAlert => "announcement_air_alert.ogg".to_string(),
         }
     }
