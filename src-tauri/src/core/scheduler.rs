@@ -57,7 +57,10 @@ impl CeremonyScheduler {
     }
 
     fn get_default_duration(&self) -> Duration {
-        *self.voice_durations.get(&AnnouncementVoice::BohdanHdal).unwrap()
+        *self
+            .voice_durations
+            .get(&AnnouncementVoice::BohdanHdal)
+            .unwrap()
     }
 
     /// Run the main scheduler loop.
@@ -143,7 +146,10 @@ impl CeremonyScheduler {
                         false
                     } else {
                         let voice = inner.settings.announcement_voice;
-                        let voice_duration = *self.voice_durations.get(&voice).unwrap_or(&self.get_default_duration());
+                        let voice_duration = *self
+                            .voice_durations
+                            .get(&voice)
+                            .unwrap_or(&self.get_default_duration());
                         let compensation = Self::get_compensation_duration(
                             inner.settings.preset,
                             voice_duration,
