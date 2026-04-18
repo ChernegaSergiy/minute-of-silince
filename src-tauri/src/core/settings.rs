@@ -65,6 +65,7 @@ pub struct Settings {
 #[serde(rename_all = "snake_case")]
 pub enum AnnouncementVoice {
     BohdanHdal,
+    AirAlert,
 }
 
 impl Default for Settings {

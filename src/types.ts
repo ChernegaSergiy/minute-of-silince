@@ -1,6 +1,6 @@
 // Mirror of Rust `AnnouncementVoice` enum
 
-export type AnnouncementVoice = "bohdan_hdal";
+export type AnnouncementVoice = "bohdan_hdal" | "air_alert";
 
 // Mirror of Rust `Settings` struct
 

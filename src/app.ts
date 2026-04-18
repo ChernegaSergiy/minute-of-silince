@@ -268,6 +268,7 @@ export class App {
               </div>
               <select id="voiceSelect" class="select">
                 <option value="bohdan_hdal" ${this.settings.announcementVoice === "bohdan_hdal" ? "selected" : ""}>${t("controls.voice.bohdan_hdal")}</option>
+                <option value="air_alert" ${this.settings.announcementVoice === "air_alert" ? "selected" : ""}>${t("controls.voice.air_alert")}</option>
               </select>
             </div>
 
