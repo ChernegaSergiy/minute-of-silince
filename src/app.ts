@@ -23,7 +23,7 @@ import {
 import { listen } from "@tauri-apps/api/event";
 import { open } from "@tauri-apps/plugin-shell";
 import { getVersion } from "@tauri-apps/api/app";
-import type { Settings, StatusSnapshot } from "./types";
+import type { Settings, StatusSnapshot, AudioPreset } from "./types";
 import { t } from "./i18n";
 
 export class App {
@@ -390,7 +390,7 @@ export class App {
   }
 
   private renderPresetOptions(): string {
-    const presets: Array<"voice_metronome" | "metronome_only" | "voice_silence_bell" | "voice_silence" | "voice_metronome_anthem" | "voice_metronome_ending" | "metronome_anthem" | "bell_silence_bell" | "bell_metronome_bell" | "silence"> = [
+    const presets: AudioPreset[] = [
       "voice_metronome",
       "metronome_only",
       "voice_silence_bell",
@@ -402,6 +402,7 @@ export class App {
       "bell_metronome_bell",
       "silence",
     ];
+
     return presets.map(
         (key) =>
           `<option value="${key}" ${
@@ -536,7 +537,7 @@ export class App {
       this.checkDirty();
     });
  
-// Preset select
+    // Preset select
     this.q<HTMLSelectElement>("#presetSelect").addEventListener("change", (e) => {
       this.settings = {
         ...this.settings,
