@@ -144,6 +144,8 @@ pub enum AudioPreset {
     VoiceSilence,
     /// Voice announcement + metronome + national anthem
     VoiceMetronomeAnthem,
+    /// Voice announcement + metronome + ending
+    VoiceMetronomeEnding,
     /// Metronome + national anthem
     MetronomeAnthem,
     /// Bell + 60 s silence + bell
@@ -162,6 +164,7 @@ impl std::fmt::Display for AudioPreset {
             Self::VoiceSilenceBell => "Голос + тиша + дзвін",
             Self::VoiceSilence => "Голос + тиша",
             Self::VoiceMetronomeAnthem => "Голос + метроном + гімн",
+            Self::VoiceMetronomeEnding => "Голос + метроном + завершення",
             Self::MetronomeAnthem => "Метроном + гімн",
             Self::BellSilenceBell => "Дзвін + тиша + дзвін",
             Self::BellMetronomeBell => "Дзвін + метроном + дзвін",

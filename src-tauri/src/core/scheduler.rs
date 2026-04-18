@@ -241,6 +241,7 @@ impl CeremonyScheduler {
                 | AudioPreset::VoiceSilenceBell
                 | AudioPreset::VoiceSilence
                 | AudioPreset::VoiceMetronomeAnthem
+                | AudioPreset::VoiceMetronomeEnding
         )
     }
 

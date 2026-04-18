@@ -218,6 +218,9 @@ impl AudioEngine {
                     player.append(source);
                 }
             }
+            (AudioPreset::VoiceMetronomeEnding, _) => {
+                todo!("VoiceMetronomeEnding not implemented yet")
+            }
             (AudioPreset::MetronomeAnthem, _) => {
                 if self.is_stopped(start_counter) {
                     return Ok(());
