@@ -52,6 +52,11 @@
       "label": "Companion mode",
       "description": "Select audio accompaniment: voice, metronome, bell, or anthem."
     },
+    "voice": {
+      "label": "Announcement voice",
+      "description": "Select voice for the pre-ceremony announcement.",
+      "bohdan_hdal": "Bohdan Hdal"
+    },
     "presets": {
       "voice_metronome": "Voice + metronome",
       "metronome_only": "Metronome",
