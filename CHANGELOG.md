@@ -9,6 +9,23 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.6.4] - 2026-04-19
+
+### Added
+- Voice selection for announcement with 4 options:
+  - Bohdan Hdal (original)
+  - Sonia Sotnyk (Vshanui)
+  - Dania Khomutovskyi (Vshanui)
+  - Air Alert app
+- New audio presets with endings: "Voice + metronome + ending"
+- Ending voice files: "Vichna slava Herojam" and "Slava Ukrajini"
+
+### Fixed
+- Voice duration now uses selected voice instead of hardcoded announcement.
+- Wait for voice announcement to finish before playing metronome.
+- Skip ending for Air Alert voice in VoiceMetronomeEnding preset.
+- Voice durations cached at startup to avoid repeated file reads.
+
 ## [0.6.3] - 2026-04-17
 
 ### Added
