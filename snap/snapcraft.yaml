@@ -4,7 +4,7 @@
 name: minute-of-silence
 title: Хвилина мовчання
 base: core24
-version: '0.6.3'
+version: '0.6.4'
 icon: snap/gui/minute-of-silence.png
 summary: Національна хвилина мовчання о 09:00
 description: |
