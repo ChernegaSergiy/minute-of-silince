@@ -155,28 +155,30 @@ impl CeremonyScheduler {
                             voice_duration,
                             self.bell_duration,
                         );
-                        if compensation > Duration::ZERO {
-                            // Compensation window: [09:00 - duration, 09:00)
-                            let window_start = ceremony_time
-                                - chrono::Duration::seconds(compensation.as_secs() as i64);
-                            let should = now_time >= window_start && now_time < ceremony_time;
-                            if now_time.hour() == 8 && now_time.minute() == 59 {
-                                log::info!(
-                                    "Compensation check: preset={:?}, compensation={:.2}s, now={}, window_start={}, should_trigger={}",
-                                    inner.settings.preset,
-                                    compensation.as_secs_f32(),
-                                    now_time,
-                                    window_start,
-                                    should
-                                );
-                            }
-                            should
-                        } else if self.is_within_window(now_time, ceremony_time, grace_minutes) {
-                            // Grace window: [09:00, 09:00 + grace)
-                            true
-                        } else {
-                            false
+                        // Check compensation window first: [09:00 - duration, 09:00)
+                        let window_start = ceremony_time
+                            - chrono::Duration::seconds(compensation.as_secs() as i64);
+                        let in_compensation_window =
+                            now_time >= window_start && now_time < ceremony_time;
+
+                        // Also check grace window: [09:00, 09:00 + grace)
+                        let in_grace_window =
+                            self.is_within_window(now_time, ceremony_time, grace_minutes);
+
+                        let should = in_compensation_window || in_grace_window;
+                        if should && now_time.hour() == 8 && now_time.minute() == 59 {
+                            log::info!(
+                                "Trigger check: preset={:?}, compensation={:.2}s, now={}, window_start={}, in_compensation={}, in_grace={}, should_trigger={}",
+                                inner.settings.preset,
+                                compensation.as_secs_f32(),
+                                now_time,
+                                window_start,
+                                in_compensation_window,
+                                in_grace_window,
+                                should
+                            );
                         }
+                        should
                     }
                 } else {
                     false
