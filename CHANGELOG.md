@@ -9,6 +9,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+- Fixed ceremony not triggering in grace window when started after 09:00.
+
 ## [0.6.5] - 2026-04-19
 
 ### Added
