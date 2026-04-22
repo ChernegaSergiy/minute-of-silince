@@ -26,7 +26,7 @@
     "@eslint/js": "^10.0.1",
     "@tauri-apps/cli": "^2.0.0",
     "@types/node": "^25.6.0",
-    "@typescript-eslint/eslint-plugin": "^8.58.0",
+    "@typescript-eslint/eslint-plugin": "^8.59.0",
     "@typescript-eslint/parser": "^8.58.2",
     "esbuild": "^0.28.0",
     "eslint": "^10.2.0",
