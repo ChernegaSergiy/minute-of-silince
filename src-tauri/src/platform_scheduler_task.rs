@@ -3,6 +3,7 @@ use std::process::Command;
 #[allow(dead_code)]
 pub fn create_autostart_task(exe_path: &str) -> Result<(), String> {
     let task_name = "MinuteOfSilence";
+    log::info!("Creating Windows Task Scheduler task: {}", exe_path);
 
     // First remove existing task if any
     let _ = Command::new("schtasks")
@@ -18,9 +19,12 @@ pub fn create_autostart_task(exe_path: &str) -> Result<(), String> {
         .map_err(|e| e.to_string())?;
 
     if output.status.success() {
+        log::info!("Successfully created autostart task");
         Ok(())
     } else {
-        Err(String::from_utf8_lossy(&output.stderr).to_string())
+        let error = String::from_utf8_lossy(&output.stderr).to_string();
+        log::error!("Failed to create autostart task: {}", error);
+        Err(error)
     }
 }
 
