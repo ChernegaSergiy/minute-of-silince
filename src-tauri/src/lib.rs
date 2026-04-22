@@ -17,6 +17,8 @@ pub use state::AppState;
 mod platform_linux;
 #[cfg(target_os = "windows")]
 mod platform_windows;
+#[cfg(target_os = "windows")]
+mod scheduler_task;
 mod msix;
 
 /// Application entry point — called from `main.rs`.
@@ -64,7 +66,24 @@ pub fn run() {
             #[cfg(not(test))]
             {
                 let is_snap = std::env::var("SNAP").is_ok();
-                if !is_snap {
+                let is_msix = crate::msix::is_msix_package();
+
+                if is_msix {
+                    // Use Windows Task Scheduler for MSIX packages
+                    use crate::platform::scheduler_task;
+                    if settings.autostart_enabled {
+                        if let Ok(exe_path) = std::env::current_exe() {
+                            if let Err(e) = scheduler_task::create_autostart_task(&exe_path.to_string_lossy()) {
+                                log::error!("Failed to create autostart task: {}", e);
+                            }
+                        }
+                    } else {
+                        if let Err(e) = scheduler_task::remove_autostart_task() {
+                            log::error!("Failed to remove autostart task: {}", e);
+                        }
+                    }
+                } else if !is_snap {
+                    // Use standard autostart plugin for non-sandboxed packages
                     use tauri_plugin_autostart::ManagerExt;
                     let autostart_manager = app.autolaunch();
                     if settings.autostart_enabled {
