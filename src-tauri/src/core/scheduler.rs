@@ -195,17 +195,32 @@ impl CeremonyScheduler {
     /// Send a system notification about the upcoming ceremony.
     fn send_reminder_notification(&self, mins_before: u8) {
         use rust_i18n::t;
+        let title = t!("notification_title").to_string();
         let body = if mins_before == 0 {
-            t!("notification_body_start")
+            t!("notification_body_start").to_string()
         } else {
-            t!("notification_body_reminder", mins => mins_before)
+            t!("notification_body_reminder", mins => mins_before).to_string()
         };
+
+        #[cfg(target_os = "windows")]
+        if crate::platform_scheduler_task::is_msix_package() {
+            match crate::platform_windows_notifications::send_toast(&title, &body) {
+                Ok(_) => log::info!(
+                    "Reminder notification sent via WinRT ({} min before)",
+                    mins_before
+                ),
+                Err(e) => log::warn!("MSIX toast failed: {e}"),
+            }
+            return;
+        }
+
+        // Standard path for non-MSIX Windows and Linux
         let result = self
             .app
             .notification()
             .builder()
-            .title(t!("notification_title").to_string())
-            .body(body.to_string())
+            .title(title)
+            .body(body)
             .show();
 
         match result {
