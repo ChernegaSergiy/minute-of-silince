@@ -31,8 +31,7 @@ pub fn send_toast(title: &str, body: &str) -> Result<(), crate::AppError> {
         title, body
     );
 
-    let xml = XmlDocument::new()
-        .map_err(|e| crate::AppError::Windows(e.to_string()))?;
+    let xml = XmlDocument::new().map_err(|e| crate::AppError::Windows(e.to_string()))?;
     xml.LoadXml(&HSTRING::from(xml_str.as_str()))
         .map_err(|e| crate::AppError::Windows(e.to_string()))?;
 
@@ -40,7 +39,8 @@ pub fn send_toast(title: &str, body: &str) -> Result<(), crate::AppError> {
         .map_err(|e| crate::AppError::Windows(e.to_string()))?;
     let toast = ToastNotification::CreateToastNotification(&xml)
         .map_err(|e| crate::AppError::Windows(e.to_string()))?;
-    notifier.Show(&toast)
+    notifier
+        .Show(&toast)
         .map_err(|e| crate::AppError::Windows(e.to_string()))?;
 
     Ok(())
