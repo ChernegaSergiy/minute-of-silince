@@ -137,7 +137,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 - Fixed missing `zbus::proxy` import in platform_linux.rs.
-- Removed accidentally committed support-bot PHP files from the repository.
 
 ### Added
 - MSIX packaging support via `winapp` CLI tool.
