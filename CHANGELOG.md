@@ -9,8 +9,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.6.6] - 2026-04-23
+
+### Added
+- MSIX StartupTask extension for autostart in Microsoft Store packages.
+- Windows Task Scheduler module (platform_scheduler_task.rs).
+- Voice announcements from Sonia Sotnyk and Daria Khomutovskyi.
+
+### Changed
+- Version bump to 0.6.6.
+- Bump i18next, typescript-eslint, tokio, and vitest dependencies.
+
 ### Fixed
-- Fixed ceremony not triggering in grace window when started after 09:00.
+- Ceremony not triggering in grace window when started after 09:00.
 
 ## [0.6.5] - 2026-04-19
 
