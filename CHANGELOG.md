@@ -9,6 +9,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.7.0] - 2026-04-24
+
+### Added
+- MSIX Toast Notifications support via WinRT API for Microsoft Store packages.
+
+### Fixed
+- Reminder notifications not working in MSIX packages due to AppContainer restrictions.
+
 ## [0.6.6] - 2026-04-23
 
 ### Added
