@@ -22,6 +22,7 @@ import {
 } from "./api";
 
 import { listen } from "@tauri-apps/api/event";
+import { getCurrentWindow } from "@tauri-apps/api/window";
 import { open } from "@tauri-apps/plugin-shell";
 import { getVersion } from "@tauri-apps/api/app";
 import type { Settings, StatusSnapshot, AudioPreset } from "./types";
@@ -33,6 +34,8 @@ export class App {
   private cleanSettings!: Settings;
   private status!: StatusSnapshot;
   private version: string = "...";
+  private wasWindowMinimized: boolean = false;
+  private wasWindowVisible: boolean = true;
 
   constructor(root: HTMLElement) {
     this.root = root;
@@ -63,6 +66,9 @@ export class App {
   private initOverlay(): void {
     onCeremonyStart(async () => {
       if (this.settings.showVisualOverlay) {
+        const win = getCurrentWindow();
+        this.wasWindowMinimized = await win.isMinimized();
+        this.wasWindowVisible = await win.isVisible();
         await bringWindowToFront();
         this.showOverlay();
       }
