@@ -9,6 +9,22 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.7.1] - 2026-04-26
+
+### Added
+- Auto-show window when ceremony starts, even if minimized or hidden.
+- Window permissions for MSIX packages (unminimize/show/set-focus).
+
+### Fixed
+- Ceremony-end flashing when restarting ceremony multiple times via test button.
+- Ceremony status now updates before command returns.
+- Fixed "повноекранний екран" → "оверлей вшанування на весь екран" in Ukrainian locale.
+
+### Changed
+- Moved `is_msix_package()` to dedicated `is_msix.rs` module.
+- Removed unused Task Scheduler autostart functions from `platform_scheduler_task.rs`.
+- Updated project tree in README.md.
+
 ## [0.7.0] - 2026-04-24
 
 ### Added
