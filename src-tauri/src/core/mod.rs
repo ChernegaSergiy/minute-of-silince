@@ -9,12 +9,14 @@ use crate::core::audio::AudioEngine;
 use crate::core::platform::Platform;
 use crate::core::settings::AudioPreset;
 use crate::state::AppState;
+use std::sync::atomic::{AtomicU32, Ordering};
 use std::sync::{Arc, Mutex};
 use tauri::{AppHandle, Emitter, Manager};
 
 lazy_static::lazy_static! {
     static ref PREVIOUS_VOLUME: Mutex<Option<u8>> = Mutex::new(None);
     static ref WAS_MUTED: Mutex<Option<bool>> = Mutex::new(None);
+    static ref ACTIVE_TRIGGER_COUNT: AtomicU32 = AtomicU32::new(0);
 }
 
 /// Orchestrator for the ceremony.
@@ -62,6 +64,7 @@ impl CeremonyManager {
             inner.ceremony_active = true;
             inner.last_activation = Some(chrono::Local::now());
         }
+        ACTIVE_TRIGGER_COUNT.fetch_add(1, Ordering::SeqCst);
 
         // 2. Notify UI
         let _ = self.app.emit("ceremony-start", ());
@@ -110,6 +113,18 @@ impl CeremonyManager {
     }
 
     pub async fn finish_ceremony(app: AppHandle, platform: Box<dyn Platform>) {
+        // Decrement trigger count - only finish if this was the last one
+        let count = ACTIVE_TRIGGER_COUNT.fetch_sub(1, Ordering::SeqCst);
+        if count == 1 {
+            // This was the last trigger, proceed to finish
+        } else if count > 1 {
+            // More triggers still active, skip restoration and emit
+            return;
+        } else {
+            // count was 0, nothing to do
+            return;
+        }
+
         let (volume_priority, auto_unmute) = {
             let state = app.state::<AppState>();
             let inner = state.lock();
