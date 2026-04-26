@@ -62,8 +62,8 @@ export class App {
 
   private initOverlay(): void {
     onCeremonyStart(async () => {
-      await bringWindowToFront();
       if (this.settings.showVisualOverlay) {
+        await bringWindowToFront();
         this.showOverlay();
       }
     });
@@ -642,7 +642,6 @@ export class App {
  
   private async subscribeToBackendEvents(): Promise<void> {
     await onCeremonyStart(async () => {
-      await bringWindowToFront();
       console.log("Ceremony start event received");
       this.refreshStatus();
     });
