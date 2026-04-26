@@ -15,7 +15,7 @@
   <Identity
     Name="BF570F0A.313786C1665D6"
     Publisher="CN=01445EFC-3CD0-4B45-A28E-B290F6B26A52"
-    Version="0.7.0.0" />
+    Version="0.7.1.0" />
 
   <Properties>
     <DisplayName>Хвилина мовчання</DisplayName>
