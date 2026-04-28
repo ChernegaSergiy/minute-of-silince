@@ -9,6 +9,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.7.2] - 2026-04-28
+
+### Added
+- Window state preservation before ceremony and restoration after ceremony ends.
+
+### Fixed
+- Window permissions for minimize/hide operations in MSIX packages.
+
+### Changed
+- Updated version to 0.7.2.
+
 ## [0.7.1] - 2026-04-26
 
 ### Added
