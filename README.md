@@ -124,11 +124,11 @@ minute-of-silence/
 |   \-- types.ts                               # Shared types, mirrors Rust structs
 +-- src-tauri/
 |   +-- src/
-|   |   +-- app/                               # Tauri-специфічні точки входу
+|   |   +-- app/                               # Tauri entry points
 |   |   |   +-- mod.rs
 |   |   |   +-- commands.rs                    # Tauri IPC command handlers
 |   |   |   \-- tray.rs                        # System tray icon and context menu
-|   |   +-- core/                              # Бізнес-логіка
+|   |   +-- core/                              # Business logic
 |   |   |   +-- mod.rs
 |   |   |   +-- audio.rs                       # Backend audio engine (rodio)
 |   |   |   +-- ceremony.rs                    # Ceremony orchestration and lifecycle
