@@ -1,6 +1,6 @@
 [package]
 name = "minute-of-silence"
-version = "0.7.3"
+version = "0.7.4"
 description = "A desktop application for the daily Minute of Silence at 09:00"
 authors = ["Serhii Cherneha"]
 license-file = "../LICENSE"

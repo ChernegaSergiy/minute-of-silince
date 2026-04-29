@@ -9,6 +9,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.7.4] - 2026-04-29
+
+### Changed
+- Removed redundant Snap interfaces (`home`, `login-session-observe`, `upower-observe`, `hardware-observe`, `system-observe`) to streamline Store approval.
+- Cleaned up `plugs` list in `snapcraft.yaml`.
+
 ## [0.7.3] - 2026-04-29
 
 ### Added
