@@ -8,6 +8,7 @@ use crate::error::Result;
 
 /// Returns true when the current process is running from an MSIX package
 /// (i.e. installed via Microsoft Store or `.msix`/`.msixbundle`).
+#[allow(dead_code)]
 pub fn is_msix() -> bool {
     #[cfg(target_os = "windows")]
     {
