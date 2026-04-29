@@ -24,19 +24,29 @@ pub fn save_settings(app: AppHandle, state: State<'_, AppState>, settings: Setti
     // Persist to disk.
     settings.save()?;
 
-    // Apply autostart setting via the plugin or manual Snap logic.
-    #[cfg(not(test))]
-    {
-        if std::env::var("SNAP").is_ok() {
-            #[cfg(target_os = "linux")]
-            crate::manage_snap_autostart(settings.autostart_enabled);
-        } else {
-            use tauri_plugin_autostart::ManagerExt;
-            let autostart_manager = app.autolaunch();
-            if settings.autostart_enabled {
-                let _ = autostart_manager.enable();
-            } else {
-                let _ = autostart_manager.disable();
+    // Apply autostart setting.
+    let is_snap = std::env::var("SNAP").is_ok();
+
+    if is_snap {
+        // Snap: manage the .desktop file in $SNAP_USER_DATA/.config/autostart
+        #[cfg(target_os = "linux")]
+        crate::platform_linux::autostart::manage(settings.autostart_enabled);
+    } else {
+        #[cfg(not(test))]
+        {
+            #[cfg(target_os = "windows")]
+            let is_msix = crate::is_msix::is_msix_package();
+            #[cfg(not(target_os = "windows"))]
+            let is_msix = false;
+
+            if !is_msix {
+                use tauri_plugin_autostart::ManagerExt;
+                let autostart_manager = app.autolaunch();
+                if settings.autostart_enabled {
+                    let _ = autostart_manager.enable();
+                } else {
+                    let _ = autostart_manager.disable();
+                }
             }
         }
     }
