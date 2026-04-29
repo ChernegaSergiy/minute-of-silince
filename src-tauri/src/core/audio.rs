@@ -118,8 +118,27 @@ impl AudioEngine {
         let mixer = sink.mixer();
         let player = Player::connect_new(mixer);
 
-        let volume_float = volume as f32 / 100.0;
-        player.set_volume(volume_float);
+        // On Windows use WASAPI ISimpleAudioVolume for per-application volume
+        // control.  This sets the volume at the OS audio-session level so the
+        // setting is visible in the Windows Volume Mixer and does not affect
+        // any other application or the system master volume.  rodio's own
+        // gain stage is left at 1.0 so that WASAPI is the sole control point.
+        //
+        // On other platforms the existing sample-level gain is used.
+        #[cfg(target_os = "windows")]
+        {
+            if let Err(e) = crate::platform_windows::app_volume::set_volume(volume) {
+                log::warn!("Failed to set WASAPI session volume, falling back to rodio gain: {e}");
+                player.set_volume(volume as f32 / 100.0);
+            } else {
+                player.set_volume(1.0);
+            }
+        }
+        #[cfg(not(target_os = "windows"))]
+        {
+            let volume_float = volume as f32 / 100.0;
+            player.set_volume(volume_float);
+        }
 
         match (preset, voice) {
             (AudioPreset::VoiceMetronome, _) => {
