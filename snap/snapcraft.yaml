@@ -77,7 +77,7 @@ apps:
     command: bin/minute-of-silence
     extensions: [gnome]
     desktop: usr/share/applications/minute-of-silence.desktop
-    autostart: minute-of-silence
+    autostart: minute-of-silence.desktop
     environment:
       TAURI_ENV_RESOURCES_PATH: $SNAP/bin
       # Help ALSA find its configuration and plugins inside the snap
