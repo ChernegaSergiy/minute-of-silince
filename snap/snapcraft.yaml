@@ -100,7 +100,7 @@ apps:
       - gsettings      # To access system settings
       - hardware-observe
       - system-observe
-      - shared-memory
+      - shmem
       - screen-inhibit-control
       - upower-observe
 
