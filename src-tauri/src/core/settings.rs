@@ -155,21 +155,3 @@ pub enum AudioPreset {
     /// Silence only (no audio, just visual overlay)
     Silence,
 }
-
-impl std::fmt::Display for AudioPreset {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        let label = match self {
-            Self::VoiceMetronome => "Голос + метроном",
-            Self::MetronomeOnly => "Метроном",
-            Self::VoiceSilenceBell => "Голос + тиша + дзвін",
-            Self::VoiceSilence => "Голос + тиша",
-            Self::VoiceMetronomeAnthem => "Голос + метроном + гімн",
-            Self::VoiceMetronomeEnding => "Голос + метроном + завершення",
-            Self::MetronomeAnthem => "Метроном + гімн",
-            Self::BellSilenceBell => "Дзвін + тиша + дзвін",
-            Self::BellMetronomeBell => "Дзвін + метроном + дзвін",
-            Self::Silence => "Тиша",
-        };
-        write!(f, "{label}")
-    }
-}
