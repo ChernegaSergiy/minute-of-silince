@@ -80,6 +80,9 @@ pub fn run() {
                         settings.autostart_enabled
                     );
                 } else if is_snap {
+                    #[cfg(target_os = "linux")]
+                    manage_snap_autostart(settings.autostart_enabled);
+
                     if is_hidden && !settings.autostart_enabled {
                         log::info!("Autostart is disabled in settings. Exiting Snap instance launched with --hidden.");
                         std::process::exit(0);
@@ -132,4 +135,39 @@ pub fn run() {
         })
         .run(tauri::generate_context!())
         .expect("error while running Minute of Silence");
+}
+
+#[cfg(target_os = "linux")]
+pub(crate) fn manage_snap_autostart(enabled: bool) {
+    let is_snap = std::env::var("SNAP").is_ok();
+    if !is_snap {
+        return;
+    }
+
+    let home = std::env::var("HOME").unwrap_or_default();
+    if home.is_empty() {
+        return;
+    }
+
+    let autostart_dir = std::path::PathBuf::from(home).join(".config/autostart");
+    let dest = autostart_dir.join("minute-of-silence.desktop");
+
+    if enabled {
+        let _ = std::fs::create_dir_all(&autostart_dir);
+        let snap_dir = std::env::var("SNAP").unwrap_or_default();
+        let src = std::path::PathBuf::from(snap_dir).join("usr/share/applications/minute-of-silence.desktop");
+
+        if src.exists() {
+            if let Err(e) = std::fs::copy(&src, &dest) {
+                log::error!("Failed to copy Snap autostart file: {}", e);
+            } else {
+                log::info!("Snap autostart file created at: {:?}", dest);
+            }
+        } else {
+            log::warn!("Source desktop file not found at: {:?}", src);
+        }
+    } else if dest.exists() {
+        let _ = std::fs::remove_file(&dest);
+        log::info!("Snap autostart file removed.");
+    }
 }
