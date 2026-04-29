@@ -79,7 +79,15 @@ pub fn run() {
                          manifest extension (autostart_enabled = {}).",
                         settings.autostart_enabled
                     );
-                } else if !is_snap {
+                } else if is_snap {
+                    #[cfg(target_os = "linux")]
+                    update_snap_autostart(settings.autostart_enabled);
+
+                    if is_hidden && !settings.autostart_enabled {
+                        log::info!("Autostart is disabled in settings. Exiting Snap instance launched with --hidden.");
+                        std::process::exit(0);
+                    }
+                } else {
                     use tauri_plugin_autostart::ManagerExt;
                     let autostart_manager = app.autolaunch();
                     if settings.autostart_enabled {
@@ -87,9 +95,6 @@ pub fn run() {
                     } else {
                         let _ = autostart_manager.disable();
                     }
-                } else if is_hidden && !settings.autostart_enabled {
-                    log::info!("Autostart is disabled in settings. Exiting Snap instance launched with --hidden.");
-                    std::process::exit(0);
                 }
             }
 
@@ -130,4 +135,43 @@ pub fn run() {
         })
         .run(tauri::generate_context!())
         .expect("error while running Minute of Silence");
+}
+
+#[cfg(target_os = "linux")]
+pub(crate) fn update_snap_autostart(enabled: bool) {
+    let home = std::env::var("SNAP_REAL_HOME")
+        .or_else(|_| std::env::var("USER").map(|u| format!("/home/{}", u)))
+        .unwrap_or_default();
+
+    if home.is_empty() {
+        log::warn!("Could not determine real HOME directory for Snap autostart.");
+        return;
+    }
+
+    let autostart_dir = std::path::PathBuf::from(home).join(".config/autostart");
+    let desktop_file_path = autostart_dir.join("minute-of-silence.desktop");
+
+    if enabled {
+        if !autostart_dir.exists() {
+            let _ = std::fs::create_dir_all(&autostart_dir);
+        }
+
+        let content = "[Desktop Entry]\n\
+                       Name=Хвилина мовчання\n\
+                       Exec=minute-of-silence --hidden\n\
+                       Icon=minute-of-silence\n\
+                       Terminal=false\n\
+                       Type=Application\n\
+                       Categories=Utility;Clock;\n\
+                       X-GNOME-Autostart-enabled=true\n";
+
+        if let Err(e) = std::fs::write(&desktop_file_path, content) {
+            log::error!("Failed to write Snap autostart file: {}", e);
+        } else {
+            log::info!("Snap autostart file updated at: {:?}", desktop_file_path);
+        }
+    } else if desktop_file_path.exists() {
+        let _ = std::fs::remove_file(&desktop_file_path);
+        log::info!("Snap autostart file removed.");
+    }
 }
