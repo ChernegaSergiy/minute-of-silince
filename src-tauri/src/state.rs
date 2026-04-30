@@ -9,6 +9,8 @@ use crate::core::audio::AudioEngine;
 use crate::core::ntp_service::NtpService;
 use crate::core::settings::Settings;
 
+rust_i18n::i18n!("locales");
+
 /// Runtime state shared between the scheduler, commands, and tray.
 #[derive(Debug)]
 pub struct AppState {
@@ -77,12 +79,12 @@ impl AppState {
         let tomorrow = (Local::now() + chrono::Duration::days(1)).date_naive();
 
         let ntp_status = if inner.settings.system_time_only {
-            Some("Вимкнено (системний час)".to_string())
+            Some(t!("ntp_disabled").to_string())
         } else {
             self.ntp_service
                 .last_sync_time()
                 .map(|dt| dt.format("%H:%M:%S").to_string())
-                .or_else(|| Some("Синхронізація...".to_string()))
+                .or_else(|| Some(t!("ntp_syncing").to_string()))
         };
 
         StatusSnapshot {
