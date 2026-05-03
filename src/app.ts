@@ -67,6 +67,11 @@ export class App {
   }
 
   private initOverlay(): void {
+    const overlayTitle = document.querySelector(".overlay__text");
+    const overlaySubtitle = document.querySelector(".overlay__sub");
+    if (overlayTitle) overlayTitle.textContent = t("overlay.title");
+    if (overlaySubtitle) overlaySubtitle.textContent = t("overlay.subtitle");
+
     onCeremonyStart(async () => {
       if (this.settings.showVisualOverlay) {
         const win = getCurrentWindow();
