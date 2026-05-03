@@ -9,6 +9,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.7.7] - 2026-05-03
+
+### Added
+- Overlay text i18n support (title and subtitle localized).
+- Windows MSIX localization for app name in system language.
+
+### Changed
+- Updated appxmanifest to use ms-resource:AppName for localized DisplayName.
+
 ## [0.7.6] - 2026-04-30
 
 ### Added
