@@ -619,9 +619,20 @@ export class App {
  
     // Pause other players toggle
     this.q<HTMLInputElement>("#pauseToggle").addEventListener("change", (e) => {
+      const checked = (e.target as HTMLInputElement).checked;
       this.settings = {
         ...this.settings,
-        pauseOtherPlayers: (e.target as HTMLInputElement).checked,
+        pauseOtherPlayers: checked,
+      };
+      this.updateResumeVisibility(checked);
+      this.checkDirty();
+    });
+
+    // Resume toggle
+    this.q<HTMLInputElement>("#resumeToggle").addEventListener("change", (e) => {
+      this.settings = {
+        ...this.settings,
+        resumeAfterCeremony: (e.target as HTMLInputElement).checked,
       };
       this.checkDirty();
     });
