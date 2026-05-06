@@ -4,7 +4,7 @@ use chrono::{Datelike, Local, NaiveDate, NaiveTime, Timelike};
 use std::collections::HashMap;
 use std::sync::Arc;
 use std::time::Duration;
-use tauri::{AppHandle, Emitter, Manager};
+use tauri::{AppHandle, Emitter, Listener, Manager};
 use tauri_plugin_notification::NotificationExt;
 
 use crate::core::audio::AudioEngine;
@@ -70,7 +70,7 @@ impl CeremonyScheduler {
         // Listen for resume-from-sleep event (Windows)
         let state = self.app.state::<AppState>();
         let ntp_service = state.ntp_service.clone();
-        let app_emit_handle = self.app.handle().clone();
+        let app_emit_handle = self.app.clone();
 
         self.app.listen("resume-from-sleep", move |_| {
             log::info!("Resume-from-sleep event received, forcing NTP sync...");
