@@ -31,7 +31,8 @@ pub trait Platform: Send + Sync {
     fn set_volume(&self, level: u8) -> Result<()>;
     fn is_muted(&self) -> Result<bool>;
     fn set_mute(&self, mute: bool) -> Result<()>;
-    async fn pause_media(&self) -> Result<()>;
+    async fn pause_media(&self) -> Result<Vec<String>>;
+    async fn resume_media(&self, players: Vec<String>) -> Result<()>;
 }
 
 pub fn get_platform() -> Box<dyn Platform> {
