@@ -9,6 +9,7 @@ use tauri::{AppHandle, Emitter, Manager};
 lazy_static::lazy_static! {
     static ref PREVIOUS_VOLUME: Mutex<Option<u8>> = Mutex::new(None);
     static ref WAS_MUTED: Mutex<Option<bool>> = Mutex::new(None);
+    static ref PAUSED_PLAYERS: Mutex<Vec<String>> = Mutex::new(Vec::new());
     static ref ACTIVE_TRIGGER_COUNT: AtomicU32 = AtomicU32::new(0);
 }
 
@@ -32,6 +33,7 @@ impl CeremonyManager {
     pub async fn run_ceremony(&self) {
         let (
             should_pause_players,
+            should_resume_players,
             volume_priority,
             auto_unmute,
             target_volume,
@@ -42,6 +44,7 @@ impl CeremonyManager {
             let inner = state.lock();
             (
                 inner.settings.pause_other_players,
+                inner.settings.resume_after_ceremony,
                 inner.settings.volume_priority,
                 inner.settings.auto_unmute,
                 inner.settings.volume,
@@ -64,7 +67,12 @@ impl CeremonyManager {
 
         // 3. Pause players
         if should_pause_players {
-            let _ = self.platform.pause_media().await;
+            if let Ok(players) = self.platform.pause_media().await {
+                if should_resume_players {
+                    let mut lock = PAUSED_PLAYERS.lock().unwrap();
+                    *lock = players;
+                }
+            }
         }
 
         // 4. Handle Volume and Mute (skip for Silence preset)
@@ -118,13 +126,17 @@ impl CeremonyManager {
             return;
         }
 
-        let (volume_priority, auto_unmute) = {
+        let (volume_priority, auto_unmute, should_resume) = {
             let state = app.state::<AppState>();
             let inner = state.lock();
             if !inner.ceremony_active {
                 return;
             }
-            (inner.settings.volume_priority, inner.settings.auto_unmute)
+            (
+                inner.settings.volume_priority,
+                inner.settings.auto_unmute,
+                inner.settings.resume_after_ceremony,
+            )
         };
 
         {
@@ -147,6 +159,17 @@ impl CeremonyManager {
             if let Some(true) = was_muted {
                 let _ = platform.set_mute(true);
                 *WAS_MUTED.lock().unwrap() = None;
+            }
+        }
+
+        // Restore media playback
+        if should_resume {
+            let players = {
+                let mut lock = PAUSED_PLAYERS.lock().unwrap();
+                std::mem::take(&mut *lock)
+            };
+            if !players.is_empty() {
+                let _ = platform.resume_media(players).await;
             }
         }
 
