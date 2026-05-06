@@ -35,10 +35,8 @@ pub async fn pause_all() -> Result<Vec<String>> {
                     .map_err(|e| AppError::Platform(e.to_string()))?;
 
                 if let Ok(status) = player.playback_status() {
-                    if status == "Playing" {
-                        if player.pause().is_ok() {
-                            paused_names.push(name.to_string());
-                        }
+                    if status == "Playing" && player.pause().is_ok() {
+                        paused_names.push(name.to_string());
                     }
                 }
             }
