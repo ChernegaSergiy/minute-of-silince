@@ -101,7 +101,10 @@ pub fn run() {
                     window.hide()?;
                 }
                 #[cfg(target_os = "windows")]
-                window.set_skip_taskbar(true)?;
+                {
+                    window.set_skip_taskbar(true)?;
+                    crate::platform::windows::power::register_power_hook(&window);
+                }
             }
 
             // --- 5. Core Services ---
