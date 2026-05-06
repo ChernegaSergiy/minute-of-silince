@@ -67,6 +67,21 @@ impl CeremonyScheduler {
     pub async fn run(&self) {
         log::info!("Scheduler loop started");
 
+        // Listen for resume-from-sleep event (Windows)
+        let state = self.app.state::<AppState>();
+        let ntp_service = state.ntp_service.clone();
+        let app_emit_handle = self.app.handle().clone();
+
+        self.app.listen("resume-from-sleep", move |_| {
+            log::info!("Resume-from-sleep event received, forcing NTP sync...");
+            let ntp = ntp_service.clone();
+            let app = app_emit_handle.clone();
+            tauri::async_runtime::spawn(async move {
+                let _ = ntp.sync().await;
+                let _ = app.emit("ntp-synced", ());
+            });
+        });
+
         // Initial NTP sync
         self.sync_ntp().await;
 
