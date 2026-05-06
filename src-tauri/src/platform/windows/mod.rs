@@ -19,7 +19,10 @@ impl super::Platform for WindowsPlatform {
     fn set_mute(&self, mute: bool) -> crate::error::Result<()> {
         self::volume::set_mute(mute)
     }
-    async fn pause_media(&self) -> crate::error::Result<()> {
+    async fn pause_media(&self) -> crate::error::Result<Vec<String>> {
         self::media::pause_all().await
+    }
+    async fn resume_media(&self, players: Vec<String>) -> crate::error::Result<()> {
+        self::media::resume_specific(players).await
     }
 }
