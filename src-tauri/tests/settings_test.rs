@@ -25,9 +25,11 @@ fn all_presets_round_trip() {
         AudioPreset::VoiceSilenceBell,
         AudioPreset::VoiceSilence,
         AudioPreset::VoiceMetronomeAnthem,
+        AudioPreset::VoiceMetronomeEnding,
         AudioPreset::MetronomeAnthem,
         AudioPreset::BellSilenceBell,
         AudioPreset::BellMetronomeBell,
+        AudioPreset::Silence,
     ];
 
     for preset in presets {
