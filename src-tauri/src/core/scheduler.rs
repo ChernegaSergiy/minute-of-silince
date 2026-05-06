@@ -135,7 +135,9 @@ impl CeremonyScheduler {
                 let state = self.app.state::<AppState>();
                 let inner = state.lock();
 
-                if !inner.settings.ceremony_enabled {
+                if !inner.settings.ceremony_enabled
+                    || (inner.settings.weekdays_only && today.weekday().number_from_monday() > 5)
+                {
                     false
                 } else if !inner.ceremony_active {
                     let grace_minutes = inner.settings.late_start_grace_minutes;
