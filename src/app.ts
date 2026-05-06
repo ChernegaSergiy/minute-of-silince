@@ -343,6 +343,16 @@ export class App {
                      ${this.settings.pauseOtherPlayers ? "checked" : ""} />
             </label>
 
+            <!-- Resume after ceremony -->
+            <label class="control-row" id="resumeRow">
+              <div class="control-row__info">
+                <span class="control-row__label">${t("controls.resume.label")}</span>
+                <span class="control-row__description">${t("controls.resume.description")}</span>
+              </div>
+              <input type="checkbox" id="resumeToggle" class="toggle"
+                     ${this.settings.resumeAfterCeremony ? "checked" : ""} />
+            </label>
+
             <!-- Visual overlay toggle -->
             <label class="control-row">
               <div class="control-row__info">
