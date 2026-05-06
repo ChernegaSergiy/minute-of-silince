@@ -64,6 +64,7 @@ export class App {
     this.refreshStatus();
     this.startStatusPolling();
     this.updateReminderMinutesVisibility(this.settings.reminderEnabled);
+    this.updateResumeVisibility(this.settings.pauseOtherPlayers);
   }
 
   private initOverlay(): void {
@@ -715,6 +716,13 @@ export class App {
 
   private updateReminderMinutesVisibility(enabled: boolean): void {
     const row = document.getElementById("reminderMinutesRow");
+    if (row) {
+      row.classList.toggle("hidden", !enabled);
+    }
+  }
+
+  private updateResumeVisibility(enabled: boolean): void {
+    const row = document.getElementById("resumeRow");
     if (row) {
       row.classList.toggle("hidden", !enabled);
     }
