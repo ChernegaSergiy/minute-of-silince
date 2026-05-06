@@ -1,6 +1,6 @@
 //! Ceremony scheduler and execution logic.
 
-use chrono::{Local, NaiveDate, NaiveTime, Timelike};
+use chrono::{Datelike, Local, NaiveDate, NaiveTime, Timelike};
 use std::collections::HashMap;
 use std::sync::Arc;
 use std::time::Duration;
@@ -97,6 +97,7 @@ impl CeremonyScheduler {
 
                 if !inner.settings.reminder_enabled
                     || !inner.settings.ceremony_enabled
+                    || (inner.settings.weekdays_only && today.weekday().number_from_monday() > 5)
                     || inner.skip_date == Some(today)
                     || inner.last_activation.map(|dt| dt.date_naive()) == Some(today)
                     || last_reminded_date == Some(today)
