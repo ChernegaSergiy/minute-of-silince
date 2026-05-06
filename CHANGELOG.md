@@ -9,6 +9,21 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.7.8] - 2026-05-06
+
+### Added
+- Optional "Resume playback" setting to restore paused media after the ceremony.
+- Targeted media handling: the app now tracks which specific players were paused and only resumes them if they are still paused.
+- Real-time post-sleep handling on Windows via `WM_POWERBROADCAST` hook to trigger immediate clock sync upon resume.
+
+### Fixed
+- "Weekdays only" logic now correctly applied to both the ceremony trigger and notifications.
+- Improved test coverage for `Silence` and `VoiceMetronomeEnding` presets in `settings_test.rs`.
+
+### Changed
+- Cleaned up redundant Win32 features in `Cargo.toml`.
+- Updated dependencies: Tauri v2.11.0, Tokio v1.52.2, Vite v8.0.10.
+
 ## [0.7.7] - 2026-05-03
 
 ### Added
