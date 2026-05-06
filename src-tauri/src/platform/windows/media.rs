@@ -3,7 +3,6 @@
 use log::{error, info};
 use windows::Media::Control::{
     GlobalSystemMediaTransportControlsSessionManager,
-    GlobalSystemMediaTransportControlsSessionPlaybackInfo,
     GlobalSystemMediaTransportControlsSessionPlaybackStatus,
 };
 
