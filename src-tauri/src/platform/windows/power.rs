@@ -2,7 +2,7 @@
 //! Handles system-wide power events like waking from sleep.
 
 use std::sync::OnceLock;
-use tauri::{AppHandle, Emitter, Manager, WebviewWindow};
+use tauri::{AppHandle, Emitter, WebviewWindow};
 use windows::Win32::Foundation::{HWND, LPARAM, LRESULT, WPARAM};
 use windows::Win32::UI::WindowsAndMessaging::{
     CallWindowProcW, SetWindowLongPtrW, GWLP_WNDPROC, WM_POWERBROADCAST,
