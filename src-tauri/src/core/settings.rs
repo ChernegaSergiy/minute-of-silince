@@ -31,6 +31,9 @@ pub struct Settings {
     /// Pause other media players before the ceremony.
     pub pause_other_players: bool,
 
+    /// Automatically resume paused players after the ceremony.
+    pub resume_after_ceremony: bool,
+
     /// Show a visual overlay window when the ceremony starts.
     pub show_visual_overlay: bool,
 
@@ -79,6 +82,7 @@ impl Default for Settings {
             preset: AudioPreset::VoiceMetronome,
             volume: 80,
             pause_other_players: true,
+            resume_after_ceremony: false,
             show_visual_overlay: true,
             system_time_only: false,
             volume_priority: false,
