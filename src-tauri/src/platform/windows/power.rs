@@ -1,9 +1,49 @@
-//! Listen for `WM_POWERBROADCAST` events so the scheduler can detect
-//! whether the PC woke from sleep after 09:00.
+//! Windows-specific power management.
+//! Handles system-wide power events like waking from sleep.
 
-use windows::Win32::UI::WindowsAndMessaging::{PBT_APMRESUMEAUTOMATIC, PBT_APMRESUMESUSPEND};
+use std::sync::OnceLock;
+use tauri::{AppHandle, Emitter, Manager, WebviewWindow};
+use windows::Win32::Foundation::{HWND, LPARAM, LRESULT, WPARAM};
+use windows::Win32::UI::WindowsAndMessaging::{
+    CallWindowProcW, SetWindowLongPtrW, GWLP_WNDPROC, WM_POWERBROADCAST,
+};
 
-#[allow(dead_code)]
-pub fn is_resume_event(wparam: usize) -> bool {
-    wparam == PBT_APMRESUMESUSPEND as usize || wparam == PBT_APMRESUMEAUTOMATIC as usize
+static ORIGINAL_WNDPROC: OnceLock<isize> = OnceLock::new();
+static APP_HANDLE: OnceLock<AppHandle> = OnceLock::new();
+
+const PBT_APMRESUMEAUTOMATIC: usize = 0x0012;
+const PBT_APMRESUMESUSPEND: usize = 0x0007;
+
+/// Register a hook to listen for WM_POWERBROADCAST events.
+pub fn register_power_hook(window: &WebviewWindow) {
+    let hwnd = window.hwnd().expect("Failed to get HWND").0;
+    let handle = window.app_handle().clone();
+    let _ = APP_HANDLE.set(handle);
+
+    unsafe {
+        let original = SetWindowLongPtrW(HWND(hwnd as *mut _), GWLP_WNDPROC, wndproc as isize);
+        let _ = ORIGINAL_WNDPROC.set(original);
+    }
+}
+
+/// Window procedure to handle WM_POWERBROADCAST.
+unsafe extern "system" fn wndproc(hwnd: HWND, msg: u32, wparam: WPARAM, lparam: LPARAM) -> LRESULT {
+    if msg == WM_POWERBROADCAST {
+        let wp = wparam.0 as usize;
+        if wp == PBT_APMRESUMEAUTOMATIC || wp == PBT_APMRESUMESUSPEND {
+            log::info!("System resume from sleep detected (WP: {wp})");
+            if let Some(handle) = APP_HANDLE.get() {
+                let _ = handle.emit("resume-from-sleep", ());
+            }
+        }
+    }
+
+    let original = ORIGINAL_WNDPROC.get().expect("Original WndProc not set");
+    CallWindowProcW(
+        Some(std::mem::transmute(*original)),
+        hwnd,
+        msg,
+        wparam,
+        lparam,
+    )
 }
