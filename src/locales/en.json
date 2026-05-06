@@ -91,6 +91,10 @@
       "label": "Pause other players",
       "description": "Pauses music and video (Spotify, YouTube) during the ceremony."
     },
+    "resume": {
+      "label": "Resume playback",
+      "description": "Automatically resume paused players after the ceremony."
+    },
     "overlay": {
       "label": "Visual overlay",
       "description": "Show full-screen memorial overlay during the ceremony."
