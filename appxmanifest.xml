@@ -33,7 +33,7 @@
   </Resources>
 
   <Applications>
-    <Application Id="minuteOfSilence"
+    <Application Id="ua.pp.khvylyna.MinuteOfSilence"
       Executable="minute-of-silence.exe"
       EntryPoint="Windows.FullTrustApplication">
       <uap:VisualElements

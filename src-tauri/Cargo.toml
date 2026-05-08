@@ -13,7 +13,7 @@ name = "minute_of_silence_lib"
 crate-type = ["staticlib", "cdylib", "rlib"]
 
 [[bin]]
-name = "minute-of-silence"
+name = "MinuteOfSilence"
 path = "src/main.rs"
 
 [build-dependencies]
