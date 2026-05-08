@@ -37,7 +37,7 @@ modules:
       
       # Install binary and resources
       - mkdir -p /app/bin/audio
-      - cp src-tauri/target/release/minute-of-silence /app/bin/MinuteOfSilence
+      - cp src-tauri/target/release/MinuteOfSilence /app/bin/MinuteOfSilence
       - cp src-tauri/audio/*.ogg /app/bin/audio/
       
       # Install desktop entry, metainfo and icons
