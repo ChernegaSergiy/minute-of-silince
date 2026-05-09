@@ -18,7 +18,7 @@ pub fn build_tray(app: &App) -> tauri::Result<()> {
 
     let menu = Menu::with_items(app, &[&open_i, &skip_i, &sep, &quit_i])?;
 
-    let icon = tauri::include_image!("../../icons/tray-icon-32.png");
+    let icon = tauri::include_image!("icons/tray-icon-32.png");
 
     TrayIconBuilder::with_id("main")
         .icon(icon)
