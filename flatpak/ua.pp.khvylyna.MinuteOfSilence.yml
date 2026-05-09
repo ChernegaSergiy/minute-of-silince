@@ -6,6 +6,10 @@ sdk-extensions:
   - org.freedesktop.Sdk.Extension.rust-stable
   - org.freedesktop.Sdk.Extension.node20
 command: MinuteOfSilence
+build-options:
+  env:
+    # Ensure pkg-config finds modules in both lib and lib64
+    PKG_CONFIG_PATH: /app/lib/pkgconfig:/app/lib64/pkgconfig
 finish-args:
   # Graphical access
   - --socket=fallback-x11
