@@ -12,6 +12,7 @@ build-options:
     PKG_CONFIG_PATH: /app/lib/pkgconfig:/app/lib64/pkgconfig
     LDFLAGS: -L/app/lib64 -L/app/lib
     LIBRARY_PATH: /app/lib64:/app/lib
+    LD_LIBRARY_PATH: /app/lib64:/app/lib
 finish-args:
   # Graphical access
   - --socket=fallback-x11
