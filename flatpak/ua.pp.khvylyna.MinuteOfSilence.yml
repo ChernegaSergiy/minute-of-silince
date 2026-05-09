@@ -12,7 +12,7 @@ finish-args:
   - --socket=wayland
   - --device=dri
   - --share=ipc
-  # Network (for NTP sync)
+  # Network (needed for NTP sync)
   - --share=network
   # Audio (Pulseaudio/Pipewire)
   - --socket=pulseaudio
@@ -20,26 +20,34 @@ finish-args:
   - --talk-name=org.mpris.MediaPlayer2.*
   # Notifications
   - --talk-name=org.freedesktop.Notifications
-  # System Settings (GTK)
+  # System Settings
   - --metadata=X-DConf=comm/org/gnome/
+  # Allow system tray icons
+  - --talk-name=org.kde.StatusNotifierWatcher
 
 modules:
+  - shared-modules/libayatana-appindicator/libayatana-appindicator-gtk3.json
+
   - name: minute-of-silence
     buildsystem: simple
+    build-options:
+      append-path: /usr/lib/sdk/node20/bin:/usr/lib/sdk/rust-stable/bin
+      build-args:
+        - --share=network
     build-commands:
       # Use Rust and Node.js extensions
       - /usr/lib/sdk/node20/enable.sh
       - /usr/lib/sdk/rust-stable/enable.sh
-      
+
       # Build the application
       - npm install
       - npm run tauri build -- --no-bundle
-      
+
       # Install binary and resources
       - mkdir -p /app/bin/audio
       - cp src-tauri/target/release/MinuteOfSilence /app/bin/MinuteOfSilence
       - cp src-tauri/audio/*.ogg /app/bin/audio/
-      
+
       # Install desktop entry, metainfo and icons
       - mkdir -p /app/share/applications
       - mkdir -p /app/share/metainfo
