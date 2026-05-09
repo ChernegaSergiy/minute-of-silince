@@ -26,6 +26,8 @@ finish-args:
   - --metadata=X-DConf=comm/org/gnome/
   # Allow system tray icons
   - --talk-name=org.kde.StatusNotifierWatcher
+  # Allow autostart
+  - --filesystem=~/.config/autostart:create
 
 build-options:
   env:
