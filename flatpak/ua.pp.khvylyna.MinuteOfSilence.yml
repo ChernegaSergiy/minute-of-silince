@@ -6,9 +6,14 @@ sdk-extensions:
   - org.freedesktop.Sdk.Extension.rust-stable
   - org.freedesktop.Sdk.Extension.node20
 command: MinuteOfSilence
-# Runtime environment variables
-env:
-  LD_LIBRARY_PATH: /app/lib64:/app/lib
+finish-args:
+  # Graphical access
+  - --socket=fallback-x11
+  - --socket=wayland
+  - --device=dri
+  - --share=ipc
+  # Environment
+  - --env=LD_LIBRARY_PATH=/app/lib64:/app/lib
 build-options:
   env:
     # Ensure pkg-config and linker find modules in both lib and lib64
@@ -16,12 +21,6 @@ build-options:
     LDFLAGS: -L/app/lib64 -L/app/lib
     LIBRARY_PATH: /app/lib64:/app/lib
     LD_LIBRARY_PATH: /app/lib64:/app/lib
-finish-args:
-  # Graphical access
-  - --socket=fallback-x11
-  - --socket=wayland
-  - --device=dri
-  - --share=ipc
   # Network (needed for NTP sync)
   - --share=network
   # Audio (Pulseaudio/Pipewire)
