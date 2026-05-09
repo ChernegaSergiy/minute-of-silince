@@ -50,14 +50,15 @@ parts:
       export PATH="$PATH:$HOME/.cargo/bin"
       rustup default stable
       
-      # Build the Tauri application
+      # Build the application
       npm install
       # Build only the binary, skip all bundling
       npm run tauri build -- --no-bundle
       
       # Move binary and resources
       mkdir -p $SNAPCRAFT_PART_INSTALL/bin/audio
-      cp src-tauri/target/release/minute-of-silence $SNAPCRAFT_PART_INSTALL/bin/
+      # SOURCE is MinuteOfSilence (from Cargo.toml), TARGET is minute-of-silence (to match snap)
+      cp src-tauri/target/release/MinuteOfSilence $SNAPCRAFT_PART_INSTALL/bin/minute-of-silence
       cp src-tauri/audio/*.ogg $SNAPCRAFT_PART_INSTALL/bin/audio/
       
       # Copy custom minimal ALSA config (Pulse redirect)
