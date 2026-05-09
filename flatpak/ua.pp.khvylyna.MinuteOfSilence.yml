@@ -6,6 +6,9 @@ sdk-extensions:
   - org.freedesktop.Sdk.Extension.rust-stable
   - org.freedesktop.Sdk.Extension.node20
 command: MinuteOfSilence
+# Runtime environment variables
+env:
+  LD_LIBRARY_PATH: /app/lib64:/app/lib
 build-options:
   env:
     # Ensure pkg-config and linker find modules in both lib and lib64
