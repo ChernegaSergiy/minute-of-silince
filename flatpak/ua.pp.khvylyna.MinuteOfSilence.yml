@@ -66,9 +66,6 @@ modules:
       - mkdir -p /app/share/applications
       - mkdir -p /app/share/metainfo
       - mkdir -p /app/share/icons/hicolor/32x32/apps
-      - mkdir -p /app/share/icons/hicolor/32x32/status
-      - mkdir -p /app/share/icons/hicolor/48x48/apps
-      - mkdir -p /app/share/icons/hicolor/64x64/apps
       - mkdir -p /app/share/icons/hicolor/128x128/apps
       - mkdir -p /app/share/icons/hicolor/512x512/apps
 
@@ -79,14 +76,6 @@ modules:
       - cp src-tauri/icons/icon.png /app/share/icons/hicolor/512x512/apps/ua.pp.khvylyna.MinuteOfSilence.png
       - cp src-tauri/icons/128x128.png /app/share/icons/hicolor/128x128/apps/ua.pp.khvylyna.MinuteOfSilence.png
       - cp src-tauri/icons/32x32.png /app/share/icons/hicolor/32x32/apps/ua.pp.khvylyna.MinuteOfSilence.png
-
-      # Copy to generic names (often used as fallbacks by Tauri/AppIndicator)
-      - cp src-tauri/icons/32x32.png /app/share/icons/hicolor/32x32/apps/icon.png
-      - cp src-tauri/icons/32x32.png /app/share/icons/hicolor/32x32/status/icon.png
-      - cp src-tauri/icons/32x32.png /app/share/icons/hicolor/32x32/apps/MinuteOfSilence.png
-      - cp src-tauri/icons/64x64.png /app/share/icons/hicolor/64x64/apps/MinuteOfSilence.png
-      - cp src-tauri/icons/128x128.png /app/share/icons/hicolor/128x128/apps/MinuteOfSilence.png
-      - cp src-tauri/icons/icon.png /app/share/icons/hicolor/48x48/apps/MinuteOfSilence.png
     sources:
       - type: dir
         path: ..
