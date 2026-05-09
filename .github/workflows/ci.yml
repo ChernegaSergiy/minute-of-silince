@@ -150,3 +150,28 @@ jobs:
         with:
           name: minute-of-silence-snap
           path: ${{ steps.build.outputs.snap }}
+
+  build-flatpak:
+    name: Build Flatpak Package
+    needs: [frontend-checks, backend-checks]
+    if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/develop'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: recursive
+          fetch-depth: 0
+
+      - name: Build Flatpak
+        uses: flatpak-github-actions/flatpak-builder@v6
+        with:
+          bundle: MinuteOfSilence.flatpak
+          manifest-path: flatpak/ua.pp.khvylyna.MinuteOfSilence.yml
+          cache: "true"
+          cache-key: flatpak-builder-${{ github.sha }}
+
+      - name: Upload Flatpak Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: minute-of-silence-flatpak
+          path: MinuteOfSilence.flatpak
