@@ -26,9 +26,10 @@ pub fn save_settings(app: AppHandle, state: State<'_, AppState>, settings: Setti
 
     // Apply autostart setting.
     let is_snap = std::env::var("SNAP").is_ok();
+    let is_flatpak = std::env::var("FLATPAK_ID").is_ok();
 
-    if is_snap {
-        // Snap: manage the .desktop file in $SNAP_USER_DATA/.config/autostart
+    if is_snap || is_flatpak {
+        // Snap/Flatpak: manage the .desktop file manually
         #[cfg(target_os = "linux")]
         crate::platform::linux::autostart::manage(settings.autostart_enabled);
     } else {

@@ -57,7 +57,7 @@ pub fn run() {
             #[cfg(not(test))]
             {
                 let is_snap = std::env::var("SNAP").is_ok();
-
+                let is_flatpak = std::env::var("FLATPAK_ID").is_ok();
                 let is_msix = crate::platform::is_msix();
 
                 if is_msix {
@@ -66,19 +66,17 @@ pub fn run() {
                          manifest extension (autostart_enabled = {}).",
                         settings.autostart_enabled
                     );
-                } else if is_snap {
-                    // Snap autostart: write/remove the .desktop file that
-                    // snapd's `snap userd --autostart` picks up at session start.
-                    // This must run on every launch so the file stays in sync
-                    // with the current setting (e.g. after a setting change
-                    // that happened while snap was running).
+                } else if is_snap || is_flatpak {
+                    // Snap/Flatpak autostart: manage the .desktop file manually
+                    // to ensure correct Exec commands and paths.
                     #[cfg(target_os = "linux")]
                     crate::platform::linux::autostart::manage(settings.autostart_enabled);
 
                     if is_hidden && !settings.autostart_enabled {
                         log::info!(
                             "Autostart is disabled in settings. \
-                             Exiting Snap instance launched with --hidden."
+                             Exiting {} instance launched with --hidden.",
+                            if is_snap { "Snap" } else { "Flatpak" }
                         );
                         std::process::exit(0);
                     }
