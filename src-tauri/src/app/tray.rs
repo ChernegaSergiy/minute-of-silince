@@ -18,10 +18,7 @@ pub fn build_tray(app: &App) -> tauri::Result<()> {
 
     let menu = Menu::with_items(app, &[&open_i, &skip_i, &sep, &quit_i])?;
 
-    let icon = app.default_window_icon().cloned().unwrap_or_else(|| {
-        log::warn!("Default window icon not found, tray may have no icon");
-        tauri::image::Image::new(&[], 0, 0)
-    });
+    let icon = tauri::include_image!("../../icons/tray-icon-32.png");
 
     TrayIconBuilder::with_id("main")
         .icon(icon)
