@@ -28,6 +28,8 @@ finish-args:
   - --talk-name=org.kde.StatusNotifierWatcher
   # Allow autostart
   - --filesystem=~/.config/autostart:create
+  # Allow Tauri to create temporary tray icon files
+  - --filesystem=xdg-run/tray-icon:create
 
 build-options:
   env:
