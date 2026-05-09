@@ -163,7 +163,7 @@ jobs:
           fetch-depth: 0
 
       - name: Build Flatpak
-        uses: flatpak-github-actions/flatpak-builder@v6
+        uses: flatpak/flatpak-github-actions/flatpak-builder@v6
         with:
           bundle: MinuteOfSilence.flatpak
           manifest-path: flatpak/ua.pp.khvylyna.MinuteOfSilence.yml
