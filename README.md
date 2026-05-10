@@ -143,7 +143,7 @@ The application is distributed as an **MSIX package** to support native Windows 
    ```
 
 2. **Package and Sign**:
-   Windows requires signed packages. Use the [winapp](https://github.com/marlon-mario/winapp) tool to handle certificate generation and bundling in one step:
+   Windows requires signed packages. Use the [WinApp SDK CLI](https://github.com/microsoft/WinAppCli) tool to handle certificate generation and bundling in one step:
    ```powershell
    winapp package dist\msix --manifest AppxManifest.xml --output dist\minute-of-silence.msix --generate-cert --install-cert
    ```
