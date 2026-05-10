@@ -5,6 +5,50 @@ pub mod windows;
 pub mod linux;
 
 use crate::error::Result;
+use std::sync::OnceLock;
+
+static DARK_MODE: OnceLock<bool> = OnceLock::new();
+
+#[cfg(target_os = "windows")]
+fn detect_system_theme() -> bool {
+    use winreg::enums::HKEY_CURRENT_USER;
+    use winreg::RegKey;
+
+    let hkcu = RegKey::predef(HKEY_CURRENT_USER);
+    if let Ok(key) =
+        hkcu.open_subkey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Themes\\Personalize")
+    {
+        if let Ok(value) = key.get_value::<u32, _>("AppsUseLightTheme") {
+            return value == 0;
+        }
+    }
+    false
+}
+
+#[cfg(target_os = "linux")]
+fn detect_system_theme() -> bool {
+    use std::process::Command;
+
+    let output = Command::new("gsettings")
+        .args(["get", "org.gnome.desktop.interface", "color-scheme"])
+        .output();
+
+    if let Ok(output) = output {
+        let stdout = String::from_utf8_lossy(&output.stdout);
+        return stdout.contains("dark");
+    }
+
+    false
+}
+
+#[cfg(not(any(target_os = "windows", target_os = "linux")))]
+fn detect_system_theme() -> bool {
+    false
+}
+
+pub fn is_dark_mode() -> bool {
+    *DARK_MODE.get_or_init(|| detect_system_theme())
+}
 
 /// Returns true when the current process is running from an MSIX package
 /// (i.e. installed via Microsoft Store or `.msix`/`.msixbundle`).

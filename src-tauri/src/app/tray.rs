@@ -1,5 +1,6 @@
 //! System-tray icon setup and context-menu event handling.
 
+use crate::platform::is_dark_mode;
 use rust_i18n::t;
 use tauri::{
     menu::{Menu, MenuItem, PredefinedMenuItem},
@@ -18,7 +19,11 @@ pub fn build_tray(app: &App) -> tauri::Result<()> {
 
     let menu = Menu::with_items(app, &[&open_i, &skip_i, &sep, &quit_i])?;
 
-    let icon = tauri::include_image!("icons/tray-icon-32.png");
+    let icon = if is_dark_mode() {
+        tauri::include_image!("icons/tray-icon-32-dark.png")
+    } else {
+        tauri::include_image!("icons/tray-icon-32.png")
+    };
 
     TrayIconBuilder::with_id("main")
         .icon(icon)
