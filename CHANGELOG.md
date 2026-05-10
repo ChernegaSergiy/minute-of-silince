@@ -9,6 +9,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.8.0] - 2026-05-10
+
+### Added
+- Flatpak support with autostart via `.desktop` file in `~/.config/autostart/`.
+- Unified autostart detection for Snap, Flatpak, and standard installations.
+
+### Fixed
+- Tray icon now uses dedicated `tray-icon-32.png` instead of default window icon.
+
+### Changed
+- MSIX identifier changed to `ua.pp.khvylyna.MinuteOfSilence` for proper store submission.
+- Binary name changed from `minute-of-silence` to `MinuteOfSilence`.
+
 ## [0.7.8] - 2026-05-06
 
 ### Added
