@@ -26,30 +26,23 @@ pub fn detect_system_theme() -> bool {
 pub fn detect_system_theme() -> bool {
     use std::process::Command;
 
-    if is_gnome() {
-        // On GNOME, the top panel is almost always dark regardless of the application theme.
-        return true;
-    }
+    // Check KDE color scheme via kreadconfig
+    for cmd in ["kreadconfig6", "kreadconfig5"] {
+        let output = Command::new(cmd)
+            .args([
+                "--file",
+                "kdeglobals",
+                "--group",
+                "KDE",
+                "--key",
+                "ColorScheme",
+            ])
+            .output();
 
-    if is_kde() {
-        // Check KDE color scheme via kreadconfig
-        for cmd in ["kreadconfig6", "kreadconfig5"] {
-            let output = Command::new(cmd)
-                .args([
-                    "--file",
-                    "kdeglobals",
-                    "--group",
-                    "KDE",
-                    "--key",
-                    "ColorScheme",
-                ])
-                .output();
-
-            if let Ok(output) = output {
-                let stdout = String::from_utf8_lossy(&output.stdout).to_lowercase();
-                if !stdout.trim().is_empty() {
-                    return stdout.contains("dark");
-                }
+        if let Ok(output) = output {
+            let stdout = String::from_utf8_lossy(&output.stdout).to_lowercase();
+            if !stdout.trim().is_empty() {
+                return stdout.contains("dark");
             }
         }
     }
@@ -100,6 +93,14 @@ pub fn detect_system_theme() -> bool {
 }
 
 pub fn is_dark_mode() -> bool {
+    if is_gnome() {
+        // On GNOME, the top panel is almost always dark regardless of the application theme.
+        return true;
+    }
+    if is_kde() {
+        // On KDE, we rely on the specific theme detection in detect_system_theme.
+        return detect_system_theme();
+    }
     detect_system_theme()
 }
 
