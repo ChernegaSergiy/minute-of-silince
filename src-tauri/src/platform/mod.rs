@@ -26,6 +26,35 @@ pub fn detect_system_theme() -> bool {
 pub fn detect_system_theme() -> bool {
     use std::process::Command;
 
+    if is_gnome() {
+        // On GNOME, the top panel is almost always dark regardless of the application theme.
+        return true;
+    }
+
+    if is_kde() {
+        // Check KDE color scheme via kreadconfig
+        for cmd in ["kreadconfig6", "kreadconfig5"] {
+            let output = Command::new(cmd)
+                .args([
+                    "--file",
+                    "kdeglobals",
+                    "--group",
+                    "KDE",
+                    "--key",
+                    "ColorScheme",
+                ])
+                .output();
+
+            if let Ok(output) = output {
+                let stdout = String::from_utf8_lossy(&output.stdout).to_lowercase();
+                if !stdout.trim().is_empty() {
+                    return stdout.contains("dark");
+                }
+            }
+        }
+    }
+
+    // Fallback to gsettings
     let output = Command::new("gsettings")
         .args(["get", "org.gnome.desktop.interface", "color-scheme"])
         .output();
@@ -35,6 +64,33 @@ pub fn detect_system_theme() -> bool {
         return stdout.contains("dark");
     }
 
+    false
+}
+
+#[cfg(target_os = "linux")]
+pub fn is_gnome() -> bool {
+    std::env::var("XDG_CURRENT_DESKTOP")
+        .map(|v| {
+            let v = v.to_lowercase();
+            v.contains("gnome") || v.contains("unity")
+        })
+        .unwrap_or(false)
+}
+
+#[cfg(target_os = "linux")]
+pub fn is_kde() -> bool {
+    std::env::var("XDG_CURRENT_DESKTOP")
+        .map(|v| v.to_lowercase().contains("kde"))
+        .unwrap_or(false)
+}
+
+#[cfg(not(target_os = "linux"))]
+pub fn is_gnome() -> bool {
+    false
+}
+
+#[cfg(not(target_os = "linux"))]
+pub fn is_kde() -> bool {
     false
 }
 

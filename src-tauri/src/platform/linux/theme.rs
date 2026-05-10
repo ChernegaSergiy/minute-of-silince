@@ -42,6 +42,11 @@ pub fn start_theme_watcher(app_handle: AppHandle) {
         for signal in iter {
             if let Ok(args) = signal.args() {
                 if args.changed_properties().contains_key("color-scheme") {
+                    // Skip updates on GNOME because the panel is always dark and we use a light icon.
+                    if crate::platform::is_gnome() {
+                        continue;
+                    }
+
                     if let Some(tray) = app_handle.tray_by_id("main") {
                         let is_dark = crate::platform::detect_system_theme();
                         let icon = if is_dark {
