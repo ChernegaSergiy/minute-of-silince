@@ -22,7 +22,7 @@ pub fn build_tray(app: &App) -> tauri::Result<()> {
     let icon = if is_dark_mode() {
         tauri::include_image!("icons/tray-icon-32-dark.png")
     } else {
-        tauri::include_image!("icons/tray-icon-32.png")
+        tauri::include_image!("icons/tray-icon-32-light.png")
     };
 
     TrayIconBuilder::with_id("main")
