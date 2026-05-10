@@ -48,7 +48,8 @@ pub fn start_theme_watcher(app_handle: AppHandle) {
 
         for signal in iter {
             if let Ok(args) = signal.args() {
-                if args.namespace() == "org.freedesktop.appearance" && args.key() == "color-scheme"
+                if *args.namespace() == "org.freedesktop.appearance"
+                    && *args.key() == "color-scheme"
                 {
                     // Skip updates on GNOME because the panel is always dark and we use a light icon.
                     if crate::platform::is_gnome() {
