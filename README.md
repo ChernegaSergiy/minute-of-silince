@@ -134,7 +134,7 @@ The application is distributed as an **MSIX package** to support native Windows 
 
    # Copy manifest and compiled binary
    copy appxmanifest.xml dist\msix\AppxManifest.xml
-   copy src-tauri\target\release\minute-of-silence.exe dist\msix\
+   copy src-tauri\target\release\MinuteOfSilence.exe dist\msix\
 
    # Copy audio and localized resources
    Copy-Item src-tauri\audio\*.ogg dist\msix\audio\
