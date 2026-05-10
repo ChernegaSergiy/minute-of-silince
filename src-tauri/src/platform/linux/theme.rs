@@ -1,24 +1,9 @@
 //! Linux theme watcher using XDG Desktop Portal (universal for GNOME, KDE, etc.).
 
+use crate::platform::linux::PortalSettingsProxyBlocking;
 use std::thread;
 use tauri::AppHandle;
 use zbus::blocking::Connection;
-use zbus::proxy;
-
-#[proxy(
-    interface = "org.freedesktop.portal.Settings",
-    default_service = "org.freedesktop.portal.Desktop",
-    default_path = "/org/freedesktop/portal/desktop"
-)]
-trait PortalSettings {
-    #[zbus(signal)]
-    fn setting_changed(
-        &self,
-        namespace: &str,
-        key: &str,
-        value: zbus::zvariant::Value<'_>,
-    ) -> zbus::Result<()>;
-}
 
 pub fn start_theme_watcher(app_handle: AppHandle) {
     thread::spawn(move || {
@@ -51,13 +36,15 @@ pub fn start_theme_watcher(app_handle: AppHandle) {
                 if *args.namespace() == "org.freedesktop.appearance"
                     && *args.key() == "color-scheme"
                 {
-                    // Skip updates on GNOME because the panel is always dark and we use a light icon.
+                    // is_dark_mode() already handles the GNOME exception (forcing dark mode).
+                    let is_dark = crate::platform::is_dark_mode();
+
                     if crate::platform::is_gnome() {
+                        // Skip redundant updates on GNOME as the panel is always dark.
                         continue;
                     }
 
                     if let Some(tray) = app_handle.tray_by_id("main") {
-                        let is_dark = crate::platform::detect_system_theme();
                         let icon = if is_dark {
                             tauri::include_image!("icons/tray-icon-32-light.png")
                         } else {

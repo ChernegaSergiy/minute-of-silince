@@ -24,30 +24,45 @@ pub fn detect_system_theme() -> bool {
 
 #[cfg(target_os = "linux")]
 pub fn detect_system_theme() -> bool {
+    use crate::platform::linux::PortalSettingsProxyBlocking;
     use std::process::Command;
+    use zbus::blocking::Connection;
 
-    // Check KDE color scheme via kreadconfig
-    for cmd in ["kreadconfig6", "kreadconfig5"] {
-        let output = Command::new(cmd)
-            .args([
-                "--file",
-                "kdeglobals",
-                "--group",
-                "KDE",
-                "--key",
-                "ColorScheme",
-            ])
-            .output();
-
-        if let Ok(output) = output {
-            let stdout = String::from_utf8_lossy(&output.stdout).to_lowercase();
-            if !stdout.trim().is_empty() {
-                return stdout.contains("dark");
+    // 1. Primary method: XDG Desktop Portal (Universal)
+    if let Ok(conn) = Connection::session() {
+        if let Ok(proxy) = PortalSettingsProxyBlocking::new(&conn) {
+            if let Ok(val) = proxy.read("org.freedesktop.appearance", "color-scheme") {
+                if let Ok(scheme) = u32::try_from(val) {
+                    return scheme == 1; // 1 = Prefer Dark
+                }
             }
         }
     }
 
-    // Fallback to gsettings
+    // 2. Fallback: KDE specific via kreadconfig
+    if is_kde() {
+        for cmd in ["kreadconfig6", "kreadconfig5"] {
+            let output = Command::new(cmd)
+                .args([
+                    "--file",
+                    "kdeglobals",
+                    "--group",
+                    "KDE",
+                    "--key",
+                    "ColorScheme",
+                ])
+                .output();
+
+            if let Ok(output) = output {
+                let stdout = String::from_utf8_lossy(&output.stdout).to_lowercase();
+                if !stdout.trim().is_empty() {
+                    return stdout.contains("dark");
+                }
+            }
+        }
+    }
+
+    // 3. Fallback: GNOME/GSettings
     let output = Command::new("gsettings")
         .args(["get", "org.gnome.desktop.interface", "color-scheme"])
         .output();

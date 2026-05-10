@@ -3,6 +3,25 @@ pub mod media;
 pub mod theme;
 pub mod volume;
 
+use zbus::proxy;
+
+#[proxy(
+    interface = "org.freedesktop.portal.Settings",
+    default_service = "org.freedesktop.portal.Desktop",
+    default_path = "/org/freedesktop/portal/desktop"
+)]
+pub trait PortalSettings {
+    fn read(&self, namespace: &str, key: &str) -> zbus::Result<zbus::zvariant::OwnedValue>;
+
+    #[zbus(signal)]
+    fn setting_changed(
+        &self,
+        namespace: &str,
+        key: &str,
+        value: zbus::zvariant::Value<'_>,
+    ) -> zbus::Result<()>;
+}
+
 pub struct LinuxPlatform;
 
 #[async_trait::async_trait]
