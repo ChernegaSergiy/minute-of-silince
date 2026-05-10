@@ -18,33 +18,40 @@ pub fn start_theme_watcher(app_handle: AppHandle) {
             .destination("org.gnome.desktop.interface")
             .and_then(|b| b.path("/org/gnome/desktop/interface"))
         {
-            Ok(p) => p,
+            Ok(b) => match b.build() {
+                Ok(p) => p,
+                Err(e) => {
+                    log::warn!("Failed to build Properties proxy: {}", e);
+                    return;
+                }
+            },
             Err(e) => {
                 log::warn!("Failed to create Properties proxy: {}", e);
                 return;
             }
         };
 
-        loop {
-            match proxy.receive_properties_changed() {
-                Ok(changed) => {
-                    for (name, _) in changed.iter() {
-                        if name == "color-scheme" {
-                            if let Some(tray) = app_handle.tray_by_id("main") {
-                                let is_dark = crate::platform::detect_system_theme();
-                                let icon = if is_dark {
-                                    tauri::include_image!("icons/tray-icon-32-light.png")
-                                } else {
-                                    tauri::include_image!("icons/tray-icon-32-dark.png")
-                                };
-                                let _ = tray.set_icon(Some(icon));
-                                log::info!("Theme changed, tray icon updated");
-                            }
-                        }
+        let iter = match proxy.receive_properties_changed() {
+            Ok(it) => it,
+            Err(e) => {
+                log::warn!("Failed to watch for properties changes: {}", e);
+                return;
+            }
+        };
+
+        for signal in iter {
+            if let Ok(args) = signal.args() {
+                if args.changed_properties().contains_key("color-scheme") {
+                    if let Some(tray) = app_handle.tray_by_id("main") {
+                        let is_dark = crate::platform::detect_system_theme();
+                        let icon = if is_dark {
+                            tauri::include_image!("icons/tray-icon-32-light.png")
+                        } else {
+                            tauri::include_image!("icons/tray-icon-32-dark.png")
+                        };
+                        let _ = tray.set_icon(Some(icon));
+                        log::info!("Theme changed, tray icon updated");
                     }
-                }
-                Err(e) => {
-                    log::warn!("Failed to receive properties changed: {}", e);
                 }
             }
         }
