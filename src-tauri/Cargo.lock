@@ -2456,6 +2456,7 @@ dependencies = [
  "tokio",
  "windows 0.62.2",
  "windows-future 0.3.2",
+ "winreg 0.55.0",
  "zbus",
 ]
 
