@@ -5,12 +5,9 @@ pub mod windows;
 pub mod linux;
 
 use crate::error::Result;
-use std::sync::OnceLock;
-
-static DARK_MODE: OnceLock<bool> = OnceLock::new();
 
 #[cfg(target_os = "windows")]
-fn detect_system_theme() -> bool {
+pub fn detect_system_theme() -> bool {
     use winreg::enums::HKEY_CURRENT_USER;
     use winreg::RegKey;
 
@@ -26,7 +23,7 @@ fn detect_system_theme() -> bool {
 }
 
 #[cfg(target_os = "linux")]
-fn detect_system_theme() -> bool {
+pub fn detect_system_theme() -> bool {
     use std::process::Command;
 
     let output = Command::new("gsettings")
@@ -42,12 +39,12 @@ fn detect_system_theme() -> bool {
 }
 
 #[cfg(not(any(target_os = "windows", target_os = "linux")))]
-fn detect_system_theme() -> bool {
+pub fn detect_system_theme() -> bool {
     false
 }
 
 pub fn is_dark_mode() -> bool {
-    *DARK_MODE.get_or_init(detect_system_theme)
+    detect_system_theme()
 }
 
 /// Returns true when the current process is running from an MSIX package
