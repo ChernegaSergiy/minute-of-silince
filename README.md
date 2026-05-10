@@ -147,7 +147,9 @@ The application is distributed as an **MSIX package** to support native Windows 
    ```powershell
    winapp package dist\msix --manifest AppxManifest.xml --output dist\minute-of-silence.msix --generate-cert --install-cert
    ```
-   *Note: The `--generate-cert` and `--install-cert` flags are only required for the first build.*
+
+   > [!NOTE]
+   > The `--generate-cert` and `--install-cert` flags are only required for the first build on a new machine.
 
 Artifacts are written to `src-tauri/target/release/bundle/`.
 
