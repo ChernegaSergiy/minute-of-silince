@@ -47,7 +47,7 @@ fn detect_system_theme() -> bool {
 }
 
 pub fn is_dark_mode() -> bool {
-    *DARK_MODE.get_or_init(|| detect_system_theme())
+    *DARK_MODE.get_or_init(detect_system_theme)
 }
 
 /// Returns true when the current process is running from an MSIX package
