@@ -1,5 +1,6 @@
 pub mod autostart;
 pub mod media;
+pub mod theme;
 pub mod volume;
 
 pub struct LinuxPlatform;

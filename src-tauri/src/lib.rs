@@ -97,6 +97,9 @@ pub fn run() {
             #[cfg(target_os = "windows")]
             crate::platform::windows::theme::start_theme_watcher(handle.clone());
 
+            #[cfg(target_os = "linux")]
+            crate::platform::linux::theme::start_theme_watcher(handle.clone());
+
             if let Some(window) = app.get_webview_window("main") {
                 if is_hidden {
                     window.hide()?;
