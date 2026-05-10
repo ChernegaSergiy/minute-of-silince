@@ -111,6 +111,18 @@ npm run tauri dev
 npm run tauri build
 ```
 
+#### Flatpak
+To build and install the Flatpak package locally:
+
+```bash
+# Install flatpak-builder if needed (example for Fedora/Ubuntu)
+sudo dnf install flatpak-builder 
+# or: sudo apt install flatpak-builder
+
+# Build and install locally
+flatpak-builder --user --install --force-clean --ccache build-dir flatpak/ua.pp.khvylyna.MinuteOfSilence.yml
+```
+
 Artifacts are written to `src-tauri/target/release/bundle/`.
 
 ## Project Structure
