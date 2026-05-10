@@ -123,6 +123,32 @@ sudo dnf install flatpak-builder
 flatpak-builder --user --install --force-clean --ccache build-dir flatpak/ua.pp.khvylyna.MinuteOfSilence.yml
 ```
 
+#### Windows (MSIX)
+The application is distributed as an **MSIX package** to support native Windows features. To build and sign the package manually:
+
+1. **Assemble the Bundle**:
+   Collect the binary, manifest, and resources (audio and localized PRI files) into a single folder:
+   ```powershell
+   # Create directory structure
+   New-Item -ItemType Directory -Path dist\msix\audio -Force
+
+   # Copy manifest and compiled binary
+   copy appxmanifest.xml dist\msix\AppxManifest.xml
+   copy src-tauri\target\release\minute-of-silence.exe dist\msix\
+
+   # Copy audio and localized resources
+   Copy-Item src-tauri\audio\*.ogg dist\msix\audio\
+   Copy-Item -Path src-tauri\Strings -Destination dist\msix\Strings -Recurse -Force
+   Copy-Item dist\msix\Strings\resources.pri dist\msix\resources.pri
+   ```
+
+2. **Package and Sign**:
+   Windows requires signed packages. Use the [winapp](https://github.com/marlon-mario/winapp) tool to handle certificate generation and bundling in one step:
+   ```powershell
+   winapp package dist\msix --manifest AppxManifest.xml --output dist\minute-of-silence.msix --generate-cert --install-cert
+   ```
+   *Note: The `--generate-cert` and `--install-cert` flags are only required for the first build.*
+
 Artifacts are written to `src-tauri/target/release/bundle/`.
 
 ## Project Structure
