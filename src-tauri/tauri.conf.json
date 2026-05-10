@@ -10,10 +10,6 @@
     "frontendDist": "../dist"
   },
   "app": {
-    "trayIcon": {
-      "iconPath": "icons/tray-icon-32.png",
-      "iconAsTemplate": true
-    },
     "withGlobalTauri": true,
     "windows": [
       {
