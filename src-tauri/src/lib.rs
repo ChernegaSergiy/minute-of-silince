@@ -94,6 +94,9 @@ pub fn run() {
             // --- 4. UI Initialization ---
             app::tray::build_tray(app)?;
 
+            #[cfg(target_os = "windows")]
+            crate::platform::windows::theme::start_theme_watcher(handle.clone());
+
             if let Some(window) = app.get_webview_window("main") {
                 if is_hidden {
                     window.hide()?;

@@ -1,6 +1,7 @@
 pub mod media;
 pub mod notifications;
 pub mod power;
+pub mod theme;
 pub mod volume;
 
 pub struct WindowsPlatform;
