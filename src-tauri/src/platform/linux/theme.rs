@@ -15,6 +15,7 @@ pub fn start_theme_watcher(app_handle: AppHandle) {
 
         let props = match zbus::blocking::fdo::PropertiesProxy::builder(&conn)
             .destination("org.gnome.desktop.interface")
+            .map_err(|e| e)?
             .path("/org/gnome/desktop/interface")
             .map_err(|e| e)?
             .build()
