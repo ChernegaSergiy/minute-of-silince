@@ -54,7 +54,8 @@
           EntryPoint="Windows.FullTrustApplication">
           <desktop:StartupTask
             TaskId="MinuteOfSilenceStartup"
-            Enabled="true" />
+            Enabled="true"
+            Arguments="--hidden" />
         </desktop:Extension>
         <desktop:Extension
           Category="windows.toastNotificationActivation">
