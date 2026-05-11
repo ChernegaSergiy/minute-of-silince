@@ -9,6 +9,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.8.1] - 2026-05-11
+
+### Added
+- Adaptive tray icon that automatically switches between light and dark versions to match the system theme.
+- Real-time theme watching for Windows (via registry) and Linux (via XDG Desktop Portal).
+- Unified system theme detection supporting Windows, GNOME, and KDE Plasma.
+- Specialized handling for GNOME to ensure tray icon visibility on its dark top panel.
+
+### Changed
+- Replaced the static tray icon with theme-aware assets (`-light` and `-dark` versions).
+
 ## [0.8.0] - 2026-05-10
 
 ### Added
