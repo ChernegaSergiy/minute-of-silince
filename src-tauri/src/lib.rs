@@ -64,7 +64,7 @@ pub fn run() {
                     let is_msix = crate::platform::is_msix();
 
                     if is_msix {
-                        log::info!("Running as MSIX package — managing autostart via registry.");
+                        log::info!("Running as MSIX package — managing autostart via Startup-folder shortcut.");
                         if settings.autostart_enabled {
                             if let Err(e) = crate::platform::windows::autostart::enable_autostart()
                             {
