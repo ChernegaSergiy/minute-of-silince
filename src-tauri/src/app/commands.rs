@@ -38,7 +38,7 @@ pub fn save_settings(app: AppHandle, state: State<'_, AppState>, settings: Setti
             let is_msix = crate::platform::is_msix();
 
             if is_msix {
-                // MSIX: manage autostart via Startup-folder shortcut
+                // MSIX: manage autostart via packaged StartupTask
                 #[cfg(target_os = "windows")]
                 {
                     if settings.autostart_enabled {
