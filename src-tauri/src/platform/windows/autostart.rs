@@ -1,41 +1,45 @@
-//! Windows autostart management for MSIX packages.
+//! Windows autostart management — lightweight Startup-folder `.lnk` fallback.
 //!
-//! MSIX applications cannot directly modify the standard Run registry key,
-//! so we write to the virtualized registry which is properly handled by the OS.
+//! MSIX packages cannot write to HKCU Run; for self-signed MSIX we create a
+//! shortcut in the user's Startup folder which is not virtualized.
 
-use crate::error::Result;
-use winreg::enums::*;
-use winreg::RegKey;
+use crate::{error::Result, AppError};
 
-/// Enable autostart by writing to the virtualized registry.
-#[cfg(target_os = "windows")]
-#[allow(dead_code)]
+use std::path::Path;
+
+/// Enable autostart by creating `MinuteOfSilence.lnk` in the user's Startup folder.
 pub fn enable_autostart() -> Result<()> {
-    let hkcu = RegKey::predef(HKEY_CURRENT_USER);
-    let path = r"Software\Microsoft\Windows\CurrentVersion\Run";
-    let (key, _) = hkcu.create_subkey(path)?;
+    let startup_dir = dirs::data_dir()
+        .ok_or_else(|| AppError::Platform("Cannot locate AppData".into()))?
+        .join("Microsoft\\Windows\\Start Menu\\Programs\\Startup");
 
-    // Get the current executable path
-    let exe_path = std::env::current_exe()?;
-    let exe_path_str = exe_path.to_string_lossy().to_string();
+    let exe_path = std::env::current_exe().map_err(|e| AppError::Platform(e.to_string()))?;
+    let shortcut_path = startup_dir.join("MinuteOfSilence.lnk");
 
-    key.set_value("MinuteOfSilence", &exe_path_str)?;
-    log::info!("Autostart enabled for MSIX: {}", exe_path_str);
-
+    create_shortcut(&exe_path, &shortcut_path)?;
+    log::info!("Autostart enabled via startup folder: {:?}", shortcut_path);
     Ok(())
 }
 
-/// Disable autostart by removing the registry entry.
-#[cfg(target_os = "windows")]
-#[allow(dead_code)]
+/// Disable autostart by removing the shortcut from the user's Startup folder.
 pub fn disable_autostart() -> Result<()> {
-    let hkcu = RegKey::predef(HKEY_CURRENT_USER);
-    let path = r"Software\Microsoft\Windows\CurrentVersion\Run";
+    let startup_dir = dirs::data_dir()
+        .ok_or_else(|| AppError::Platform("Cannot locate AppData".into()))?
+        .join("Microsoft\\Windows\\Start Menu\\Programs\\Startup");
 
-    if let Ok(key) = hkcu.open_subkey_with_flags(path, KEY_WRITE) {
-        let _ = key.delete_value("MinuteOfSilence");
-        log::info!("Autostart disabled for MSIX");
+    let shortcut_path = startup_dir.join("MinuteOfSilence.lnk");
+
+    if shortcut_path.exists() {
+        std::fs::remove_file(&shortcut_path).map_err(|e| AppError::Platform(e.to_string()))?;
+        log::info!("Autostart disabled, shortcut removed");
     }
+    Ok(())
+}
 
+fn create_shortcut(target: &Path, shortcut: &Path) -> Result<()> {
+    mslnk::ShellLink::new(target)
+        .map_err(|e| AppError::Platform(e.to_string()))?
+        .create_lnk(shortcut)
+        .map_err(|e| AppError::Platform(e.to_string()))?;
     Ok(())
 }
