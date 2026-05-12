@@ -60,6 +60,7 @@ windows = { version = "0.62.2", features = [
     "Win32_System_Registry",
 ] }
 windows-future = "0.3.2"
+mslnk = "0.1"
 
 [target.'cfg(target_os = "linux")'.dependencies]
 alsa = "0.11"
