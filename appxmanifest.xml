@@ -49,15 +49,6 @@
       </uap:VisualElements>
       <Extensions>
         <desktop:Extension
-          Category="windows.startupTask"
-          Executable="MinuteOfSilence.exe"
-          EntryPoint="Windows.FullTrustApplication">
-          <desktop:StartupTask
-            TaskId="MinuteOfSilenceStartup"
-            Enabled="true"
-            DisplayName="ms-resource:AppName" />
-        </desktop:Extension>
-        <desktop:Extension
           Category="windows.toastNotificationActivation">
           <desktop:ToastNotificationActivation
             ToastActivatorCLSID="A1B2C3D4-E5F6-7890-ABCD-EF1234567890" />
