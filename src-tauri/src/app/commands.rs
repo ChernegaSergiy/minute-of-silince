@@ -37,7 +37,22 @@ pub fn save_settings(app: AppHandle, state: State<'_, AppState>, settings: Setti
         {
             let is_msix = crate::platform::is_msix();
 
-            if !is_msix {
+            if is_msix {
+                // MSIX: manage autostart via registry
+                #[cfg(target_os = "windows")]
+                {
+                    if settings.autostart_enabled {
+                        if let Err(e) = crate::platform::windows::autostart::enable_autostart() {
+                            log::error!("Failed to enable autostart for MSIX: {}", e);
+                        }
+                    } else {
+                        if let Err(e) = crate::platform::windows::autostart::disable_autostart() {
+                            log::error!("Failed to disable autostart for MSIX: {}", e);
+                        }
+                    }
+                }
+            } else {
+                // Standard Windows/macOS/Linux: use tauri autostart plugin
                 use tauri_plugin_autostart::ManagerExt;
                 let autostart_manager = app.autolaunch();
                 if settings.autostart_enabled {
