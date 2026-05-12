@@ -9,6 +9,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.8.3] - 2026-05-12
+
+### Changed
+- MSIX autostart now uses Startup-folder shortcut (`.lnk` file) instead of manifest extension, providing better compatibility and control.
+
+### Fixed
+- Removed invalid MSIX startup task extension from manifest that was using incorrect `desktop` namespace approach.
+
 ## [0.8.2] - 2026-05-12
 
 ### Fixed
