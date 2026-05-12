@@ -159,3 +159,9 @@ pub enum AudioPreset {
     /// Silence only (no audio, just visual overlay)
     Silence,
 }
+
+impl AudioPreset {
+    pub fn has_anthem(self) -> bool {
+        matches!(self, Self::VoiceMetronomeAnthem | Self::MetronomeAnthem)
+    }
+}
