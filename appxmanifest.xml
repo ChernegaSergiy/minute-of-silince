@@ -78,6 +78,5 @@
 
   <Capabilities>
     <rescap:Capability Name="runFullTrust" />
-    <rescap:Capability Name="registryWriteVirtualized" />
   </Capabilities>
 </Package>
