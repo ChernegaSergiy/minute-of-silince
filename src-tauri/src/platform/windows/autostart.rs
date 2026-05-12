@@ -8,6 +8,8 @@ use winreg::enums::*;
 use winreg::RegKey;
 
 /// Enable autostart by writing to the virtualized registry.
+#[cfg(target_os = "windows")]
+#[allow(dead_code)]
 pub fn enable_autostart() -> Result<()> {
     let hkcu = RegKey::predef(HKEY_CURRENT_USER);
     let path = r"Software\Microsoft\Windows\CurrentVersion\Run";
@@ -24,6 +26,8 @@ pub fn enable_autostart() -> Result<()> {
 }
 
 /// Disable autostart by removing the registry entry.
+#[cfg(target_os = "windows")]
+#[allow(dead_code)]
 pub fn disable_autostart() -> Result<()> {
     let hkcu = RegKey::predef(HKEY_CURRENT_USER);
     let path = r"Software\Microsoft\Windows\CurrentVersion\Run";

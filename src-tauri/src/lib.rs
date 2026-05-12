@@ -58,20 +58,28 @@ pub fn run() {
             {
                 let is_snap = std::env::var("SNAP").is_ok();
                 let is_flatpak = std::env::var("FLATPAK_ID").is_ok();
-                let is_msix = crate::platform::is_msix();
 
-                if is_msix {
-                    log::info!("Running as MSIX package — managing autostart via registry.");
-                    if settings.autostart_enabled {
-                        if let Err(e) = crate::platform::windows::autostart::enable_autostart() {
-                            log::error!("Failed to enable autostart for MSIX: {}", e);
-                        }
-                    } else {
-                        if let Err(e) = crate::platform::windows::autostart::disable_autostart() {
-                            log::error!("Failed to disable autostart for MSIX: {}", e);
+                #[cfg(target_os = "windows")]
+                {
+                    let is_msix = crate::platform::is_msix();
+
+                    if is_msix {
+                        log::info!("Running as MSIX package — managing autostart via registry.");
+                        if settings.autostart_enabled {
+                            if let Err(e) = crate::platform::windows::autostart::enable_autostart()
+                            {
+                                log::error!("Failed to enable autostart for MSIX: {}", e);
+                            }
+                        } else {
+                            if let Err(e) = crate::platform::windows::autostart::disable_autostart()
+                            {
+                                log::error!("Failed to disable autostart for MSIX: {}", e);
+                            }
                         }
                     }
-                } else if is_snap || is_flatpak {
+                }
+
+                if is_snap || is_flatpak {
                     // Snap/Flatpak autostart: manage the .desktop file manually
                     // to ensure correct Exec commands and paths.
                     #[cfg(target_os = "linux")]
