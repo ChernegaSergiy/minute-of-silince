@@ -8,6 +8,7 @@ use crate::{error::Result, AppError};
 use std::path::Path;
 
 /// Enable autostart by creating `MinuteOfSilence.lnk` in the user's Startup folder.
+#[allow(dead_code)]
 pub fn enable_autostart() -> Result<()> {
     let startup_dir = dirs::data_dir()
         .ok_or_else(|| AppError::Platform("Cannot locate AppData".into()))?
@@ -22,6 +23,7 @@ pub fn enable_autostart() -> Result<()> {
 }
 
 /// Disable autostart by removing the shortcut from the user's Startup folder.
+#[allow(dead_code)]
 pub fn disable_autostart() -> Result<()> {
     let startup_dir = dirs::data_dir()
         .ok_or_else(|| AppError::Platform("Cannot locate AppData".into()))?
@@ -36,6 +38,7 @@ pub fn disable_autostart() -> Result<()> {
     Ok(())
 }
 
+#[allow(dead_code)]
 fn create_shortcut(target: &Path, shortcut: &Path) -> Result<()> {
     mslnk::ShellLink::new(target)
         .map_err(|e| AppError::Platform(e.to_string()))?
