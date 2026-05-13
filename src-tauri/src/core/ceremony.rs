@@ -40,6 +40,7 @@ impl CeremonyManager {
             target_volume,
             preset,
             announcement_voice,
+            anthem_voice,
         ) = {
             let state = self.app.state::<AppState>();
             let inner = state.lock();
@@ -51,6 +52,7 @@ impl CeremonyManager {
                 inner.settings.volume,
                 inner.settings.preset,
                 inner.settings.announcement_voice,
+                inner.settings.anthem_voice,
             )
         };
 
@@ -143,7 +145,7 @@ impl CeremonyManager {
         let platform_handle = crate::platform::get_platform();
 
         std::thread::spawn(move || {
-            if let Err(e) = audio_engine.play_preset(preset, target_volume, announcement_voice) {
+            if let Err(e) = audio_engine.play_preset(preset, target_volume, announcement_voice, anthem_voice) {
                 log::error!("Ceremony audio error: {}", e);
             }
 
