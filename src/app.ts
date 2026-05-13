@@ -300,6 +300,19 @@ export class App {
               </select>
             </div>
 
+            <!-- Anthem voice selection -->
+            <div class="control-row" id="anthemVoiceSelectRow">
+              <div class="control-row__info">
+                <span class="control-row__label">${t("controls.anthem_voice.label")}</span>
+                <span class="control-row__description">${t("controls.anthem_voice.description")}</span>
+              </div>
+              <select id="anthemVoiceSelect" class="select">
+                <option value="default" ${this.settings.anthemVoice === "default" ? "selected" : ""}>${t("controls.anthem_voice.default")}</option>
+                <option value="mykhailo_khoma" ${this.settings.anthemVoice === "mykhailo_khoma" ? "selected" : ""}>${t("controls.anthem_voice.mykhailo_khoma")}</option>
+                <option value="oleksandr_ponomarov" ${this.settings.anthemVoice === "oleksandr_ponomarov" ? "selected" : ""}>${t("controls.anthem_voice.oleksandr_ponomarov")}</option>
+              </select>
+            </div>
+
             <!-- Volume -->
             <div class="control-row control-row--column">
               <div class="control-row__header">
@@ -600,7 +613,16 @@ export class App {
       };
       this.checkDirty();
     });
-  
+
+    // Anthem voice select
+    this.q<HTMLSelectElement>("#anthemVoiceSelect").addEventListener("change", (e) => {
+      this.settings = {
+        ...this.settings,
+        anthemVoice: (e.target as HTMLSelectElement).value as Settings["anthemVoice"],
+      };
+      this.checkDirty();
+    });
+
     // Volume slider
     const volumeRange = this.q<HTMLInputElement>("#volumeRange");
     const volumeValue = this.q<HTMLElement>("#volumeValue");
