@@ -4,7 +4,7 @@ use crate::platform::Platform;
 use crate::state::AppState;
 use std::sync::atomic::{AtomicU32, Ordering};
 use std::sync::{Arc, Mutex};
-use tauri::{AppHandle, Emitter, Manager, WebviewWindowBuilder};
+use tauri::{AppHandle, Emitter, Listener, Manager, WebviewWindowBuilder};
 
 lazy_static::lazy_static! {
     static ref PREVIOUS_VOLUME: Mutex<Option<u8>> = Mutex::new(None);
@@ -62,7 +62,7 @@ impl CeremonyManager {
         }
         ACTIVE_TRIGGER_COUNT.fetch_add(1, Ordering::SeqCst);
 
-        // 2. Show flag animation window if conditions are met
+        // 2. Setup flag animation listeners if conditions are met
         let should_show_flag = {
             let state = self.app.state::<AppState>();
             let inner = state.lock();
@@ -71,20 +71,34 @@ impl CeremonyManager {
                 && preset.has_anthem()
         };
         if should_show_flag {
-            if let Err(e) = WebviewWindowBuilder::new(
-                &self.app,
-                "flag-animation",
-                tauri::WebviewUrl::App(std::path::PathBuf::from("flag-animation.html")),
-            )
-            .fullscreen(true)
-            .decorations(false)
-            .transparent(true)
-            .always_on_top(true)
-            .skip_taskbar(true)
-            .build()
-            {
-                log::warn!("Failed to create flag animation window: {}", e);
-            }
+            let app_clone = self.app.clone();
+            let _ = self.app.listen("anthem-start", move |_| {
+                if let Err(e) = WebviewWindowBuilder::new(
+                    &app_clone,
+                    "flag-animation",
+                    tauri::WebviewUrl::App(std::path::PathBuf::from("flag-animation.html")),
+                )
+                .fullscreen(true)
+                .decorations(false)
+                .transparent(true)
+                .always_on_top(true)
+                .skip_taskbar(true)
+                .build()
+                {
+                    log::warn!("Failed to create flag animation window: {}", e);
+                }
+            });
+
+            let app_clone2 = self.app.clone();
+            let _ = self.app.listen("anthem-end", move |_| {
+                if let Ok(Some(window)) = app_clone2
+                    .get_webview_window("flag-animation")
+                    .ok_or(())
+                    .map(|w| Some(w))
+                {
+                    let _ = window.close();
+                }
+            });
         }
 
         // 3. Notify UI
