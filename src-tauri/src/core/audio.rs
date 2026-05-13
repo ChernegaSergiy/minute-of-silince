@@ -218,7 +218,7 @@ impl AudioEngine {
                     player.append(source);
                 }
 
-                if self.sleep_interruptible(Duration::from_secs(30), start_counter) {
+                if self.wait_player_interruptible(&player, start_counter) {
                     return Ok(());
                 }
 
@@ -299,7 +299,7 @@ impl AudioEngine {
                     player.append(source);
                 }
 
-                if self.sleep_interruptible(Duration::from_secs(30), start_counter) {
+                if self.wait_player_interruptible(&player, start_counter) {
                     return Ok(());
                 }
 
