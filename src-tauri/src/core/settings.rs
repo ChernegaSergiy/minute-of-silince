@@ -79,6 +79,14 @@ pub enum AnnouncementVoice {
     AirAlert,
 }
 
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Serialize, Deserialize)]
+#[serde(rename_all = "snake_case")]
+pub enum AnthemVoice {
+    Default,
+    MykhailoKhoma,
+    OleksandrPonomarov,
+}
+
 impl Default for Settings {
     fn default() -> Self {
         Self {
@@ -99,6 +107,7 @@ impl Default for Settings {
             reminder_enabled: false,
             reminder_minutes_before: 5,
             announcement_voice: AnnouncementVoice::BohdanHdal,
+            anthem_voice: AnthemVoice::Default,
         }
     }
 }
