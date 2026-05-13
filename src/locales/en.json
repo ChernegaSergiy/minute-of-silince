@@ -98,6 +98,10 @@
     "overlay": {
       "label": "Visual overlay",
       "description": "Show full-screen memorial overlay during the ceremony."
+    },
+    "flag_animation": {
+      "label": "Anthem flag animation",
+      "description": "Show the flag animation during the anthem segment when the visual overlay is enabled."
     }
   },
   "buttons": {
