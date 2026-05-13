@@ -484,6 +484,14 @@ export class App {
     }
   }
 
+  private updateAnthemVoiceVisibility(): void {
+    const anthemPresets = ["voice_metronome_anthem", "metronome_anthem"];
+    const row = this.q("#anthemVoiceSelectRow") as HTMLElement;
+    if (row) {
+      row.style.display = anthemPresets.includes(this.settings.preset) ? "" : "none";
+    }
+  }
+
   private checkDirty(): void {
     const dirty = JSON.stringify(this.settings) !== JSON.stringify(this.cleanSettings);
     this.setDirty(dirty);
@@ -602,8 +610,12 @@ export class App {
         ...this.settings,
         preset: (e.target as HTMLSelectElement).value as Settings["preset"],
       };
+      this.updateAnthemVoiceVisibility();
       this.checkDirty();
     });
+
+    // Set initial visibility
+    this.updateAnthemVoiceVisibility();
 
     // Voice select
     this.q<HTMLSelectElement>("#voiceSelect").addEventListener("change", (e) => {
