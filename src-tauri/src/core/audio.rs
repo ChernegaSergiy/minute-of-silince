@@ -7,7 +7,7 @@ use std::path::PathBuf;
 use std::sync::atomic::{AtomicU64, Ordering};
 use std::thread;
 use std::time::{Duration, Instant};
-use tauri::{AppHandle, Manager};
+use tauri::{AppHandle, Emitter, Manager};
 
 use crate::core::settings::{AnnouncementVoice, AudioPreset};
 use crate::error::{AppError, Result};
@@ -222,9 +222,15 @@ impl AudioEngine {
                     return Ok(());
                 }
 
+                let _ = self.app_handle.emit("anthem-start", ());
                 if let Ok(source) = Decoder::new(BufReader::new(File::open(&anthem)?)) {
                     player.append(source);
                 }
+                if self.wait_player_interruptible(&player, start_counter) {
+                    let _ = self.app_handle.emit("anthem-end", ());
+                    return Ok(());
+                }
+                let _ = self.app_handle.emit("anthem-end", ());
             }
             (AudioPreset::VoiceMetronomeEnding, voice) => {
                 if self.is_stopped(start_counter) {
@@ -297,9 +303,15 @@ impl AudioEngine {
                     return Ok(());
                 }
 
+                let _ = self.app_handle.emit("anthem-start", ());
                 if let Ok(source) = Decoder::new(BufReader::new(File::open(&anthem)?)) {
                     player.append(source);
                 }
+                if self.wait_player_interruptible(&player, start_counter) {
+                    let _ = self.app_handle.emit("anthem-end", ());
+                    return Ok(());
+                }
+                let _ = self.app_handle.emit("anthem-end", ());
             }
             (AudioPreset::BellSilenceBell, _) => {
                 if self.is_stopped(start_counter) {
