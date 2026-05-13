@@ -65,6 +65,9 @@ pub struct Settings {
 
     /// Selected announcement voice/version.
     pub announcement_voice: AnnouncementVoice,
+
+    /// Selected anthem voice/performance.
+    pub anthem_voice: AnthemVoice,
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Serialize, Deserialize)]
