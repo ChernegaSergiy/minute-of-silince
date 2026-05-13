@@ -202,7 +202,8 @@ impl AudioEngine {
                 let announcement_file = self.get_announcement_filename(voice);
                 let announcement = self.get_path(&announcement_file)?;
                 let metronome = self.get_path("metronome.ogg")?;
-                let anthem = self.get_path("anthem.ogg")?;
+                let anthem_filename = self.get_anthem_filename(anthem_voice);
+                let anthem = self.get_path(&anthem_filename)?;
 
                 if let Ok(source) = Decoder::new(BufReader::new(File::open(&announcement)?)) {
                     player.append(source);
@@ -294,7 +295,8 @@ impl AudioEngine {
                     return Ok(());
                 }
                 let metronome = self.get_path("metronome.ogg")?;
-                let anthem = self.get_path("anthem.ogg")?;
+                let anthem_filename = self.get_anthem_filename(anthem_voice);
+                let anthem = self.get_path(&anthem_filename)?;
 
                 if let Ok(source) = Decoder::new(BufReader::new(File::open(&metronome)?)) {
                     player.append(source);
