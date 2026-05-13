@@ -65,6 +65,7 @@ export class App {
     this.startStatusPolling();
     this.updateReminderMinutesVisibility(this.settings.reminderEnabled);
     this.updateResumeVisibility(this.settings.pauseOtherPlayers);
+    this.updateFlagAnimationVisibility(this.settings.showVisualOverlay);
   }
 
   private initOverlay(): void {
@@ -364,6 +365,16 @@ export class App {
                      ${this.settings.showVisualOverlay ? "checked" : ""} />
             </label>
 
+            <!-- Anthem flag animation toggle -->
+            <label class="control-row" id="flagAnimationRow">
+              <div class="control-row__info">
+                <span class="control-row__label">${t("controls.flag_animation.label")}</span>
+                <span class="control-row__description">${t("controls.flag_animation.description")}</span>
+              </div>
+              <input type="checkbox" id="flagAnimationToggle" class="toggle"
+                     ${this.settings.showFlagAnimation ? "checked" : ""} />
+            </label>
+
             <!-- Meta / debug info -->
             <div class="meta">
               <span>${t("status.last_ceremony")} <span id="lastActivationValue">${this.status.lastActivation ?? "—"}</span></span>
@@ -640,9 +651,20 @@ export class App {
  
     // Visual overlay toggle
     this.q<HTMLInputElement>("#overlayToggle").addEventListener("change", (e) => {
+      const checked = (e.target as HTMLInputElement).checked;
       this.settings = {
         ...this.settings,
-        showVisualOverlay: (e.target as HTMLInputElement).checked,
+        showVisualOverlay: checked,
+      };
+      this.updateFlagAnimationVisibility(checked);
+      this.checkDirty();
+    });
+
+    // Anthem flag animation toggle
+    this.q<HTMLInputElement>("#flagAnimationToggle").addEventListener("change", (e) => {
+      this.settings = {
+        ...this.settings,
+        showFlagAnimation: (e.target as HTMLInputElement).checked,
       };
       this.checkDirty();
     });
@@ -723,6 +745,13 @@ export class App {
 
   private updateResumeVisibility(enabled: boolean): void {
     const row = document.getElementById("resumeRow");
+    if (row) {
+      row.classList.toggle("hidden", !enabled);
+    }
+  }
+
+  private updateFlagAnimationVisibility(enabled: boolean): void {
+    const row = document.getElementById("flagAnimationRow");
     if (row) {
       row.classList.toggle("hidden", !enabled);
     }
