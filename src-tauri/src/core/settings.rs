@@ -6,6 +6,7 @@
 use std::path::PathBuf;
 
 use serde::{Deserialize, Serialize};
+use serde_json::Value;
 
 use crate::error::{AppError, Result};
 
@@ -36,6 +37,9 @@ pub struct Settings {
 
     /// Show a visual overlay window when the ceremony starts.
     pub show_visual_overlay: bool,
+
+    /// Show the flag animation window when the ceremony starts.
+    pub show_flag_animation: bool,
 
     /// Use system time instead of NTP.
     pub system_time_only: bool,
@@ -84,6 +88,7 @@ impl Default for Settings {
             pause_other_players: true,
             resume_after_ceremony: false,
             show_visual_overlay: true,
+            show_flag_animation: false,
             system_time_only: false,
             volume_priority: false,
             auto_unmute: false,
@@ -111,7 +116,12 @@ impl Settings {
             return Ok(Self::default());
         }
         let raw = std::fs::read_to_string(&path)?;
-        let settings = serde_json::from_str(&raw)?;
+        let mut json: Value = serde_json::from_str(&raw)?;
+        if let Value::Object(ref mut map) = json {
+            map.entry("showFlagAnimation".to_string())
+                .or_insert(Value::Bool(false));
+        }
+        let settings = serde_json::from_value(json)?;
         Ok(settings)
     }
 
