@@ -6,13 +6,12 @@
 use std::path::PathBuf;
 
 use serde::{Deserialize, Serialize};
-use serde_json::Value;
 
 use crate::error::{AppError, Result};
 
 /// User-configurable settings.  Persisted as JSON in the platform config dir.
 #[derive(Debug, Clone, Serialize, Deserialize)]
-#[serde(rename_all = "camelCase")]
+#[serde(rename_all = "camelCase", default)]
 pub struct Settings {
     /// Enable daily activation at 09:00.
     pub ceremony_enabled: bool,
@@ -116,12 +115,7 @@ impl Settings {
             return Ok(Self::default());
         }
         let raw = std::fs::read_to_string(&path)?;
-        let mut json: Value = serde_json::from_str(&raw)?;
-        if let Value::Object(ref mut map) = json {
-            map.entry("showFlagAnimation".to_string())
-                .or_insert(Value::Bool(false));
-        }
-        let settings = serde_json::from_value(json)?;
+        let settings = serde_json::from_str(&raw)?;
         Ok(settings)
     }
 
