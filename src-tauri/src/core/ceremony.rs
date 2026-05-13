@@ -2,6 +2,7 @@ use crate::core::audio::AudioEngine;
 use crate::core::settings::AudioPreset;
 use crate::platform::Platform;
 use crate::state::AppState;
+use rust_i18n::t;
 use std::sync::atomic::{AtomicU32, Ordering};
 use std::sync::{Arc, Mutex};
 use tauri::{AppHandle, Emitter, Listener, Manager, WebviewWindowBuilder};
@@ -78,6 +79,7 @@ impl CeremonyManager {
                     "flag-animation",
                     tauri::WebviewUrl::App(std::path::PathBuf::from("flag-animation.html")),
                 )
+                .title(t!("tray_tooltip").as_ref())
                 .fullscreen(true)
                 .decorations(false)
                 .transparent(true)
