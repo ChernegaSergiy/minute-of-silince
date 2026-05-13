@@ -4,7 +4,7 @@ use crate::platform::Platform;
 use crate::state::AppState;
 use std::sync::atomic::{AtomicU32, Ordering};
 use std::sync::{Arc, Mutex};
-use tauri::{AppHandle, Emitter, Manager};
+use tauri::{AppHandle, Emitter, Manager, WebviewWindowBuilder};
 
 lazy_static::lazy_static! {
     static ref PREVIOUS_VOLUME: Mutex<Option<u8>> = Mutex::new(None);
@@ -62,7 +62,32 @@ impl CeremonyManager {
         }
         ACTIVE_TRIGGER_COUNT.fetch_add(1, Ordering::SeqCst);
 
-        // 2. Notify UI
+        // 2. Show flag animation window if conditions are met
+        let should_show_flag = {
+            let state = self.app.state::<AppState>();
+            let inner = state.lock();
+            inner.settings.show_flag_animation
+                && inner.settings.show_visual_overlay
+                && preset.has_anthem()
+        };
+        if should_show_flag {
+            if let Err(e) = WebviewWindowBuilder::new(
+                &self.app,
+                "flag-animation",
+                tauri::WebviewUrl::App(std::path::PathBuf::from("flag-animation.html")),
+            )
+            .fullscreen(true)
+            .decorations(false)
+            .transparent(true)
+            .always_on_top(true)
+            .skip_taskbar(true)
+            .build()
+            {
+                log::warn!("Failed to create flag animation window: {}", e);
+            }
+        }
+
+        // 3. Notify UI
         let _ = self.app.emit("ceremony-start", ());
 
         // 3. Pause players
@@ -171,6 +196,15 @@ impl CeremonyManager {
             if !players.is_empty() {
                 let _ = platform.resume_media(players).await;
             }
+        }
+
+        // Close flag animation window
+        if let Ok(Some(window)) = app
+            .get_webview_window("flag-animation")
+            .ok_or(())
+            .map(|w| Some(w))
+        {
+            let _ = window.close();
         }
 
         let _ = app.emit("ceremony-end", ());
