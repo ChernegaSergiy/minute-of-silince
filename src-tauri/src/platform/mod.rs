@@ -119,6 +119,53 @@ pub fn is_dark_mode() -> bool {
     detect_system_theme()
 }
 
+/// Returns the current autostart state reported by the platform.
+///
+/// This is used to keep the persisted setting aligned with changes made
+/// outside the app, such as system UI toggles.
+pub fn system_autostart_enabled() -> Option<bool> {
+    #[cfg(target_os = "windows")]
+    {
+        if !is_msix() {
+            return None;
+        }
+
+        use ::windows::core::HSTRING;
+        use ::windows::ApplicationModel::{StartupTask, StartupTaskState};
+
+        let task = StartupTask::GetAsync(&HSTRING::from("MinuteOfSilenceStartupTask"))
+            .ok()?
+            .join()
+            .ok()?;
+        let state = task.State().ok()?;
+        return Some(state == StartupTaskState::Enabled);
+    }
+
+    #[cfg(target_os = "linux")]
+    {
+        if let Ok(snap_user_data) = std::env::var("SNAP_USER_DATA") {
+            let desktop_path = std::path::PathBuf::from(snap_user_data)
+                .join(".config/autostart/minute-of-silence.desktop");
+            return Some(desktop_path.exists());
+        }
+
+        if let Ok(flatpak_id) = std::env::var("FLATPAK_ID") {
+            let home = std::env::var("HOME").ok()?;
+            let desktop_path = std::path::PathBuf::from(home)
+                .join(".config/autostart")
+                .join(format!("{}.desktop", flatpak_id));
+            return Some(desktop_path.exists());
+        }
+
+        None
+    }
+
+    #[cfg(not(any(target_os = "windows", target_os = "linux")))]
+    {
+        None
+    }
+}
+
 /// Returns true when the current process is running from an MSIX package
 /// (i.e. installed via Microsoft Store or `.msix`/`.msixbundle`).
 #[allow(dead_code)]

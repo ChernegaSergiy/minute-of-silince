@@ -14,7 +14,21 @@ use crate::{
 /// Return the current settings snapshot.
 #[tauri::command]
 pub fn get_settings(state: State<'_, AppState>) -> Settings {
-    state.lock().settings.clone()
+    let mut guard = state.lock();
+    let mut settings = guard.settings.clone();
+
+    if let Some(system_enabled) = crate::platform::system_autostart_enabled() {
+        if system_enabled != settings.autostart_enabled {
+            settings.autostart_enabled = system_enabled;
+            guard.settings = settings.clone();
+
+            if let Err(e) = settings.save() {
+                log::warn!("Failed to persist synced autostart setting: {}", e);
+            }
+        }
+    }
+
+    settings
 }
 
 /// Persist updated settings and apply side-effects (e.g. autostart toggle).
