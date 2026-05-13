@@ -9,6 +9,25 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.8.4] - 2026-05-13
+
+### Added
+- Flag animation window (`flag-animation.html`) — a fullscreen animated Ukrainian flag rendered via canvas that appears during the anthem segment of the ceremony.
+- New `showFlagAnimation` setting (default: `false`) to toggle the flag animation independently of the visual overlay.
+- `AudioPreset::has_anthem()` helper to check whether a preset includes the anthem segment.
+- `anthem-start` / `anthem-end` Tauri events emitted by `AudioEngine` for precise flag window lifecycle control.
+- MSIX packaged `StartupTask` (`uap5` extension) in `appxmanifest.xml` for proper autostart support on packaged Windows builds.
+
+### Changed
+- Windows autostart for MSIX now uses `ApplicationModel::StartupTask` API instead of a Startup-folder `.lnk` shortcut; `mslnk` dependency removed.
+- `winreg` dependency bumped from `0.55` to `0.56`.
+- Settings struct now derives `#[serde(default)]` so missing fields in persisted JSON fall back gracefully.
+- Visual overlay toggle now also controls the visibility of the flag animation row in the UI.
+- Dev dependency updates: `@tauri-apps/cli` → 2.11.1, `vite` → 8.0.12, `typescript-eslint` → 8.59.3, `rolldown` → 1.0.0 (stable).
+
+### Fixed
+- Anthem playback timing: metronome end is now detected by waiting for the player queue rather than a hardcoded 30-second sleep, ensuring the anthem starts precisely when the metronome finishes.
+
 ## [0.8.3] - 2026-05-12
 
 ### Changed
