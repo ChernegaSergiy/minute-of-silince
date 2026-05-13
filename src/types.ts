@@ -25,6 +25,7 @@ export interface Settings {
   pauseOtherPlayers: boolean;
   resumeAfterCeremony: boolean;
   showVisualOverlay: boolean;
+  showFlagAnimation: boolean;
   systemTimeOnly: boolean;
   volumePriority: boolean;
   autoUnmute: boolean;
@@ -58,6 +59,7 @@ export const DEFAULT_SETTINGS: Settings = {
   pauseOtherPlayers: true,
   resumeAfterCeremony: false,
   showVisualOverlay: true,
+  showFlagAnimation: false,
   systemTimeOnly: false,
   volumePriority: false,
   autoUnmute: false,
