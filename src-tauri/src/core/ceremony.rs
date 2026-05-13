@@ -81,8 +81,8 @@ impl CeremonyManager {
                 .fullscreen(true)
                 .decorations(false)
                 .transparent(true)
-                .always_on_top(true)
-                .skip_taskbar(true)
+                .always_on_top(false)
+                .skip_taskbar(false)
                 .build()
                 {
                     log::warn!("Failed to create flag animation window: {}", e);
