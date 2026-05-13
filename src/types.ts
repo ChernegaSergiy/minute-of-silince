@@ -2,6 +2,10 @@
 
 export type AnnouncementVoice = "bohdan_hdal" | "sonia_sotnyk" | "dania_khomutovskyi" | "air_alert";
 
+// Mirror of Rust `AnthemVoice` enum
+
+export type AnthemVoice = "default" | "mykhailo_khoma" | "oleksandr_ponomarov";
+
 // Mirror of Rust `Settings` struct
 
 export type AudioPreset =
@@ -37,6 +41,8 @@ export interface Settings {
   reminderMinutesBefore: number; // 0–10
   /** Selected announcement voice. */
   announcementVoice: AnnouncementVoice;
+  /** Selected anthem voice. */
+  anthemVoice: AnthemVoice;
 }
 
 // Mirror of Rust `StatusSnapshot` struct
@@ -68,4 +74,5 @@ export const DEFAULT_SETTINGS: Settings = {
   reminderEnabled: false,
   reminderMinutesBefore: 5,
   announcementVoice: "bohdan_hdal",
+  anthemVoice: "default",
 };
