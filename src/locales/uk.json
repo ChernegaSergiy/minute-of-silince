@@ -63,6 +63,13 @@
       "dania_khomutovskyi": "Даня Хомутовський (Вшануй)",
       "air_alert": "З програми Повітряна тривога"
     },
+    "anthem_voice": {
+      "label": "Виконання гімну",
+      "description": "Вибір виконавця гімну.",
+      "default": "Запис за замовчуванням",
+      "mykhailo_khoma": "Михайло Хома",
+      "oleksandr_ponomarov": "Олександр Пономарьов"
+    },
     "presets": {
       "voice_metronome": "Голос + метроном",
       "metronome_only": "Метроном",

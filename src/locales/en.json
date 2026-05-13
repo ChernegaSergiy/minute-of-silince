@@ -63,6 +63,13 @@
       "dania_khomutovskyi": "Dania Khomutovskyi (Vshanui)",
       "air_alert": "From Air Alert app"
     },
+    "anthem_voice": {
+      "label": "Anthem performance",
+      "description": "Select anthem performer.",
+      "default": "Default recording",
+      "mykhailo_khoma": "Mykhailo Khoma",
+      "oleksandr_ponomarov": "Oleksandr Ponomarov"
+    },
     "presets": {
       "voice_metronome": "Voice + metronome",
       "metronome_only": "Metronome",
