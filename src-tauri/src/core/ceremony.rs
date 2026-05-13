@@ -94,7 +94,7 @@ impl CeremonyManager {
                 if let Ok(Some(window)) = app_clone2
                     .get_webview_window("flag-animation")
                     .ok_or(())
-                    .map(|w| Some(w))
+                    .map(Some)
                 {
                     let _ = window.close();
                 }
@@ -213,11 +213,7 @@ impl CeremonyManager {
         }
 
         // Close flag animation window
-        if let Ok(Some(window)) = app
-            .get_webview_window("flag-animation")
-            .ok_or(())
-            .map(|w| Some(w))
-        {
+        if let Ok(Some(window)) = app.get_webview_window("flag-animation").ok_or(()).map(Some) {
             let _ = window.close();
         }
 
