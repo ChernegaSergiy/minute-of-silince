@@ -9,7 +9,7 @@ use std::thread;
 use std::time::{Duration, Instant};
 use tauri::{AppHandle, Emitter, Manager};
 
-use crate::core::settings::{AnnouncementVoice, AudioPreset};
+use crate::core::settings::{AnnouncementVoice, AnthemVoice, AudioPreset};
 use crate::error::{AppError, Result};
 
 /// Audio engine for ceremony playback.
@@ -109,6 +109,7 @@ impl AudioEngine {
         preset: AudioPreset,
         volume: u8,
         voice: AnnouncementVoice,
+        anthem_voice: AnthemVoice,
     ) -> Result<()> {
         let start_counter = self.stop_counter.load(Ordering::SeqCst);
 
@@ -383,6 +384,14 @@ impl AudioEngine {
             AnnouncementVoice::SoniaSotnyk => "announcement_sotnyk.ogg".to_string(),
             AnnouncementVoice::DaniaKhomutovskyi => "announcement_khomutovskyi.ogg".to_string(),
             AnnouncementVoice::AirAlert => "announcement_air_alert.ogg".to_string(),
+        }
+    }
+
+    fn get_anthem_filename(&self, voice: AnthemVoice) -> String {
+        match voice {
+            AnthemVoice::Default => "anthem.ogg".to_string(),
+            AnthemVoice::MykhailoKhoma => "anthem_khoma.ogg".to_string(),
+            AnthemVoice::OleksandrPonomarov => "anthem_ponomarov.ogg".to_string(),
         }
     }
 
