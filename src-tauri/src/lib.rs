@@ -63,8 +63,6 @@ pub fn run() {
             {
                 let settings = app.state::<AppState>().lock().settings.clone();
 
-                crate::platform::apply_autostart_enabled(&handle, settings.autostart_enabled);
-
                 let is_snap = std::env::var("SNAP").is_ok();
                 let is_flatpak = std::env::var("FLATPAK_ID").is_ok();
 
