@@ -51,56 +51,30 @@ pub fn run() {
                 settings.clone(),
             ));
 
+            #[cfg(not(test))]
+            {
+                app::commands::sync_autostart_from_system(app.state::<AppState>())?;
+            }
+
             // --- 3. Autostart & Snap Logic ---
             let is_hidden = std::env::args().any(|arg| arg == "--hidden");
 
             #[cfg(not(test))]
             {
+                let settings = app.state::<AppState>().lock().settings.clone();
+
+                crate::platform::apply_autostart_enabled(&handle, settings.autostart_enabled);
+
                 let is_snap = std::env::var("SNAP").is_ok();
                 let is_flatpak = std::env::var("FLATPAK_ID").is_ok();
 
-                #[cfg(target_os = "windows")]
-                {
-                    let is_msix = crate::platform::is_msix();
-
-                    if is_msix {
-                        log::info!("Running as MSIX package — managing autostart via packaged StartupTask.");
-                        if settings.autostart_enabled {
-                            if let Err(e) = crate::platform::windows::autostart::enable_autostart()
-                            {
-                                log::error!("Failed to enable autostart for MSIX: {}", e);
-                            }
-                        } else {
-                            if let Err(e) = crate::platform::windows::autostart::disable_autostart()
-                            {
-                                log::error!("Failed to disable autostart for MSIX: {}", e);
-                            }
-                        }
-                    }
-                }
-
-                if is_snap || is_flatpak {
-                    // Snap/Flatpak autostart: manage the .desktop file manually
-                    // to ensure correct Exec commands and paths.
-                    #[cfg(target_os = "linux")]
-                    crate::platform::linux::autostart::manage(settings.autostart_enabled);
-
-                    if is_hidden && !settings.autostart_enabled {
-                        log::info!(
-                            "Autostart is disabled in settings. \
-                             Exiting {} instance launched with --hidden.",
-                            if is_snap { "Snap" } else { "Flatpak" }
-                        );
-                        std::process::exit(0);
-                    }
-                } else {
-                    use tauri_plugin_autostart::ManagerExt;
-                    let autostart_manager = app.autolaunch();
-                    if settings.autostart_enabled {
-                        let _ = autostart_manager.enable();
-                    } else {
-                        let _ = autostart_manager.disable();
-                    }
+                if (is_snap || is_flatpak) && is_hidden && !settings.autostart_enabled {
+                    log::info!(
+                        "Autostart is disabled in settings. \
+                         Exiting {} instance launched with --hidden.",
+                        if is_snap { "Snap" } else { "Flatpak" }
+                    );
+                    std::process::exit(0);
                 }
             }
 
@@ -134,6 +108,7 @@ pub fn run() {
         })
         .invoke_handler(tauri::generate_handler![
             app::commands::get_settings,
+            app::commands::sync_autostart_from_system,
             app::commands::save_settings,
             app::commands::get_status,
             app::commands::sync_ntp_now,
