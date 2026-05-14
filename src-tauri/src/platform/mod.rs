@@ -183,8 +183,7 @@ pub fn apply_autostart_enabled(app: &tauri::AppHandle, enabled: bool) {
                 #[cfg(target_os = "windows")]
                 {
                     if enabled {
-                        if let Err(e) = crate::platform::windows::autostart::enable_autostart()
-                        {
+                        if let Err(e) = crate::platform::windows::autostart::enable_autostart() {
                             log::error!("Failed to enable autostart for MSIX: {}", e);
                         }
                     } else if let Err(e) = crate::platform::windows::autostart::disable_autostart()
