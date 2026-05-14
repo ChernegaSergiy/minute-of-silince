@@ -14,21 +14,13 @@ use crate::{
 /// Return the current settings snapshot.
 #[tauri::command]
 pub fn get_settings(state: State<'_, AppState>) -> Settings {
-    let mut guard = state.lock();
-    let mut settings = guard.settings.clone();
+    state.lock().settings.clone()
+}
 
-    if let Some(system_enabled) = crate::platform::system_autostart_enabled() {
-        if system_enabled != settings.autostart_enabled {
-            settings.autostart_enabled = system_enabled;
-            guard.settings = settings.clone();
-
-            if let Err(e) = settings.save() {
-                log::warn!("Failed to persist synced autostart setting: {}", e);
-            }
-        }
-    }
-
-    settings
+/// Sync the persisted autostart setting with the actual platform state.
+#[tauri::command]
+pub fn sync_autostart_from_system(state: State<'_, AppState>) -> Result<()> {
+    crate::platform::sync_autostart_from_system(state)
 }
 
 /// Persist updated settings and apply side-effects (e.g. autostart toggle).
@@ -39,44 +31,7 @@ pub fn save_settings(app: AppHandle, state: State<'_, AppState>, settings: Setti
     settings.save()?;
 
     // Apply autostart setting.
-    let is_snap = std::env::var("SNAP").is_ok();
-    let is_flatpak = std::env::var("FLATPAK_ID").is_ok();
-
-    if is_snap || is_flatpak {
-        // Snap/Flatpak: manage the .desktop file manually
-        #[cfg(target_os = "linux")]
-        crate::platform::linux::autostart::manage(settings.autostart_enabled);
-    } else {
-        #[cfg(not(test))]
-        {
-            let is_msix = crate::platform::is_msix();
-
-            if is_msix {
-                // MSIX: manage autostart via packaged StartupTask
-                #[cfg(target_os = "windows")]
-                {
-                    if settings.autostart_enabled {
-                        if let Err(e) = crate::platform::windows::autostart::enable_autostart() {
-                            log::error!("Failed to enable autostart for MSIX: {}", e);
-                        }
-                    } else {
-                        if let Err(e) = crate::platform::windows::autostart::disable_autostart() {
-                            log::error!("Failed to disable autostart for MSIX: {}", e);
-                        }
-                    }
-                }
-            } else {
-                // Standard Windows/macOS/Linux: use tauri autostart plugin
-                use tauri_plugin_autostart::ManagerExt;
-                let autostart_manager = app.autolaunch();
-                if settings.autostart_enabled {
-                    let _ = autostart_manager.enable();
-                } else {
-                    let _ = autostart_manager.disable();
-                }
-            }
-        }
-    }
+    crate::platform::apply_autostart_enabled(&app, settings.autostart_enabled);
 
     // Update in-memory state.
     state.lock().settings = settings.clone();
