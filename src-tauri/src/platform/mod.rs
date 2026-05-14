@@ -164,6 +164,64 @@ pub fn system_autostart_enabled() -> Option<bool> {
     }
 }
 
+/// Apply the requested autostart state to the current platform.
+pub fn apply_autostart_enabled(app: &tauri::AppHandle, enabled: bool) {
+    let _ = (app, enabled);
+
+    let is_snap = std::env::var("SNAP").is_ok();
+    let is_flatpak = std::env::var("FLATPAK_ID").is_ok();
+
+    if is_snap || is_flatpak {
+        #[cfg(target_os = "linux")]
+        crate::platform::linux::autostart::manage(enabled);
+    } else {
+        #[cfg(not(test))]
+        {
+            let is_msix = is_msix();
+
+            if is_msix {
+                #[cfg(target_os = "windows")]
+                {
+                    if enabled {
+                        if let Err(e) = crate::platform::windows::autostart::enable_autostart()
+                        {
+                            log::error!("Failed to enable autostart for MSIX: {}", e);
+                        }
+                    } else if let Err(e) = crate::platform::windows::autostart::disable_autostart()
+                    {
+                        log::error!("Failed to disable autostart for MSIX: {}", e);
+                    }
+                }
+            } else {
+                use tauri_plugin_autostart::ManagerExt;
+                let autostart_manager = app.autolaunch();
+                if enabled {
+                    let _ = autostart_manager.enable();
+                } else {
+                    let _ = autostart_manager.disable();
+                }
+            }
+        }
+    }
+}
+
+/// Sync the persisted autostart setting with the actual platform state.
+pub fn sync_autostart_from_system(state: tauri::State<'_, crate::AppState>) -> Result<()> {
+    let mut guard = state.lock();
+    let mut settings = guard.settings.clone();
+
+    if let Some(system_enabled) = system_autostart_enabled() {
+        if system_enabled != settings.autostart_enabled {
+            settings.autostart_enabled = system_enabled;
+            settings.save()?;
+            guard.settings = settings;
+            log::info!("Autostart setting synced from system: {}", system_enabled);
+        }
+    }
+
+    Ok(())
+}
+
 /// Returns true when the current process is running from an MSIX package
 /// (i.e. installed via Microsoft Store or `.msix`/`.msixbundle`).
 #[allow(dead_code)]
