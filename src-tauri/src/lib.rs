@@ -86,6 +86,14 @@ pub fn run() {
             crate::platform::linux::theme::start_theme_watcher(handle.clone());
 
             if let Some(window) = app.get_webview_window("main") {
+                let main_window = window.clone();
+                window.on_window_event(move |event| {
+                    if let tauri::WindowEvent::CloseRequested { api, .. } = event {
+                        api.prevent_close();
+                        let _ = main_window.hide();
+                    }
+                });
+
                 if is_hidden {
                     window.hide()?;
                 }
@@ -115,12 +123,6 @@ pub fn run() {
             app::commands::trigger_ceremony_now,
             app::commands::finish_ceremony_now,
         ])
-        .on_window_event(|window, event| {
-            if let tauri::WindowEvent::CloseRequested { api, .. } = event {
-                api.prevent_close();
-                let _ = window.hide();
-            }
-        })
         .run(tauri::generate_context!())
         .expect("error while running Minute of Silence");
 }
