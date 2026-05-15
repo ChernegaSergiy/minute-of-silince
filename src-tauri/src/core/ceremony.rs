@@ -74,6 +74,11 @@ impl CeremonyManager {
                 && preset.has_anthem()
         };
         if should_show_flag {
+            // Close any stale flag animation window synchronously before registering new listeners
+            if let Some(old) = self.app.get_webview_window("flag-animation") {
+                let _ = old.close();
+            }
+
             let app_clone = self.app.clone();
             let _ = self.app.once("anthem-start", move |_| {
                 let app = app_clone.clone();
