@@ -75,33 +75,39 @@ impl CeremonyManager {
         };
         if should_show_flag {
             let app_clone = self.app.clone();
-            let _ = self.app.listen("anthem-start", move |_| {
-                if let Err(e) = WebviewWindowBuilder::new(
-                    &app_clone,
-                    "flag-animation",
-                    tauri::WebviewUrl::App(std::path::PathBuf::from("flag-animation.html")),
-                )
-                .title(t!("tray_tooltip").as_ref())
-                .fullscreen(true)
-                .decorations(false)
-                .transparent(true)
-                .always_on_top(false)
-                .skip_taskbar(false)
-                .build()
-                {
-                    log::warn!("Failed to create flag animation window: {}", e);
-                }
+            let _ = self.app.once("anthem-start", move |_| {
+                let app = app_clone.clone();
+                tauri::async_runtime::spawn(async move {
+                    if let Some(old) = app.get_webview_window("flag-animation") {
+                        let _ = old.close();
+                        tokio::time::sleep(std::time::Duration::from_millis(100)).await;
+                    }
+                    if let Err(e) = WebviewWindowBuilder::new(
+                        &app,
+                        "flag-animation",
+                        tauri::WebviewUrl::App(std::path::PathBuf::from("flag-animation.html")),
+                    )
+                    .title(t!("tray_tooltip").as_ref())
+                    .fullscreen(true)
+                    .decorations(false)
+                    .transparent(true)
+                    .always_on_top(false)
+                    .skip_taskbar(false)
+                    .build()
+                    {
+                        log::warn!("Failed to create flag animation window: {}", e);
+                    }
+                });
             });
 
             let app_clone2 = self.app.clone();
-            let _ = self.app.listen("anthem-end", move |_| {
-                if let Ok(Some(window)) = app_clone2
-                    .get_webview_window("flag-animation")
-                    .ok_or(())
-                    .map(Some)
-                {
-                    let _ = window.close();
-                }
+            let _ = self.app.once("anthem-end", move |_| {
+                let app = app_clone2.clone();
+                tauri::async_runtime::spawn(async move {
+                    if let Some(window) = app.get_webview_window("flag-animation") {
+                        let _ = window.close();
+                    }
+                });
             });
         }
 
