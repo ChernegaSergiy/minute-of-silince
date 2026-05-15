@@ -74,11 +74,6 @@ impl CeremonyManager {
                 && preset.has_anthem()
         };
         if should_show_flag {
-            // Close any stale flag animation window before registering listeners
-            if let Some(old) = self.app.get_webview_window("flag-animation") {
-                let _ = old.close();
-            }
-
             let app_clone = self.app.clone();
             let listener_id = self.app.listen("anthem-start", move |_| {
                 let app = app_clone.clone();
@@ -242,11 +237,6 @@ impl CeremonyManager {
             if !players.is_empty() {
                 let _ = platform.resume_media(players).await;
             }
-        }
-
-        // Close flag animation window
-        if let Ok(Some(window)) = app.get_webview_window("flag-animation").ok_or(()).map(Some) {
-            let _ = window.close();
         }
 
         let _ = app.emit("ceremony-end", ());
