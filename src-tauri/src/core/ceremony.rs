@@ -75,7 +75,7 @@ impl CeremonyManager {
         };
         if should_show_flag {
             let app_clone = self.app.clone();
-            let listener_id = self.app.listen("anthem-start", move |_| {
+            let _ = self.app.once("anthem-start", move |_| {
                 let app = app_clone.clone();
                 tauri::async_runtime::spawn(async move {
                     if let Err(e) = WebviewWindowBuilder::new(
@@ -95,15 +95,9 @@ impl CeremonyManager {
                     }
                 });
             });
-            self.app
-                .state::<AppState>()
-                .flag_listeners
-                .lock()
-                .unwrap()
-                .push(listener_id);
 
             let app_clone2 = self.app.clone();
-            let listener_id2 = self.app.listen("anthem-end", move |_| {
+            let _ = self.app.once("anthem-end", move |_| {
                 let app = app_clone2.clone();
                 tauri::async_runtime::spawn(async move {
                     if let Some(window) = app.get_webview_window("flag-animation") {
@@ -111,12 +105,6 @@ impl CeremonyManager {
                     }
                 });
             });
-            self.app
-                .state::<AppState>()
-                .flag_listeners
-                .lock()
-                .unwrap()
-                .push(listener_id2);
         }
 
         // 3. Notify UI
@@ -203,14 +191,7 @@ impl CeremonyManager {
             let mut inner = state.lock();
             inner.ceremony_active = false;
         }
-        // Remove flag animation listeners
-        {
-            let state = app.state::<AppState>();
-            let mut listeners = state.flag_listeners.lock().unwrap();
-            for id in listeners.drain(..) {
-                app.unlisten(id);
-            }
-        }
+
         // Restore volume and mute
         if volume_priority {
             let prev_vol = *PREVIOUS_VOLUME.lock().unwrap();

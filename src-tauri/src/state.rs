@@ -19,7 +19,6 @@ pub struct AppState {
     inner: Arc<Mutex<Inner>>,
     pub ntp_service: NtpService,
     pub audio: Arc<AudioEngine>,
-    pub flag_listeners: Arc<Mutex<Vec<u32>>>,
 }
 
 #[derive(Debug)]
@@ -57,7 +56,6 @@ impl AppState {
             })),
             ntp_service: NtpService::new(settings.ntp_server.clone()),
             audio: Arc::new(AudioEngine::new(app_handle)),
-            flag_listeners: Arc::new(Mutex::new(Vec::new())),
         }
     }
 
