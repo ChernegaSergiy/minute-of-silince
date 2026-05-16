@@ -718,7 +718,7 @@ export default function App() {
                   <img src="/logo.png" className={styles.aboutLogo} />
                   <div className={styles.aboutTitle}>{t("app.title")}</div>
                   <div className={styles.aboutVersion}>
-                    Версія {version}
+                    {t("about.version")} {version}
                   </div>
                   <div className={styles.aboutDesc}>
                     {t("about.description")}
