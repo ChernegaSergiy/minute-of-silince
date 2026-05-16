@@ -749,11 +749,11 @@ export default function App() {
               ) : (
                 <div className={styles.changelogContent}>
                   {visibleVersions.map((v, i) => (
-                    <Card
+                    <div
                       key={v.version}
                       ref={i === visibleVersions.length - 1 ? sentinelRef : undefined}
-                      className={styles.card}
                     >
+                      <Card className={styles.card}>
                       <CardHeader
                         header={
                           <Text size={200} weight="semibold">
@@ -786,6 +786,7 @@ export default function App() {
                         </div>
                       ))}
                     </Card>
+                    </div>
                   ))}
                 </div>
               )}
