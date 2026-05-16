@@ -214,9 +214,6 @@ const useStyles = makeStyles({
     color: tokens.colorNeutralForeground3,
     marginTop: tokens.spacingVerticalXXL,
   },
-  heroism: {
-    color: tokens.colorBrandForeground1,
-  },
   overlay: {
     display: "none",
     position: "fixed",
@@ -747,7 +744,7 @@ export default function App() {
                   <div className={styles.aboutLicense}>
                     {t("about.license")}
                     <br />
-                    <span className={styles.heroism}>{t("about.glory")}</span>
+                    {t("about.glory")}
                   </div>
                 </div>
               ) : (
