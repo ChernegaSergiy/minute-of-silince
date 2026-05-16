@@ -744,11 +744,8 @@ export default function App() {
                 </div>
               ) : (
                 <div className={styles.changelogContent}>
-                  {visibleVersions.map((v, i) => (
-                    <div
-                      key={v.version}
-                      ref={i === visibleVersions.length - 1 ? sentinelRef : undefined}
-                    >
+                  {visibleVersions.map((v) => (
+                    <div key={v.version}>
                       <Card className={styles.card}>
                       <CardHeader
                         header={
@@ -784,6 +781,9 @@ export default function App() {
                     </Card>
                     </div>
                   ))}
+                  {changelogCount < changelogVersions.length && (
+                    <div ref={sentinelRef} style={{ height: 1 }} />
+                  )}
                 </div>
               )}
             </div>
