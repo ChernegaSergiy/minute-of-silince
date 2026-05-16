@@ -377,6 +377,12 @@ export default function App() {
   useEffect(() => {
     const el = scrollRef.current;
     if (!el || changelogCount >= changelogVersions.length) return;
+
+    if (el.scrollHeight <= el.clientHeight) {
+      setChangelogCount((c) => Math.min(c + CHANGELOG_PAGE_SIZE, changelogVersions.length));
+      return;
+    }
+
     const onScroll = () => {
       if (el.scrollHeight - el.scrollTop - el.clientHeight < 200) {
         setChangelogCount((c) => Math.min(c + CHANGELOG_PAGE_SIZE, changelogVersions.length));
