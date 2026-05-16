@@ -94,7 +94,7 @@ function parseChangelog(md: string): ChangelogVersion[] {
 }
 
 const changelogVersions = parseChangelog(changelogMd);
-const CHANGELOG_PAGE_SIZE = 3;
+const CHANGELOG_PAGE_SIZE = 1;
 
 const announcementVoiceLabels: Record<string, string> = {
   bohdan_hdal: "Богдан Хдаль",
@@ -297,6 +297,7 @@ export default function App() {
   const [syncing, setSyncing] = useState(false);
   const [changelogCount, setChangelogCount] = useState(CHANGELOG_PAGE_SIZE);
   const sentinelRef = useRef<HTMLDivElement>(null);
+  const scrollRef = useRef<HTMLDivElement>(null);
   const initRef = useRef(false);
 
   const isDirty =
@@ -376,14 +377,15 @@ export default function App() {
 
   useEffect(() => {
     const sentinel = sentinelRef.current;
-    if (!sentinel || changelogCount >= changelogVersions.length) return;
+    const root = scrollRef.current;
+    if (!sentinel || !root || changelogCount >= changelogVersions.length) return;
     const observer = new IntersectionObserver(
       ([entry]) => {
         if (entry.isIntersecting) {
           setChangelogCount((c) => Math.min(c + CHANGELOG_PAGE_SIZE, changelogVersions.length));
         }
       },
-      { rootMargin: "200px" }
+      { root }
     );
     observer.observe(sentinel);
     return () => observer.disconnect();
@@ -439,7 +441,7 @@ export default function App() {
           </NavDrawer>
 
           <div className={styles.content}>
-            <div className={styles.scroll}>
+            <div ref={scrollRef} className={styles.scroll}>
               {selectedNav === "settings" ? (
                 <>
                   <Card className={styles.card}>
