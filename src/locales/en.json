@@ -8,7 +8,8 @@
   },
   "tabs": {
     "settings": "SETTINGS",
-    "about": "ABOUT"
+    "about": "ABOUT",
+    "changelog": "CHANGELOG"
   },
   "status": {
     "active": "● ACTIVE CEREMONY",
