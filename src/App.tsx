@@ -251,9 +251,6 @@ const useStyles = makeStyles({
   changelogContent: {
     padding: tokens.spacingVerticalL,
   },
-  changelogSentinel: {
-    height: "1px",
-  },
 });
 
 function SwitchRow({
@@ -298,6 +295,8 @@ export default function App() {
   const [changelogCount, setChangelogCount] = useState(CHANGELOG_PAGE_SIZE);
   const sentinelRef = useRef<HTMLDivElement>(null);
   const scrollRef = useRef<HTMLDivElement>(null);
+
+  const visibleVersions = changelogVersions.slice(0, changelogCount);
   const initRef = useRef(false);
 
   const isDirty =
@@ -749,8 +748,12 @@ export default function App() {
                 </div>
               ) : (
                 <div className={styles.changelogContent}>
-                  {changelogVersions.slice(0, changelogCount).map((v) => (
-                    <Card key={v.version} className={styles.card}>
+                  {visibleVersions.map((v, i) => (
+                    <Card
+                      key={v.version}
+                      ref={i === visibleVersions.length - 1 ? sentinelRef : undefined}
+                      className={styles.card}
+                    >
                       <CardHeader
                         header={
                           <Text size={200} weight="semibold">
@@ -784,9 +787,6 @@ export default function App() {
                       ))}
                     </Card>
                   ))}
-                  {changelogCount < changelogVersions.length && (
-                    <div ref={sentinelRef} className={styles.changelogSentinel} />
-                  )}
                 </div>
               )}
             </div>
