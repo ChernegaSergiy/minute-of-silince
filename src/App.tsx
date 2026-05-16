@@ -293,7 +293,7 @@ export default function App() {
   const [volumeValue, setVolumeValue] = useState(80);
   const [syncing, setSyncing] = useState(false);
   const [changelogCount, setChangelogCount] = useState(CHANGELOG_PAGE_SIZE);
-  const sentinelRef = useRef<HTMLDivElement>(null);
+  const scrollRef = useRef<HTMLDivElement>(null);
 
   const visibleVersions = changelogVersions.slice(0, changelogCount);
   const initRef = useRef(false);
@@ -373,17 +373,19 @@ export default function App() {
     };
   }, [settings, status?.ceremonyActive]);
 
-  useEffect(() => {
-    const el = sentinelRef.current;
-    if (!el || changelogCount >= changelogVersions.length) return;
+  const handleChangelogScroll = useCallback((e: React.UIEvent<HTMLDivElement>) => {
+    const { scrollTop, scrollHeight, clientHeight } = e.currentTarget;
+    if (scrollHeight - scrollTop - clientHeight < 100) {
+      setChangelogCount((c) => Math.min(c + CHANGELOG_PAGE_SIZE, changelogVersions.length));
+    }
+  }, []);
 
-    const observer = new IntersectionObserver(([entry]) => {
-      if (entry.isIntersecting) {
-        setChangelogCount((c) => Math.min(c + CHANGELOG_PAGE_SIZE, changelogVersions.length));
-      }
-    });
-    observer.observe(el);
-    return () => observer.disconnect();
+  useEffect(() => {
+    const el = scrollRef.current;
+    if (!el || changelogCount >= changelogVersions.length) return;
+    if (el.scrollHeight <= el.clientHeight) {
+      setChangelogCount((c) => Math.min(c + CHANGELOG_PAGE_SIZE, changelogVersions.length));
+    }
   }, [changelogCount]);
 
   const updateSetting = useCallback(
@@ -436,7 +438,7 @@ export default function App() {
           </NavDrawer>
 
           <div className={styles.content}>
-            <div className={styles.scroll}>
+            <div ref={scrollRef} className={styles.scroll} onScroll={handleChangelogScroll}>
               {selectedNav === "settings" ? (
                 <>
                   <Card className={styles.card}>
@@ -781,9 +783,6 @@ export default function App() {
                     </Card>
                     </div>
                   ))}
-                  {changelogCount < changelogVersions.length && (
-                    <div ref={sentinelRef} style={{ height: 1 }} />
-                  )}
                 </div>
               )}
             </div>
