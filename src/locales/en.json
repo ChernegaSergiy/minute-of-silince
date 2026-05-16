@@ -12,8 +12,6 @@
     "changelog": "CHANGELOG"
   },
   "status": {
-    "active": "● ACTIVE CEREMONY",
-    "waiting": "○ WAITING",
     "last_ceremony": "Last ceremony:",
     "ntp_sync": "NTP synchronization:",
     "ntp_disabled": "Disabled",

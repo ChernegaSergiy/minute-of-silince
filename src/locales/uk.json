@@ -12,8 +12,6 @@
     "changelog": "ЗМІНИ"
   },
   "status": {
-    "active": "● АКТИВНА ЦЕРЕМОНІЯ",
-    "waiting": "○ ОЧІКУВАННЯ",
     "last_ceremony": "Остання церемонія:",
     "ntp_sync": "Синхронізація NTP:",
     "ntp_disabled": "Вимкнено",
