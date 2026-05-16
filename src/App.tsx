@@ -294,7 +294,6 @@ export default function App() {
   const [syncing, setSyncing] = useState(false);
   const [changelogCount, setChangelogCount] = useState(CHANGELOG_PAGE_SIZE);
   const sentinelRef = useRef<HTMLDivElement>(null);
-  const scrollRef = useRef<HTMLDivElement>(null);
 
   const visibleVersions = changelogVersions.slice(0, changelogCount);
   const initRef = useRef(false);
@@ -375,21 +374,16 @@ export default function App() {
   }, [settings, status?.ceremonyActive]);
 
   useEffect(() => {
-    const el = scrollRef.current;
+    const el = sentinelRef.current;
     if (!el || changelogCount >= changelogVersions.length) return;
 
-    if (el.scrollHeight <= el.clientHeight) {
-      setChangelogCount((c) => Math.min(c + CHANGELOG_PAGE_SIZE, changelogVersions.length));
-      return;
-    }
-
-    const onScroll = () => {
-      if (el.scrollHeight - el.scrollTop - el.clientHeight < 200) {
+    const observer = new IntersectionObserver(([entry]) => {
+      if (entry.isIntersecting) {
         setChangelogCount((c) => Math.min(c + CHANGELOG_PAGE_SIZE, changelogVersions.length));
       }
-    };
-    el.addEventListener("scroll", onScroll);
-    return () => el.removeEventListener("scroll", onScroll);
+    });
+    observer.observe(el);
+    return () => observer.disconnect();
   }, [changelogCount]);
 
   const updateSetting = useCallback(
@@ -442,7 +436,7 @@ export default function App() {
           </NavDrawer>
 
           <div className={styles.content}>
-            <div ref={scrollRef} className={styles.scroll}>
+            <div className={styles.scroll}>
               {selectedNav === "settings" ? (
                 <>
                   <Card className={styles.card}>
