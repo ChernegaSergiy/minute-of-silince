@@ -288,7 +288,7 @@ export default function App() {
   const [cleanSettings, setCleanSettings] = useState<string>("");
   const [status, setStatus] = useState<StatusSnapshot | null>(null);
   const [version, setVersion] = useState("...");
-  const [showOverlay, setShowOverlay] = useState(true);
+  const [showOverlay, setShowOverlay] = useState(false);
   const [volumeValue, setVolumeValue] = useState(80);
   const [syncing, setSyncing] = useState(false);
   const initRef = useRef(false);
