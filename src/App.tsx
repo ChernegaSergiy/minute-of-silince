@@ -55,6 +55,7 @@ const presets: AudioPreset[] = [
   "voice_silence", "voice_metronome_anthem", "voice_metronome_ending",
   "metronome_anthem", "bell_silence_bell", "bell_metronome_bell", "silence",
 ];
+const anthemPresets = ["voice_metronome_anthem", "metronome_anthem"];
 
 interface ChangelogCategory {
   name: string;
@@ -564,14 +565,16 @@ export default function App() {
                       checked={settings.showVisualOverlay}
                       onChange={(v) => updateSetting("showVisualOverlay", v)}
                     />
-                    <Divider />
-                    <SwitchRow
-                      id="flagAnimationToggle"
-                      label={t("controls.flag_animation.label")}
-                      desc={t("controls.flag_animation.description")}
-                      checked={settings.showFlagAnimation}
-                      onChange={(v) => updateSetting("showFlagAnimation", v)}
-                    />
+                    {settings.showVisualOverlay && <>
+                      <Divider />
+                      <SwitchRow
+                        id="flagAnimationToggle"
+                        label={t("controls.flag_animation.label")}
+                        desc={t("controls.flag_animation.description")}
+                        checked={settings.showFlagAnimation}
+                        onChange={(v) => updateSetting("showFlagAnimation", v)}
+                      />
+                    </>}
                   </Card>
 
                   <Card className={styles.card}>
@@ -621,6 +624,7 @@ export default function App() {
                         </Dropdown>
                       </div>
                     </div>
+                    {anthemPresets.includes(settings.preset) && (
                     <div className={styles.selectRow}>
                       <div className={styles.selectLabel}>
                         {t("controls.anthem_voice.label")}
@@ -640,6 +644,7 @@ export default function App() {
                         </Dropdown>
                       </div>
                     </div>
+                    )}
                     <div>
                       <div className={styles.selectLabel}>
                         {t("controls.volume.label")}
@@ -674,14 +679,16 @@ export default function App() {
                       onChange={(v) => updateSetting("pauseOtherPlayers", v)}
                     />
                     <Divider />
-                    <SwitchRow
-                      id="resumeToggle"
-                      label={t("controls.resume.label")}
-                      desc={t("controls.resume.description")}
-                      checked={settings.resumeAfterCeremony}
-                      onChange={(v) => updateSetting("resumeAfterCeremony", v)}
-                    />
-                    <Divider />
+                    {settings.pauseOtherPlayers && <>
+                      <SwitchRow
+                        id="resumeToggle"
+                        label={t("controls.resume.label")}
+                        desc={t("controls.resume.description")}
+                        checked={settings.resumeAfterCeremony}
+                        onChange={(v) => updateSetting("resumeAfterCeremony", v)}
+                      />
+                      <Divider />
+                    </>}
                     <SwitchRow
                       id="volumePriorityToggle"
                       label={t("controls.volume_priority.label")}
