@@ -94,6 +94,7 @@ function parseChangelog(md: string): ChangelogVersion[] {
 }
 
 const changelogVersions = parseChangelog(changelogMd);
+const CHANGELOG_PAGE_SIZE = 3;
 
 const announcementVoiceLabels: Record<string, string> = {
   bohdan_hdal: "Богдан Хдаль",
@@ -250,6 +251,9 @@ const useStyles = makeStyles({
   changelogContent: {
     padding: tokens.spacingVerticalL,
   },
+  changelogSentinel: {
+    height: "1px",
+  },
 });
 
 function SwitchRow({
@@ -291,6 +295,8 @@ export default function App() {
   const [showOverlay, setShowOverlay] = useState(false);
   const [volumeValue, setVolumeValue] = useState(80);
   const [syncing, setSyncing] = useState(false);
+  const [changelogCount, setChangelogCount] = useState(CHANGELOG_PAGE_SIZE);
+  const sentinelRef = useRef<HTMLDivElement>(null);
   const initRef = useRef(false);
 
   const isDirty =
@@ -367,6 +373,21 @@ export default function App() {
       unlisteners.forEach((u) => u());
     };
   }, [settings, status?.ceremonyActive]);
+
+  useEffect(() => {
+    const sentinel = sentinelRef.current;
+    if (!sentinel || changelogCount >= changelogVersions.length) return;
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setChangelogCount((c) => Math.min(c + CHANGELOG_PAGE_SIZE, changelogVersions.length));
+        }
+      },
+      { rootMargin: "200px" }
+    );
+    observer.observe(sentinel);
+    return () => observer.disconnect();
+  }, [changelogCount]);
 
   const updateSetting = useCallback(
     <K extends keyof Settings>(key: K, value: Settings[K]) => {
@@ -726,7 +747,7 @@ export default function App() {
                 </div>
               ) : (
                 <div className={styles.changelogContent}>
-                  {changelogVersions.map((v) => (
+                  {changelogVersions.slice(0, changelogCount).map((v) => (
                     <Card key={v.version} className={styles.card}>
                       <CardHeader
                         header={
@@ -761,6 +782,9 @@ export default function App() {
                       ))}
                     </Card>
                   ))}
+                  {changelogCount < changelogVersions.length && (
+                    <div ref={sentinelRef} className={styles.changelogSentinel} />
+                  )}
                 </div>
               )}
             </div>
