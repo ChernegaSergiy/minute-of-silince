@@ -11,13 +11,11 @@ const containerStyle: React.CSSProperties = {
   left: 0,
   right: 0,
   bottom: 0,
-  backgroundColor: "#000000",
+  backgroundColor: "rgba(0, 0, 0, 0.9)",
   zIndex: 9999,
   justifyContent: "center",
   alignItems: "center",
   flexDirection: "column",
-  userSelect: "none",
-  cursor: "none",
 };
 
 const innerStyle: React.CSSProperties = {
@@ -36,23 +34,22 @@ const crossStyle: React.CSSProperties = {
     35% 0%, 65% 0%, 65% 35%, 100% 35%, 100% 65%,
     65% 65%, 65% 100%, 35% 100%, 35% 65%, 0% 65%, 0% 35%, 35% 35%
   )`,
-  animation: "pulse 3s ease-in-out infinite",
 };
 
 const titleStyle: React.CSSProperties = {
   color: "white",
-  fontSize: 32,
-  fontWeight: "bold",
-  letterSpacing: "0.25em",
-  lineHeight: 1.2,
+  fontSize: 24,
+  fontWeight: 600,
   textTransform: "uppercase",
+  letterSpacing: "0.2em",
 };
 
 const subStyle: React.CSSProperties = {
   color: "#888",
   fontSize: 14,
-  letterSpacing: "0.5em",
+  marginTop: 12,
   textTransform: "uppercase",
+  letterSpacing: "0.4em",
 };
 
 export default function Overlay({ show }: OverlayProps) {
@@ -60,7 +57,6 @@ export default function Overlay({ show }: OverlayProps) {
 
   return (
     <div style={containerStyle}>
-      <style>{`@keyframes pulse { 0% { transform: scale(1); opacity: 1; } 50% { transform: scale(1.02); opacity: 0.8; } 100% { transform: scale(1); opacity: 1; } }`}</style>
       <div style={innerStyle}>
         <div style={crossStyle} />
         <div style={titleStyle}>{t("overlay.title")}</div>
