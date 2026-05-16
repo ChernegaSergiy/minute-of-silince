@@ -347,8 +347,10 @@ export default function App() {
         await onCeremonyStart(async () => {
           if (cancelled) return;
           if (settings.showVisualOverlay) {
-            await bringWindowToFront();
             setShowOverlay(true);
+            try {
+              await bringWindowToFront();
+            } catch {}
           }
         }),
         await onCeremonyEnd(() => {
