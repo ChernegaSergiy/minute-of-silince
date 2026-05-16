@@ -797,7 +797,7 @@ export default function App() {
                     </Card>
                     </div>
                   ))}
-                  {changelogLoading && (
+                  {changelogLoading && changelogCount < changelogVersions.length && (
                     <div className={styles.changelogSpinner}>
                       <Spinner size="tiny" />
                     </div>
