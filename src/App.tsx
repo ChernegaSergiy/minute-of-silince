@@ -217,7 +217,10 @@ const useStyles = makeStyles({
   overlay: {
     display: "none",
     position: "fixed",
-    inset: "0",
+    top: "0",
+    left: "0",
+    right: "0",
+    bottom: "0",
     backgroundColor: "rgba(0, 0, 0, 0.9)",
     zIndex: 9999,
     justifyContent: "center",
@@ -417,7 +420,8 @@ export default function App() {
   if (!settings || !status) return null;
 
   return (
-    <FluentProvider theme={webDarkTheme} style={{ height: "100%" }}>
+    <>
+      <FluentProvider theme={webDarkTheme} style={{ height: "100%" }}>
       <div className={styles.layout}>
         <div className={styles.body}>
           <NavDrawer
@@ -810,13 +814,14 @@ export default function App() {
           </div>
         )}
       </div>
-
-      <div
-        className={`${styles.overlay} ${showOverlay ? styles.overlayVisible : ""}`}
-      >
-        <div className={styles.overlayText}>{t("overlay.title")}</div>
-        <div className={styles.overlaySub}>{t("overlay.subtitle")}</div>
-      </div>
     </FluentProvider>
+
+    <div
+      className={`${styles.overlay} ${showOverlay ? styles.overlayVisible : ""}`}
+    >
+      <div className={styles.overlayText}>{t("overlay.title")}</div>
+      <div className={styles.overlaySub}>{t("overlay.subtitle")}</div>
+    </div>
+    </>
   );
 }
