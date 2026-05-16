@@ -9,6 +9,27 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.8.5] - 2026-05-16
+ 
+### Added
+- `AnthemVoice` enum (`Default`, `MykhailoKhoma`, `OleksandrPonomarov`) with `snake_case` serialization.
+- `anthem_voice` field in `Settings` struct (default: `AnthemVoice::Default`).
+- Anthem audio performances by Mykhailo Khoma and Oleksandr Ponomarov.
+- `AnthemVoice` parameter in `play_preset` / `AudioEngine` to select the correct anthem file at playback time.
+- Anthem voice selection dropdown in the settings UI; hidden automatically when the active preset has no anthem segment.
+- `AnthemVoice` TypeScript type in `types.ts`.
+- i18n strings for anthem voice control (`controls.anthem_voice.*`) in `en.json` and `uk.json`.
+- `sync_autostart` Tauri command for explicit autostart synchronisation on demand.
+- `apply_autostart_enabled` and `sync_autostart_from_system` helpers extracted into `platform/mod.rs`.
+
+### Changed
+- Autostart state is now synchronised with the actual system state at application startup (`lib.rs`) instead of being applied blindly from the persisted value.
+- `get_settings` command syncs the persisted autostart flag against the real platform state before returning, keeping the UI consistent with external changes (e.g. system Settings toggles).
+
+### Fixed
+- Flag animation window event listeners now use `once` instead of `listen`, preventing listener accumulation across repeated ceremonies.
+- Flag animation window was not closing after ceremony end: the global `on_window_event` handler intercepted `CloseRequested` on all windows and called `hide()` instead of closing. Handler is now scoped to the main window only.
+
 ## [0.8.4] - 2026-05-13
 
 ### Added
