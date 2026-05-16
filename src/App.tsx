@@ -723,6 +723,9 @@ export default function App() {
                   <div className={styles.aboutDesc}>
                     {t("about.description")}
                   </div>
+                  <div className={styles.aboutDesc}>
+                    {t("about.acknowledgments")}
+                  </div>
                   <div className={styles.aboutLinks}>
                     <Link
                       onClick={() =>
