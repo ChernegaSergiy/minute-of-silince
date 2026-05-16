@@ -298,6 +298,7 @@ export default function App() {
   const [volumeValue, setVolumeValue] = useState(80);
   const [syncing, setSyncing] = useState(false);
   const [changelogCount, setChangelogCount] = useState(CHANGELOG_PAGE_SIZE);
+  const [changelogLoading, setChangelogLoading] = useState(false);
   const scrollRef = useRef<HTMLDivElement>(null);
 
   const visibleVersions = changelogVersions.slice(0, changelogCount);
@@ -380,17 +381,25 @@ export default function App() {
 
   const handleChangelogScroll = useCallback((e: React.UIEvent<HTMLDivElement>) => {
     const { scrollTop, scrollHeight, clientHeight } = e.currentTarget;
-    if (scrollHeight - scrollTop - clientHeight < 100) {
+    if (scrollHeight - scrollTop - clientHeight < 100 && !changelogLoading) {
+      setChangelogLoading(true);
       setChangelogCount((c) => Math.min(c + CHANGELOG_PAGE_SIZE, changelogVersions.length));
     }
-  }, []);
+  }, [changelogLoading]);
 
   useEffect(() => {
     const el = scrollRef.current;
     if (!el || changelogCount >= changelogVersions.length) return;
-    if (el.scrollHeight <= el.clientHeight) {
+    if (el.scrollHeight <= el.clientHeight && !changelogLoading) {
+      setChangelogLoading(true);
       setChangelogCount((c) => Math.min(c + CHANGELOG_PAGE_SIZE, changelogVersions.length));
     }
+  }, [changelogCount]);
+
+  useEffect(() => {
+    if (!changelogLoading) return;
+    const t = setTimeout(() => setChangelogLoading(false), 500);
+    return () => clearTimeout(t);
   }, [changelogCount]);
 
   const updateSetting = useCallback(
@@ -788,7 +797,7 @@ export default function App() {
                     </Card>
                     </div>
                   ))}
-                  {changelogCount < changelogVersions.length && (
+                  {changelogLoading && (
                     <div className={styles.changelogSpinner}>
                       <Spinner size="tiny" />
                     </div>
