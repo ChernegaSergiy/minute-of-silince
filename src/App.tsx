@@ -9,10 +9,11 @@ import {
   NavDrawerBody,
   NavItem,
   Switch,
-  Select,
   Button,
   Slider,
   Text,
+  Dropdown,
+  Option,
   Card,
   CardHeader,
   Divider,
@@ -93,6 +94,13 @@ function parseChangelog(md: string): ChangelogVersion[] {
 
 const changelogVersions = parseChangelog(changelogMd);
 
+const announcementVoiceLabels: Record<string, string> = {
+  bohdan_hdal: "Богдан Хдаль",
+  sonia_sotnyk: "Соня Сотник",
+  dania_khomutovskyi: "Даня Хомутовський",
+  air_alert: "Повітряна тривога",
+};
+
 const useStyles = makeStyles({
   layout: {
     height: "100%",
@@ -149,6 +157,9 @@ const useStyles = makeStyles({
   selectLabel: {
     fontSize: tokens.fontSizeBase200,
     marginBottom: tokens.spacingVerticalXS,
+  },
+  dropdown: {
+    flex: 1,
   },
   volumeRow: {
     display: "flex",
@@ -535,20 +546,22 @@ export default function App() {
                     <Divider />
                     {settings.reminderEnabled && (
                       <>
-                        <div className={styles.selectRow}>
-                          <Select
-                            value={String(settings.reminderMinutesBefore)}
-                            onChange={(_, data) =>
-                              updateSetting("reminderMinutesBefore", Number(data.value))
+                        <div className={styles.volumeRow}>
+                          <Dropdown
+                            className={styles.dropdown}
+                            value={settings.reminderMinutesBefore === 0 ? t("controls.reminder.immediately") : `${t("controls.reminder.in")} ${settings.reminderMinutesBefore} ${t("controls.grace.unit")}`}
+                            selectedOptions={[String(settings.reminderMinutesBefore)]}
+                            onOptionSelect={(_, data) =>
+                              updateSetting("reminderMinutesBefore", Number(data.optionValue))
                             }
                           >
-                            <option value="0">{t("controls.reminder.immediately")}</option>
+                            <Option value="0" text={t("controls.reminder.immediately")}>{t("controls.reminder.immediately")}</Option>
                             {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((n) => (
-                              <option key={n} value={String(n)}>
+                              <Option key={n} value={String(n)} text={`${t("controls.reminder.in")} ${n} ${t("controls.grace.unit")}`}>
                                 {t("controls.reminder.in")} {n} {t("controls.grace.unit")}
-                              </option>
+                              </Option>
                             ))}
-                          </Select>
+                          </Dropdown>
                         </div>
                         <Divider />
                       </>
@@ -578,51 +591,63 @@ export default function App() {
                       <div className={styles.selectLabel}>
                         {t("controls.audio_mode.label")}
                       </div>
-                      <Select
-                        value={settings.preset}
-                        onChange={(_, data) =>
-                          updateSetting("preset", data.value as AudioPreset)
-                        }
-                      >
-                        {presets.map((p) => (
-                          <option key={p} value={p}>
-                            {t("controls.presets." + p)}
-                          </option>
-                        ))}
-                      </Select>
+                      <div className={styles.volumeRow}>
+                        <Dropdown
+                          className={styles.dropdown}
+                          value={t("controls.presets." + settings.preset)}
+                          selectedOptions={[settings.preset]}
+                          onOptionSelect={(_, data) =>
+                            updateSetting("preset", data.optionValue as AudioPreset)
+                          }
+                        >
+                          {presets.map((p) => (
+                            <Option key={p} value={p} text={t("controls.presets." + p)}>
+                              {t("controls.presets." + p)}
+                            </Option>
+                          ))}
+                        </Dropdown>
+                      </div>
                     </div>
                     <div className={styles.selectRow}>
                       <div className={styles.selectLabel}>
                         {t("controls.voice.label")}
                       </div>
-                      <Select
-                        value={settings.announcementVoice}
-                        onChange={(_, data) =>
-                          updateSetting("announcementVoice", data.value as AnnouncementVoice)
-                        }
-                      >
-                        <option value="bohdan_hdal">Богдан Хдаль</option>
-                        <option value="sonia_sotnyk">Соня Сотник</option>
-                        <option value="dania_khomutovskyi">
-                          Даня Хомутовський
-                        </option>
-                        <option value="air_alert">Повітряна тривога</option>
-                      </Select>
+                      <div className={styles.volumeRow}>
+                        <Dropdown
+                          className={styles.dropdown}
+                          value={announcementVoiceLabels[settings.announcementVoice]}
+                          selectedOptions={[settings.announcementVoice]}
+                          onOptionSelect={(_, data) =>
+                            updateSetting("announcementVoice", data.optionValue as AnnouncementVoice)
+                          }
+                        >
+                          <Option value="bohdan_hdal" text="Богдан Хдаль">Богдан Хдаль</Option>
+                          <Option value="sonia_sotnyk" text="Соня Сотник">Соня Сотник</Option>
+                          <Option value="dania_khomutovskyi" text="Даня Хомутовський">
+                            Даня Хомутовський
+                          </Option>
+                          <Option value="air_alert" text="Повітряна тривога">Повітряна тривога</Option>
+                        </Dropdown>
+                      </div>
                     </div>
                     <div className={styles.selectRow}>
                       <div className={styles.selectLabel}>
                         {t("controls.anthem_voice.label")}
                       </div>
-                      <Select
-                        value={settings.anthemVoice}
-                        onChange={(_, data) =>
-                          updateSetting("anthemVoice", data.value as AnthemVoice)
-                        }
-                      >
-                        <option value="default">{t("controls.anthem_voice.default")}</option>
-                        <option value="mykhailo_khoma">{t("controls.anthem_voice.mykhailo_khoma")}</option>
-                        <option value="oleksandr_ponomarov">{t("controls.anthem_voice.oleksandr_ponomarov")}</option>
-                      </Select>
+                      <div className={styles.volumeRow}>
+                        <Dropdown
+                          className={styles.dropdown}
+                          value={t("controls.anthem_voice." + settings.anthemVoice)}
+                          selectedOptions={[settings.anthemVoice]}
+                          onOptionSelect={(_, data) =>
+                            updateSetting("anthemVoice", data.optionValue as AnthemVoice)
+                          }
+                        >
+                          <Option value="default" text={t("controls.anthem_voice.default")}>{t("controls.anthem_voice.default")}</Option>
+                          <Option value="mykhailo_khoma" text={t("controls.anthem_voice.mykhailo_khoma")}>{t("controls.anthem_voice.mykhailo_khoma")}</Option>
+                          <Option value="oleksandr_ponomarov" text={t("controls.anthem_voice.oleksandr_ponomarov")}>{t("controls.anthem_voice.oleksandr_ponomarov")}</Option>
+                        </Dropdown>
+                      </div>
                     </div>
                     <div>
                       <div className={styles.selectLabel}>
