@@ -747,7 +747,7 @@ export default function App() {
                   <div className={styles.aboutLicense}>
                     {t("about.license")}
                     <br />
-                    <span className={styles.heroism}>Слава Україні!</span>
+                    <span className={styles.heroism}>{t("about.glory")}</span>
                   </div>
                 </div>
               ) : (
