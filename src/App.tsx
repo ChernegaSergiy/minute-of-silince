@@ -419,10 +419,6 @@ export default function App() {
 
   if (!settings || !status) return null;
 
-  const ceremonyActiveText = status.ceremonyActive
-    ? t("status.active")
-    : t("status.waiting");
-
   return (
     <FluentProvider theme={webDarkTheme} style={{ height: "100%" }}>
       <div className={styles.layout}>
@@ -451,19 +447,6 @@ export default function App() {
             <div className={styles.scroll}>
               {selectedNav === "settings" ? (
                 <>
-                  <Card className={styles.statusCard}>
-                    <CardHeader
-                      header={
-                        <Text size={100}>
-                          {t("status.title")}
-                        </Text>
-                      }
-                    />
-                    <Text size={600} weight="semibold" className={styles.statusValue}>
-                      {ceremonyActiveText}
-                    </Text>
-                  </Card>
-
                   <Card className={styles.card}>
                     <Text size={100} weight="semibold" block>
                       ОСНОВНІ
