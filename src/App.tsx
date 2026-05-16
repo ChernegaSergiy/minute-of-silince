@@ -18,6 +18,7 @@ import {
   CardHeader,
   Divider,
   Link,
+  Spinner,
 } from "@fluentui/react-components";
 import {
   Settings20Regular,
@@ -231,8 +232,12 @@ const useStyles = makeStyles({
   },
   changelogCatHeader: {
     textTransform: "uppercase",
-    letterSpacing: "0.1em",
-    marginBottom: tokens.spacingVerticalXXS,
+    ...shorthands.margin(0, 0, tokens.spacingVerticalXS, 0),
+  },
+  changelogSpinner: {
+    display: "flex",
+    justifyContent: "center",
+    paddingTop: tokens.spacingVerticalL,
   },
   changelogList: {
     margin: 0,
@@ -783,6 +788,11 @@ export default function App() {
                     </Card>
                     </div>
                   ))}
+                  {changelogCount < changelogVersions.length && (
+                    <div className={styles.changelogSpinner}>
+                      <Spinner size="tiny" />
+                    </div>
+                  )}
                 </div>
               )}
             </div>
