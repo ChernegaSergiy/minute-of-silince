@@ -47,6 +47,7 @@ import type { Settings, StatusSnapshot, AudioPreset, AnnouncementVoice, AnthemVo
 import { t } from "./i18n";
 import changelogMd from "../CHANGELOG.md?raw";
 import Markdown from "react-markdown";
+import Overlay from "./Overlay";
 
 const presets: AudioPreset[] = [
   "voice_metronome", "metronome_only", "voice_silence_bell",
@@ -213,36 +214,6 @@ const useStyles = makeStyles({
     fontSize: tokens.fontSizeBase100,
     color: tokens.colorNeutralForeground3,
     marginTop: tokens.spacingVerticalXXL,
-  },
-  overlay: {
-    display: "none",
-    position: "fixed",
-    top: "0",
-    left: "0",
-    right: "0",
-    bottom: "0",
-    backgroundColor: "rgba(0, 0, 0, 0.9)",
-    zIndex: 9999,
-    justifyContent: "center",
-    alignItems: "center",
-    flexDirection: "column",
-  },
-  overlayVisible: {
-    display: "flex",
-  },
-  overlayText: {
-    color: "white",
-    fontSize: tokens.fontSizeBase600,
-    fontWeight: tokens.fontWeightSemibold,
-    textTransform: "uppercase",
-    letterSpacing: "0.2em",
-  },
-  overlaySub: {
-    color: "#888",
-    fontSize: tokens.fontSizeBase200,
-    marginTop: tokens.spacingVerticalS,
-    textTransform: "uppercase",
-    letterSpacing: "0.4em",
   },
   infoRow: {
     fontSize: tokens.fontSizeBase100,
@@ -816,12 +787,7 @@ export default function App() {
       </div>
     </FluentProvider>
 
-    <div
-      className={`${styles.overlay} ${showOverlay ? styles.overlayVisible : ""}`}
-    >
-      <div className={styles.overlayText}>{t("overlay.title")}</div>
-      <div className={styles.overlaySub}>{t("overlay.subtitle")}</div>
-    </div>
+    <Overlay show={showOverlay} />
     </>
   );
 }
