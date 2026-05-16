@@ -375,19 +375,15 @@ export default function App() {
   }, [settings, status?.ceremonyActive]);
 
   useEffect(() => {
-    const sentinel = sentinelRef.current;
-    const root = scrollRef.current;
-    if (!sentinel || !root || changelogCount >= changelogVersions.length) return;
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) {
-          setChangelogCount((c) => Math.min(c + CHANGELOG_PAGE_SIZE, changelogVersions.length));
-        }
-      },
-      { root }
-    );
-    observer.observe(sentinel);
-    return () => observer.disconnect();
+    const el = scrollRef.current;
+    if (!el || changelogCount >= changelogVersions.length) return;
+    const onScroll = () => {
+      if (el.scrollHeight - el.scrollTop - el.clientHeight < 200) {
+        setChangelogCount((c) => Math.min(c + CHANGELOG_PAGE_SIZE, changelogVersions.length));
+      }
+    };
+    el.addEventListener("scroll", onScroll);
+    return () => el.removeEventListener("scroll", onScroll);
   }, [changelogCount]);
 
   const updateSetting = useCallback(
