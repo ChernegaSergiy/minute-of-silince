@@ -28,14 +28,18 @@ const presets: AudioPreset[] = [
   "silence",
 ];
 
+const presetLabel = (preset: AudioPreset) => t(`controls.presets.${preset}`);
+
 const anthemPresets = ["voice_metronome_anthem", "metronome_anthem"];
 
-const announcementVoiceLabels: Record<string, string> = {
-  bohdan_hdal: "Богдан Хдаль",
-  sonia_sotnyk: "Соня Сотник",
-  dania_khomutovskyi: "Даня Хомутовський",
-  air_alert: "Повітряна тривога",
-};
+const announcementVoices: AnnouncementVoice[] = [
+  "bohdan_hdal",
+  "sonia_sotnyk",
+  "dania_khomutovskyi",
+  "air_alert",
+];
+
+const announcementVoiceLabel = (voice: AnnouncementVoice) => t(`controls.voice.${voice}`);
 
 type UpdateSetting = <K extends keyof Settings>(key: K, value: Settings[K]) => void;
 
@@ -295,15 +299,15 @@ export default function SettingsTab({
           <div className={styles.volumeRow}>
             <Dropdown
               className={styles.dropdown}
-              value={t("controls.presets." + settings.preset)}
+              value={presetLabel(settings.preset)}
               selectedOptions={[settings.preset]}
               onOptionSelect={(_, data) =>
                 onUpdateSetting("preset", data.optionValue as AudioPreset)
               }
             >
               {presets.map((p) => (
-                <Option key={p} value={p} text={t("controls.presets." + p)}>
-                  {t("controls.presets." + p)}
+                <Option key={p} value={p} text={presetLabel(p)}>
+                  {presetLabel(p)}
                 </Option>
               ))}
             </Dropdown>
@@ -314,24 +318,17 @@ export default function SettingsTab({
           <div className={styles.volumeRow}>
             <Dropdown
               className={styles.dropdown}
-              value={announcementVoiceLabels[settings.announcementVoice]}
+              value={announcementVoiceLabel(settings.announcementVoice)}
               selectedOptions={[settings.announcementVoice]}
               onOptionSelect={(_, data) =>
                 onUpdateSetting("announcementVoice", data.optionValue as AnnouncementVoice)
               }
             >
-              <Option value="bohdan_hdal" text="Богдан Хдаль">
-                Богдан Хдаль
-              </Option>
-              <Option value="sonia_sotnyk" text="Соня Сотник">
-                Соня Сотник
-              </Option>
-              <Option value="dania_khomutovskyi" text="Даня Хомутовський">
-                Даня Хомутовський
-              </Option>
-              <Option value="air_alert" text="Повітряна тривога">
-                Повітряна тривога
-              </Option>
+              {announcementVoices.map((voice) => (
+                <Option key={voice} value={voice} text={announcementVoiceLabel(voice)}>
+                  {announcementVoiceLabel(voice)}
+                </Option>
+              ))}
             </Dropdown>
           </div>
         </div>
