@@ -198,6 +198,33 @@ export default function SettingsTab({
           onChange={(v) => onUpdateSetting("weekdaysOnly", v)}
         />
         <Divider />
+        <SwitchRow
+          id="useSystemThemeToggle"
+          label={t("controls.use_system_theme.label")}
+          desc={t("controls.use_system_theme.description")}
+          checked={settings.useSystemTheme ?? true}
+          onChange={(v) => onUpdateSetting("useSystemTheme", v)}
+        />
+        {!settings.useSystemTheme && (
+          <>
+            <Divider />
+            <div className={styles.selectRow}>
+              <div className={styles.selectLabel}>{t("controls.ui_theme.label")}</div>
+              <div className={styles.volumeRow}>
+                <Dropdown
+                  className={styles.dropdown}
+                  value={settings.uiTheme ?? "light"}
+                  selectedOptions={[settings.uiTheme ?? "light"]}
+                  onOptionSelect={(_, data) => onUpdateSetting("uiTheme", data.optionValue as "light" | "dark")}
+                >
+                  <Option value="light" text={t("controls.ui_theme.light")}>{t("controls.ui_theme.light")}</Option>
+                  <Option value="dark" text={t("controls.ui_theme.dark")}>{t("controls.ui_theme.dark")}</Option>
+                </Dropdown>
+              </div>
+            </div>
+          </>
+        )}
+        <Divider />
         <div>
           <div className={styles.selectLabel}>{t("controls.grace.label")}</div>
           <div className={styles.volumeRow}>
