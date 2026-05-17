@@ -7,6 +7,12 @@
     "about": "ABOUT",
     "changelog": "CHANGELOG"
   },
+  "sections": {
+    "general": "GENERAL",
+    "reminder": "REMINDER",
+    "audio_mode": "AUDIO",
+    "system": "SYSTEM"
+  },
   "status": {
     "last_ceremony": "Last ceremony:",
     "ntp_sync": "NTP synchronization:",

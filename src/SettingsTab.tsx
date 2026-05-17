@@ -172,7 +172,7 @@ export default function SettingsTab({
     <>
       <Card className={styles.card}>
         <Text size={100} weight="semibold" block>
-          ОСНОВНІ
+          {t("sections.general")}
         </Text>
         <SwitchRow
           id="ceremonyToggle"
@@ -238,7 +238,7 @@ export default function SettingsTab({
 
       <Card className={styles.card}>
         <Text size={100} weight="semibold" block>
-          {t("controls.reminder.label")}
+          {t("sections.reminder")}
         </Text>
         <SwitchRow
           id="reminderToggle"
@@ -303,7 +303,7 @@ export default function SettingsTab({
 
       <Card className={styles.card}>
         <Text size={100} weight="semibold" block>
-          {t("controls.audio_mode.label")}
+          {t("sections.audio_mode")}
         </Text>
         <div className={styles.selectRow}>
           <div className={styles.selectLabel}>{t("controls.audio_mode.label")}</div>
@@ -374,7 +374,7 @@ export default function SettingsTab({
 
       <Card className={styles.card}>
         <Text size={100} weight="semibold" block>
-          СИСТЕМА
+          {t("sections.system")}
         </Text>
         <SwitchRow
           id="pauseToggle"
