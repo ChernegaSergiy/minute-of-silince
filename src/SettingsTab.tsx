@@ -45,6 +45,9 @@ const anthemVoices: AnthemVoice[] = ["default", "mykhailo_khoma", "oleksandr_pon
 
 const anthemVoiceLabel = (voice: AnthemVoice) => t(`controls.anthem_voice.${voice}`);
 
+const uiThemes = ["light", "dark"];
+const uiThemeLabel = (v: string) => t(`controls.ui_theme.${v}`);
+
 const renderOptions = <T extends string>(values: readonly T[], getLabel: (v: T) => string) =>
   values.map((v) => (
     <Option key={v} value={v} text={getLabel(v)}>
@@ -213,12 +216,11 @@ export default function SettingsTab({
               <div className={styles.volumeRow}>
                 <Dropdown
                   className={styles.dropdown}
-                  value={settings.uiTheme ?? "light"}
+                  value={uiThemeLabel(settings.uiTheme ?? "light")}
                   selectedOptions={[settings.uiTheme ?? "light"]}
                   onOptionSelect={(_, data) => onUpdateSetting("uiTheme", data.optionValue as "light" | "dark")}
                 >
-                  <Option value="light" text={t("controls.ui_theme.light")}>{t("controls.ui_theme.light")}</Option>
-                  <Option value="dark" text={t("controls.ui_theme.dark")}>{t("controls.ui_theme.dark")}</Option>
+                  {renderOptions(uiThemes, uiThemeLabel)}
                 </Dropdown>
               </div>
             </div>
