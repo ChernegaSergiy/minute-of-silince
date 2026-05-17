@@ -45,6 +45,13 @@ const anthemVoices: AnthemVoice[] = ["default", "mykhailo_khoma", "oleksandr_pon
 
 const anthemVoiceLabel = (voice: AnthemVoice) => t(`controls.anthem_voice.${voice}`);
 
+const renderOptions = <T extends string>(values: readonly T[], getLabel: (v: T) => string) =>
+  values.map((v) => (
+    <Option key={v} value={v} text={getLabel(v)}>
+      {getLabel(v)}
+    </Option>
+  ));
+
 type UpdateSetting = <K extends keyof Settings>(key: K, value: Settings[K]) => void;
 
 interface SettingsTabProps {
@@ -309,11 +316,7 @@ export default function SettingsTab({
                 onUpdateSetting("preset", data.optionValue as AudioPreset)
               }
             >
-              {presets.map((p) => (
-                <Option key={p} value={p} text={presetLabel(p)}>
-                  {presetLabel(p)}
-                </Option>
-              ))}
+              {renderOptions(presets, presetLabel)}
             </Dropdown>
           </div>
         </div>
@@ -328,11 +331,7 @@ export default function SettingsTab({
                 onUpdateSetting("announcementVoice", data.optionValue as AnnouncementVoice)
               }
             >
-              {announcementVoices.map((voice) => (
-                <Option key={voice} value={voice} text={announcementVoiceLabel(voice)}>
-                  {announcementVoiceLabel(voice)}
-                </Option>
-              ))}
+              {renderOptions(announcementVoices, announcementVoiceLabel)}
             </Dropdown>
           </div>
         </div>
@@ -348,11 +347,7 @@ export default function SettingsTab({
                   onUpdateSetting("anthemVoice", data.optionValue as AnthemVoice)
                 }
               >
-                {anthemVoices.map((voice) => (
-                  <Option key={voice} value={voice} text={anthemVoiceLabel(voice)}>
-                    {anthemVoiceLabel(voice)}
-                  </Option>
-                ))}
+                {renderOptions(anthemVoices, anthemVoiceLabel)}
               </Dropdown>
             </div>
           </div>
