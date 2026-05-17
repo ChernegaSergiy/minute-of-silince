@@ -43,6 +43,10 @@ export interface Settings {
   announcementVoice: AnnouncementVoice;
   /** Selected anthem voice. */
   anthemVoice: AnthemVoice;
+  /** Whether to follow the OS theme */
+  useSystemTheme?: boolean;
+  /** Manual UI theme when not using system theme: 'light' | 'dark' */
+  uiTheme?: "light" | "dark";
 }
 
 // Mirror of Rust `StatusSnapshot` struct
@@ -75,4 +79,6 @@ export const DEFAULT_SETTINGS: Settings = {
   reminderMinutesBefore: 5,
   announcementVoice: "bohdan_hdal",
   anthemVoice: "default",
+  useSystemTheme: true,
+  uiTheme: "light",
 };
