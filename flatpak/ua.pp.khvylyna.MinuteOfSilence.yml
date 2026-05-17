@@ -12,8 +12,6 @@ finish-args:
   - --socket=wayland
   - --device=dri
   - --share=ipc
-  # Environment
-  - --env=LD_LIBRARY_PATH=/app/lib64:/app/lib
   # Network (needed for NTP sync)
   - --share=network
   # Audio (Pulseaudio/Pipewire)
@@ -30,14 +28,6 @@ finish-args:
   - --filesystem=~/.config/autostart:create
   # Allow Tauri to create temporary tray icon files
   - --filesystem=xdg-run/tray-icon:create
-
-build-options:
-  env:
-    # Ensure pkg-config and linker find modules in both lib and lib64
-    PKG_CONFIG_PATH: /app/lib/pkgconfig:/app/lib64/pkgconfig
-    LDFLAGS: -L/app/lib64 -L/app/lib
-    LIBRARY_PATH: /app/lib64:/app/lib
-    LD_LIBRARY_PATH: /app/lib64:/app/lib
 
 modules:
   - shared-modules/libayatana-appindicator/libayatana-appindicator-gtk3.json
