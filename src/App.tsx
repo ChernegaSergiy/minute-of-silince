@@ -242,25 +242,33 @@ export default function App() {
             </NavDrawer>
 
             <div className={styles.content}>
-              <div className={styles.scroll}>
-                {selectedNav === "settings" ? (
-                  <SettingsTab
-                    settings={settings}
-                    status={status}
-                    volumeValue={volumeValue}
-                    syncing={syncing}
-                    onUpdateSetting={updateSetting}
-                    onVolumeChange={setVolumeValue}
-                    onSyncNtp={handleSyncNtp}
-                  />
-                ) : selectedNav === "about" ? (
-                  <AboutTab version={version} />
-                ) : (
-                  <Suspense fallback={<div className={styles.changelogSpinner}><Spinner size="tiny" /></div>}>
-                    <ChangelogTab />
-                  </Suspense>
-                )}
-              </div>
+              {selectedNav === "changelog" ? (
+                <Suspense
+                  fallback={
+                    <div className={styles.changelogSpinner}>
+                      <Spinner size="tiny" />
+                    </div>
+                  }
+                >
+                  <ChangelogTab />
+                </Suspense>
+              ) : (
+                <div className={styles.scroll}>
+                  {selectedNav === "settings" ? (
+                    <SettingsTab
+                      settings={settings}
+                      status={status}
+                      volumeValue={volumeValue}
+                      syncing={syncing}
+                      onUpdateSetting={updateSetting}
+                      onVolumeChange={setVolumeValue}
+                      onSyncNtp={handleSyncNtp}
+                    />
+                  ) : (
+                    <AboutTab version={version} />
+                  )}
+                </div>
+              )}
             </div>
           </div>
 

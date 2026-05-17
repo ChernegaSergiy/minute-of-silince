@@ -48,6 +48,8 @@ const changelogVersions = parseChangelog(changelogMd);
 
 const useStyles = makeStyles({
   changelogContent: {
+    height: "100%",
+    overflowY: "auto",
     padding: tokens.spacingVerticalL,
   },
   card: {
@@ -113,47 +115,45 @@ export default function ChangelogTab() {
   }, [changelogCount, changelogLoading]);
 
   return (
-    <div className={styles.changelogContent}>
-      <div ref={scrollRef} onScroll={handleChangelogScroll}>
-        {visibleVersions.map((v) => (
-          <div key={v.version}>
-            <Card className={styles.card}>
-              <Text size={200} weight="semibold">
-                v{v.version} — {v.date}
-              </Text>
-              {v.categories.map((cat) => (
-                <div key={cat.name} className={styles.changelogCategory}>
-                  <Text weight="semibold" size={100} className={styles.changelogCatHeader}>
-                    {cat.name}
-                  </Text>
-                  <ul className={styles.changelogList}>
-                    {cat.items.map((item, i) => (
-                      <li key={i} className={styles.changelogItem}>
-                        <Markdown
-                          components={{
-                            p: ({ children }) => <Text size={200}>{children}</Text>,
-                            code: ({ children }) => <code className={styles.changelogCode}>{children}</code>,
-                            a: ({ href, children }) => (
-                              <Link onClick={() => href && open(href)}>{children}</Link>
-                            ),
-                          }}
-                        >
-                          {item}
-                        </Markdown>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              ))}
-            </Card>
-          </div>
-        ))}
-        {changelogLoading && changelogCount < changelogVersions.length && (
-          <div className={styles.changelogSpinner}>
-            <Spinner size="tiny" />
-          </div>
-        )}
-      </div>
+    <div ref={scrollRef} className={styles.changelogContent} onScroll={handleChangelogScroll}>
+      {visibleVersions.map((v) => (
+        <div key={v.version}>
+          <Card className={styles.card}>
+            <Text size={200} weight="semibold">
+              v{v.version} — {v.date}
+            </Text>
+            {v.categories.map((cat) => (
+              <div key={cat.name} className={styles.changelogCategory}>
+                <Text weight="semibold" size={100} className={styles.changelogCatHeader}>
+                  {cat.name}
+                </Text>
+                <ul className={styles.changelogList}>
+                  {cat.items.map((item, i) => (
+                    <li key={i} className={styles.changelogItem}>
+                      <Markdown
+                        components={{
+                          p: ({ children }) => <Text size={200}>{children}</Text>,
+                          code: ({ children }) => <code className={styles.changelogCode}>{children}</code>,
+                          a: ({ href, children }) => (
+                            <Link onClick={() => href && open(href)}>{children}</Link>
+                          ),
+                        }}
+                      >
+                        {item}
+                      </Markdown>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            ))}
+          </Card>
+        </div>
+      ))}
+      {changelogLoading && changelogCount < changelogVersions.length && (
+        <div className={styles.changelogSpinner}>
+          <Spinner size="tiny" />
+        </div>
+      )}
     </div>
   );
 }
