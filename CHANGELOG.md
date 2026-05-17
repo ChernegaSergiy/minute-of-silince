@@ -9,6 +9,26 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.9.0] - 2026-05-17
+ 
+### Added
+- `ChangelogTab` with infinite scroll — changelog is parsed from `CHANGELOG.md` at build time via Vite `?raw` import, no network requests required.
+- `tabs.changelog` i18n key (uk: `ЗМІНИ`, en: `CHANGELOG`).
+- Section headings in `SettingsTab` via new `sections.*` i18n keys.
+
+### Changed
+- **Frontend fully migrated from FAST/web-components to Fluent UI React v9** (`@fluentui/react-components`, `@fluentui/react-icons`, `react`, `react-dom`, `react-markdown`, `@vitejs/plugin-react` added).
+- UI split into dedicated React component files: `App.tsx`, `SettingsTab.tsx`, `AboutTab.tsx`, `Overlay.tsx`, `ChangelogTab.tsx` (lazy-loaded).
+- Navigation replaced with Fluent `NavDrawer` + `NavItem` with icons.
+- Main window size increased from 360×460 to 640×520 (min 500×400).
+- Autostart sync on startup made non-blocking via `tauri::async_runtime::spawn_blocking`.
+- Flatpak `.desktop` and `metainfo.xml`: English set as default locale, Ukrainian as `[uk]` variant — aligns with AppStream/Flathub conventions.
+- Flatpak CI: added `ppa:flatpak/stable` to fix lib64 build failures on GitHub Actions.
+- MSIX `appxmanifest.xml`: `uap10:Parameters="--hidden"` added to `startupTask`; `DisplayName` attribute removed from `StartupTask`.
+
+### Fixed
+- `sync_autostart_from_system` no longer blocks the Tauri `setup` hook, preventing a potential startup hang.
+
 ## [0.8.5] - 2026-05-16
  
 ### Added
