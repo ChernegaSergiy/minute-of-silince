@@ -68,6 +68,18 @@ pub struct Settings {
 
     /// Selected anthem voice/performance.
     pub anthem_voice: AnthemVoice,
+    /// Follow the OS theme when true; otherwise use `ui_theme`.
+    pub use_system_theme: bool,
+
+    /// Manual UI theme when `use_system_theme` is false.
+    pub ui_theme: UiTheme,
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Serialize, Deserialize)]
+#[serde(rename_all = "lowercase")]
+pub enum UiTheme {
+    Light,
+    Dark,
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Serialize, Deserialize)]
@@ -108,6 +120,8 @@ impl Default for Settings {
             reminder_minutes_before: 5,
             announcement_voice: AnnouncementVoice::BohdanHdal,
             anthem_voice: AnthemVoice::Default,
+            use_system_theme: true,
+            ui_theme: UiTheme::Light,
         }
     }
 }
