@@ -71,8 +71,7 @@
           uap10:Parameters="--hidden">
           <uap5:StartupTask
             TaskId="MinuteOfSilenceStartupTask"
-            Enabled="true"
-            DisplayName="Minute of Silence" />
+            Enabled="true" />
         </uap5:Extension>
       </Extensions>
     </Application>
