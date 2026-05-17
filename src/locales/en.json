@@ -38,6 +38,15 @@
       "label": "Weekdays only",
       "description": "Disables automatic activation on Saturdays and Sundays."
     },
+    "use_system_theme": {
+      "label": "Use system theme",
+      "description": "Follow the operating system theme (light/dark) instead of the app setting."
+    },
+    "ui_theme": {
+      "label": "App theme",
+      "light": "Light",
+      "dark": "Dark"
+    },
     "system_time": {
       "label": "System time",
       "description": "Use local clock instead of accurate NTP time."
