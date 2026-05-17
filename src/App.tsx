@@ -1,4 +1,4 @@
-import { Suspense, lazy, useCallback, useEffect, useRef, useState } from "react";
+﻿import { Suspense, lazy, useCallback, useEffect, useRef, useState } from "react";
 import {
   Button,
   FluentProvider,
@@ -101,6 +101,7 @@ export default function App() {
   const initRef = useRef(false);
 
   const isDirty = hydrated && JSON.stringify(settings) !== cleanSettings;
+  const effectiveDark = (settings.useSystemTheme ?? true) ? prefersDark : settings.uiTheme === "dark";
 
   useEffect(() => {
     if (initRef.current) return;
@@ -216,7 +217,7 @@ export default function App() {
   return (
     <>
       <FluentProvider
-        theme={prefersDark ? webDarkTheme : webLightTheme}
+        theme={effectiveDark ? webDarkTheme : webLightTheme}
         style={{ height: "100%" }}
       >
         <div className={styles.layout}>
