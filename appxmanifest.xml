@@ -67,7 +67,8 @@
         <uap5:Extension
           Category="windows.startupTask"
           Executable="MinuteOfSilence.exe"
-          EntryPoint="Windows.FullTrustApplication">
+          EntryPoint="Windows.FullTrustApplication"
+          uap10:Parameters="--hidden">
           <uap5:StartupTask
             TaskId="MinuteOfSilenceStartupTask"
             Enabled="true"
