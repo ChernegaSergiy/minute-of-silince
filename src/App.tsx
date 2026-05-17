@@ -10,6 +10,7 @@ import {
   shorthands,
   tokens,
   webDarkTheme,
+  webLightTheme,
 } from "@fluentui/react-components";
 import {
   DocumentBulletList20Regular,
@@ -84,6 +85,11 @@ const useStyles = makeStyles({
 export default function App() {
   const styles = useStyles();
   const [selectedNav, setSelectedNav] = useState<string>("settings");
+  const [prefersDark, setPrefersDark] = useState(() =>
+    typeof window !== "undefined"
+      ? window.matchMedia("(prefers-color-scheme: dark)").matches
+      : true
+  );
   const [settings, setSettings] = useState<Settings>(DEFAULT_SETTINGS);
   const [cleanSettings, setCleanSettings] = useState<string>("");
   const [status, setStatus] = useState<StatusSnapshot>(DEFAULT_STATUS);
@@ -176,6 +182,19 @@ export default function App() {
     };
   }, [settings.showVisualOverlay, status.ceremonyActive]);
 
+  useEffect(() => {
+    const media = window.matchMedia("(prefers-color-scheme: dark)");
+
+    const updateTheme = (event: MediaQueryListEvent) => {
+      setPrefersDark(event.matches);
+    };
+
+    setPrefersDark(media.matches);
+    media.addEventListener("change", updateTheme);
+
+    return () => media.removeEventListener("change", updateTheme);
+  }, []);
+
   const updateSetting = useCallback(<K extends keyof Settings>(key: K, value: Settings[K]) => {
     setSettings((prev) => ({ ...prev, [key]: value }));
   }, []);
@@ -196,7 +215,10 @@ export default function App() {
 
   return (
     <>
-      <FluentProvider theme={webDarkTheme} style={{ height: "100%" }}>
+      <FluentProvider
+        theme={prefersDark ? webDarkTheme : webLightTheme}
+        style={{ height: "100%" }}
+      >
         <div className={styles.layout}>
           <div className={styles.body}>
             <NavDrawer
