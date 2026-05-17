@@ -58,7 +58,7 @@
     "reminder": {
       "label": "Reminder",
       "description": "System notification before the ceremony.",
-      "in": "In",
+      "in": "Before",
       "immediately": "Immediately"
     },
     "audio_mode": {
