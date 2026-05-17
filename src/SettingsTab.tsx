@@ -41,6 +41,10 @@ const announcementVoices: AnnouncementVoice[] = [
 
 const announcementVoiceLabel = (voice: AnnouncementVoice) => t(`controls.voice.${voice}`);
 
+const anthemVoices: AnthemVoice[] = ["default", "mykhailo_khoma", "oleksandr_ponomarov"];
+
+const anthemVoiceLabel = (voice: AnthemVoice) => t(`controls.anthem_voice.${voice}`);
+
 type UpdateSetting = <K extends keyof Settings>(key: K, value: Settings[K]) => void;
 
 interface SettingsTabProps {
@@ -338,21 +342,17 @@ export default function SettingsTab({
             <div className={styles.volumeRow}>
               <Dropdown
                 className={styles.dropdown}
-                value={t("controls.anthem_voice." + settings.anthemVoice)}
+                value={anthemVoiceLabel(settings.anthemVoice)}
                 selectedOptions={[settings.anthemVoice]}
                 onOptionSelect={(_, data) =>
                   onUpdateSetting("anthemVoice", data.optionValue as AnthemVoice)
                 }
               >
-                <Option value="default" text={t("controls.anthem_voice.default")}>
-                  {t("controls.anthem_voice.default")}
-                </Option>
-                <Option value="mykhailo_khoma" text={t("controls.anthem_voice.mykhailo_khoma")}>
-                  {t("controls.anthem_voice.mykhailo_khoma")}
-                </Option>
-                <Option value="oleksandr_ponomarov" text={t("controls.anthem_voice.oleksandr_ponomarov")}>
-                  {t("controls.anthem_voice.oleksandr_ponomarov")}
-                </Option>
+                {anthemVoices.map((voice) => (
+                  <Option key={voice} value={voice} text={anthemVoiceLabel(voice)}>
+                    {anthemVoiceLabel(voice)}
+                  </Option>
+                ))}
               </Dropdown>
             </div>
           </div>
