@@ -103,7 +103,8 @@ pub fn run() {
             {
                 let app_handle = handle.clone();
                 tauri::async_runtime::spawn_blocking(move || {
-                    if let Err(e) = app::commands::sync_autostart_from_system(app_handle.state::<AppState>())
+                    if let Err(e) =
+                        app::commands::sync_autostart_from_system(app_handle.state::<AppState>())
                     {
                         log::warn!("Failed to sync autostart from system: {}", e);
                     }
