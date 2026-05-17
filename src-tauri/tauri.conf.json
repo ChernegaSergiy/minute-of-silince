@@ -15,13 +15,12 @@
       {
         "title": "Хвилина мовчання",
         "label": "main",
-        "width": 360,
-        "height": 460,
-        "minWidth": 360,
-        "minHeight": 300,
+        "width": 640,
+        "height": 520,
+        "minWidth": 500,
+        "minHeight": 400,
         "resizable": true,
         "decorations": true,
-        "visible": false,
         "center": true,
         "skipTaskbar": true,
         "alwaysOnTop": false

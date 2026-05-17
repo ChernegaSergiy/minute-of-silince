@@ -51,11 +51,6 @@ pub fn run() {
                 settings.clone(),
             ));
 
-            #[cfg(not(test))]
-            {
-                app::commands::sync_autostart_from_system(app.state::<AppState>())?;
-            }
-
             // --- 3. Autostart & Snap Logic ---
             let is_hidden = std::env::args().any(|arg| arg == "--hidden");
 
@@ -102,6 +97,18 @@ pub fn run() {
                     window.set_skip_taskbar(true)?;
                     crate::platform::windows::power::register_power_hook(&window);
                 }
+            }
+
+            #[cfg(not(test))]
+            {
+                let app_handle = handle.clone();
+                tauri::async_runtime::spawn_blocking(move || {
+                    if let Err(e) =
+                        app::commands::sync_autostart_from_system(app_handle.state::<AppState>())
+                    {
+                        log::warn!("Failed to sync autostart from system: {}", e);
+                    }
+                });
             }
 
             // --- 5. Core Services ---

@@ -34,7 +34,7 @@ export interface Settings {
   volumePriority: boolean;
   autoUnmute: boolean;
   ntpServer: string;
-  lateStartGraceMinutes: number; // 0–15
+  lateStartGraceMinutes: number; // 0–5
   /** Enable reminder notifications. */
   reminderEnabled: boolean;
   /** Minutes before 09:00 to show reminder. 0 = immediately. */
