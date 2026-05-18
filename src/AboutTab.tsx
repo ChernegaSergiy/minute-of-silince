@@ -53,19 +53,20 @@ const useStyles = makeStyles({
 
 export default function AboutTab({ version }: AboutTabProps) {
   const styles = useStyles();
-  const [copied, setCopied] = useState(false);
+  const [copyState, setCopyState] = useState<"idle" | "copied" | "error">("idle");
 
   const handleCopyLogs = useCallback(async () => {
-    if (copied) return;
+    if (copyState !== "idle") return;
     try {
       const logs = await getLogContents();
       await navigator.clipboard.writeText(logs);
-      setCopied(true);
-      window.setTimeout(() => setCopied(false), 2000);
+      setCopyState("copied");
     } catch {
-      // no-op
+      setCopyState("error");
     }
-  }, [copied]);
+
+    window.setTimeout(() => setCopyState("idle"), 2000);
+  }, [copyState]);
 
   return (
     <div className={styles.aboutContent}>
@@ -90,11 +91,16 @@ export default function AboutTab({ version }: AboutTabProps) {
       </div>
       <div className={styles.aboutTools}>
         <Button
+          key={copyState}
           appearance="subtle"
-          icon={copied ? <ClipboardCheckmarkRegular /> : <ClipboardRegular />}
+          icon={copyState === "copied" ? <ClipboardCheckmarkRegular /> : <ClipboardRegular />}
           onClick={handleCopyLogs}
         >
-          {copied ? t("about.copy_logs_copied") : t("about.copy_logs")}
+          {copyState === "copied"
+            ? t("about.copy_logs_copied")
+            : copyState === "error"
+              ? t("about.copy_logs_error")
+              : t("about.copy_logs")}
         </Button>
       </div>
       <div className={styles.aboutLicense}>
