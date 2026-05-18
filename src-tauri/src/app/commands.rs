@@ -4,7 +4,6 @@ use std::{
     collections::VecDeque,
     fs,
     io::{BufRead, BufReader},
-    time::SystemTime,
 };
 
 use tauri::{AppHandle, Manager, State};
@@ -116,24 +115,9 @@ pub fn get_log_contents(app: AppHandle) -> Result<String> {
     const MAX_LOG_TAIL_LINES: usize = 200;
 
     let log_dir = app.path().app_log_dir()?;
-
-    let latest_log = fs::read_dir(&log_dir)?
-        .filter_map(|entry| entry.ok())
-        .filter(|entry| {
-            entry
-                .path()
-                .extension()
-                .and_then(|ext| ext.to_str())
-                .is_some_and(|ext| ext.eq_ignore_ascii_case("log"))
-        })
-        .max_by_key(|entry| {
-            entry
-                .metadata()
-                .and_then(|meta| meta.modified())
-                .unwrap_or(SystemTime::UNIX_EPOCH)
-        });
-
     let package = app.package_info();
+    let log_path = log_dir.join(format!("{}.log", package.name));
+
     let mut lines = vec![
         format!("app: {}", package.name),
         format!("version: {}", package.version),
@@ -142,8 +126,7 @@ pub fn get_log_contents(app: AppHandle) -> Result<String> {
         format!("log_dir: {}", log_dir.display()),
     ];
 
-    if let Some(last) = latest_log {
-        let log_path = last.path();
+    if log_path.is_file() {
         let file = fs::File::open(&log_path)?;
         let reader = BufReader::new(file);
         let mut tail = VecDeque::with_capacity(MAX_LOG_TAIL_LINES);
