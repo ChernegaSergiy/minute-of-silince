@@ -132,6 +132,8 @@
     "acknowledgments": "Desktop version inspired by Bohdan Hdal's app.",
     "version": "Version:",
     "copy_logs": "Copy debug logs",
+    "copy_logs_copied": "Copied.",
+    "copy_logs_error": "Copy failed",
     "license": "License: CSSM Unlimited License v2.0",
     "glory": "Every day at 09:00 we remember everyone whose lives were taken by the war. Glory to the Heroes."
   },
