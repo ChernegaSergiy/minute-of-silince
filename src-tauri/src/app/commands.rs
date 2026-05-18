@@ -1,6 +1,8 @@
 //! Tauri IPC commands exposed to the frontend via `invoke()`.
 
-use tauri::{AppHandle, State};
+use std::fs;
+
+use tauri::{AppHandle, Manager, State};
 
 #[allow(unused_imports)]
 use crate::{
@@ -101,4 +103,50 @@ pub async fn finish_ceremony_now(app: AppHandle) -> Result<()> {
     let platform = crate::platform::get_platform();
     crate::core::CeremonyManager::finish_ceremony(app, platform).await;
     Ok(())
+}
+
+/// Return debug info and a tail of the latest application log file.
+#[tauri::command]
+pub fn get_log_contents(app: AppHandle) -> Result<String> {
+    let log_dir = app.path().app_log_dir()?;
+
+    let mut log_files = fs::read_dir(&log_dir)?
+        .filter_map(|entry| entry.ok())
+        .filter(|entry| entry.path().extension().and_then(|ext| ext.to_str()) == Some("log"))
+        .collect::<Vec<_>>();
+
+    log_files.sort_by_key(|entry| entry.metadata().and_then(|m| m.modified()).ok());
+
+    let package = app.package_info();
+    let mut lines = vec![
+        format!("app: {}", package.name),
+        format!("version: {}", package.version),
+        format!("os: {}", std::env::consts::OS),
+        format!("arch: {}", std::env::consts::ARCH),
+        format!("log_dir: {}", log_dir.display()),
+    ];
+
+    if let Some(last) = log_files.last() {
+        let log_path = last.path();
+        let content = fs::read_to_string(&log_path)?;
+        let content_lines = content.lines().collect::<Vec<_>>();
+        let tail = content_lines
+            .iter()
+            .rev()
+            .take(200)
+            .rev()
+            .copied()
+            .collect::<Vec<_>>();
+
+        lines.push(format!("log_file: {}", log_path.display()));
+        lines.push(format!("lines_copied: {}", tail.len()));
+        lines.push(String::from("---"));
+        lines.push(tail.join("\n"));
+    } else {
+        lines.push(String::from("log_file: not found"));
+        lines.push(String::from("lines_copied: 0"));
+        lines.push(String::from("---"));
+    }
+
+    Ok(lines.join("\n"))
 }
