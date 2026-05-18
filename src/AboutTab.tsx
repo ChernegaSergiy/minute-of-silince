@@ -1,5 +1,6 @@
 import { Button, Link, makeStyles, tokens } from "@fluentui/react-components";
-import { ClipboardRegular } from "@fluentui/react-icons";
+import { ClipboardCheckmarkRegular, ClipboardRegular } from "@fluentui/react-icons";
+import { useCallback, useState } from "react";
 import { open } from "@tauri-apps/plugin-shell";
 import { getLogContents } from "./api";
 import { t } from "./i18n";
@@ -52,11 +53,19 @@ const useStyles = makeStyles({
 
 export default function AboutTab({ version }: AboutTabProps) {
   const styles = useStyles();
+  const [copied, setCopied] = useState(false);
 
-  const handleCopyLogs = async () => {
-    const logs = await getLogContents();
-    await navigator.clipboard.writeText(logs);
-  };
+  const handleCopyLogs = useCallback(async () => {
+    if (copied) return;
+    try {
+      const logs = await getLogContents();
+      await navigator.clipboard.writeText(logs);
+      setCopied(true);
+      window.setTimeout(() => setCopied(false), 2000);
+    } catch {
+      // no-op
+    }
+  }, [copied]);
 
   return (
     <div className={styles.aboutContent}>
@@ -80,8 +89,12 @@ export default function AboutTab({ version }: AboutTabProps) {
         </Link>
       </div>
       <div className={styles.aboutTools}>
-        <Button appearance="subtle" icon={<ClipboardRegular />} onClick={handleCopyLogs}>
-          {t("about.copy_logs")}
+        <Button
+          appearance="subtle"
+          icon={copied ? <ClipboardCheckmarkRegular /> : <ClipboardRegular />}
+          onClick={handleCopyLogs}
+        >
+          {copied ? t("about.copy_logs_copied") : t("about.copy_logs")}
         </Button>
       </div>
       <div className={styles.aboutLicense}>
