@@ -1,50 +1,55 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { Card, Spinner, Text, Link, makeStyles, shorthands, tokens } from "@fluentui/react-components";
 import Markdown from "react-markdown";
-import changelogMd from "../CHANGELOG.md?raw";
+import { changelogVersions } from "./changelog";
+import { t } from "./i18n";
 import { open } from "@tauri-apps/plugin-shell";
 
 const CHANGELOG_PAGE_SIZE = 1;
 
-interface ChangelogCategory {
-  name: string;
-  items: string[];
-}
+type ChangelogLocale = Record<string, Record<string, string>> & {
+  categories?: Record<string, string>;
+};
 
-interface ChangelogVersion {
+type ChangelogCategory = {
+  category: string;
+  keys: string[];
+};
+
+type ChangelogViewVersion = {
   version: string;
   date: string;
   categories: ChangelogCategory[];
-}
+};
 
-function parseChangelog(md: string): ChangelogVersion[] {
-  const versions: ChangelogVersion[] = [];
-  const sections = md.split(/\n(?=## \[)/);
-  for (const section of sections) {
-    const headerMatch = section.match(/^## \[([\d.]+)]\s*-\s*(.+)$/m);
-    if (!headerMatch) continue;
-    const version = headerMatch[1];
-    const date = headerMatch[2].trim();
+const changelogLocale = t("changelog", { returnObjects: true }) as ChangelogLocale | string;
+const changelogTexts = typeof changelogLocale === "string" ? undefined : changelogLocale;
+
+function groupChangelogVersions(): ChangelogViewVersion[] {
+  return changelogVersions.map((version) => {
+    const categoryMap = new Map<string, string[]>();
     const categories: ChangelogCategory[] = [];
-    const catSections = section.split(/\n(?=### )/);
-    for (const catSection of catSections) {
-      const catMatch = catSection.match(/^### (.+)$/m);
-      if (!catMatch) continue;
-      const name = catMatch[1];
-      const items = catSection
-        .split("\n")
-        .filter((l) => l.startsWith("- "))
-        .map((l) => l.replace(/^- /, "").trim());
-      if (items.length > 0) {
-        categories.push({ name, items });
+
+    for (const entry of version.entries) {
+      let keys = categoryMap.get(entry.category);
+      if (!keys) {
+        keys = [];
+        categoryMap.set(entry.category, keys);
+        categories.push({ category: entry.category, keys });
       }
+
+      keys.push(entry.key);
     }
-    versions.push({ version, date, categories });
-  }
-  return versions;
+
+    return {
+      version: version.version,
+      date: version.date,
+      categories,
+    };
+  });
 }
 
-const changelogVersions = parseChangelog(changelogMd);
+const groupedChangelogVersions = groupChangelogVersions();
 
 const useStyles = makeStyles({
   changelogContent: {
@@ -89,22 +94,22 @@ export default function ChangelogTab() {
   const [changelogLoading, setChangelogLoading] = useState(false);
   const scrollRef = useRef<HTMLDivElement>(null);
 
-  const visibleVersions = changelogVersions.slice(0, changelogCount);
+  const visibleVersions = groupedChangelogVersions.slice(0, changelogCount);
 
   const handleChangelogScroll = useCallback((e: React.UIEvent<HTMLDivElement>) => {
     const { scrollTop, scrollHeight, clientHeight } = e.currentTarget;
     if (scrollHeight - scrollTop - clientHeight < 100 && !changelogLoading) {
       setChangelogLoading(true);
-      setChangelogCount((c) => Math.min(c + CHANGELOG_PAGE_SIZE, changelogVersions.length));
+      setChangelogCount((c) => Math.min(c + CHANGELOG_PAGE_SIZE, groupedChangelogVersions.length));
     }
   }, [changelogLoading]);
 
   useEffect(() => {
     const el = scrollRef.current;
-    if (!el || changelogCount >= changelogVersions.length) return;
+    if (!el || changelogCount >= groupedChangelogVersions.length) return;
     if (el.scrollHeight <= el.clientHeight && !changelogLoading) {
       setChangelogLoading(true);
-      setChangelogCount((c) => Math.min(c + CHANGELOG_PAGE_SIZE, changelogVersions.length));
+      setChangelogCount((c) => Math.min(c + CHANGELOG_PAGE_SIZE, groupedChangelogVersions.length));
     }
   }, [changelogCount, changelogLoading]);
 
@@ -123,33 +128,37 @@ export default function ChangelogTab() {
               v{v.version} — {v.date}
             </Text>
             {v.categories.map((cat) => (
-              <div key={cat.name} className={styles.changelogCategory}>
+              <div key={cat.category} className={styles.changelogCategory}>
                 <Text weight="semibold" size={100} className={styles.changelogCatHeader}>
-                  {cat.name}
+                  {changelogTexts?.categories?.[cat.category] ?? cat.category}
                 </Text>
                 <ul className={styles.changelogList}>
-                  {cat.items.map((item, i) => (
-                    <li key={i} className={styles.changelogItem}>
-                      <Markdown
-                        components={{
-                          p: ({ children }) => <Text size={200}>{children}</Text>,
-                          code: ({ children }) => <code className={styles.changelogCode}>{children}</code>,
-                          a: ({ href, children }) => (
-                            <Link onClick={() => href && open(href)}>{children}</Link>
-                          ),
-                        }}
-                      >
-                        {item}
-                      </Markdown>
-                    </li>
-                  ))}
+                  {cat.keys.map((itemKey, i) => {
+                    const item = changelogTexts?.[v.version]?.[itemKey] ?? itemKey;
+
+                    return (
+                      <li key={i} className={styles.changelogItem}>
+                        <Markdown
+                          components={{
+                            p: ({ children }) => <Text size={200}>{children}</Text>,
+                            code: ({ children }) => <code className={styles.changelogCode}>{children}</code>,
+                            a: ({ href, children }) => (
+                              <Link onClick={() => href && open(href)}>{children}</Link>
+                            ),
+                          }}
+                        >
+                          {item}
+                        </Markdown>
+                      </li>
+                    );
+                  })}
                 </ul>
               </div>
             ))}
           </Card>
         </div>
       ))}
-      {changelogLoading && changelogCount < changelogVersions.length && (
+      {changelogLoading && changelogCount < groupedChangelogVersions.length && (
         <div className={styles.changelogSpinner}>
           <Spinner size="tiny" />
         </div>
