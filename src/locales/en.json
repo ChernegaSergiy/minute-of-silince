@@ -137,5 +137,286 @@
   "overlay": {
     "title": "MINUTE OF SILENCE",
     "subtitle": "WE REMEMBER EVERYONE"
+  },
+  "changelog": {
+    "categories": {
+      "added": "Added",
+      "changed": "Changed",
+      "fixed": "Fixed",
+      "removed": "Removed",
+      "deprecated": "Deprecated",
+      "security": "Security"
+    },
+    "0.9.1": {
+      "theme_preference_settings": "UI theme preference: new `useSystemTheme` (follow system) and `uiTheme` (`light` | `dark`) settings exposed to the frontend and persisted by the backend. A new control in the Settings tab allows choosing to follow the system theme or select Light/Dark manually.",
+      "theme_preference_frontend": "Frontend support for `useSystemTheme`/`uiTheme` in `types.ts`, `App.tsx`, and `SettingsTab.tsx` so the UI respects the persisted preference and system changes.",
+      "memoize_fluent_theme": "Memoize Fluent theme creation in the frontend to avoid recreating theme objects on every render and reduce unnecessary reflows.",
+      "i18n_theme_strings": "i18n: added strings for the new theme controls in `en.json` and `uk.json`.",
+      "localization_encoding_fixes": "Minor localization/encoding fixes in `uk.json` and `snapcraft.yaml`."
+    },
+    "0.9.0": {
+      "changelog_tab": "`ChangelogTab` with infinite scroll — changelog is parsed from `CHANGELOG.md` at build time via Vite `?raw` import, no network requests required.",
+      "tabs_changelog_i18n": "`tabs.changelog` i18n key (uk: `ЗМІНИ`, en: `CHANGELOG`).",
+      "settings_section_headings": "Section headings in `SettingsTab` via new `sections.*` i18n keys.",
+      "fluent_ui_migration": "**Frontend fully migrated from FAST/web-components to Fluent UI React v9** (`@fluentui/react-components`, `@fluentui/react-icons`, `react`, `react-dom`, `react-markdown`, `@vitejs/plugin-react` added).",
+      "ui_component_split": "UI split into dedicated React component files: `App.tsx`, `SettingsTab.tsx`, `AboutTab.tsx`, `Overlay.tsx`, `ChangelogTab.tsx` (lazy-loaded).",
+      "nav_drawer": "Navigation replaced with Fluent `NavDrawer` + `NavItem` with icons.",
+      "window_size": "Main window size increased from 360×460 to 640×520 (min 500×400).",
+      "autostart_nonblocking": "Autostart sync on startup made non-blocking via `tauri::async_runtime::spawn_blocking`.",
+      "flatpak_locale": "Flatpak `.desktop` and `metainfo.xml`: English set as default locale, Ukrainian as `[uk]` variant — aligns with AppStream/Flathub conventions.",
+      "flatpak_ci": "Flatpak CI: added `ppa:flatpak/stable` to fix lib64 build failures on GitHub Actions.",
+      "msix_manifest": "MSIX `appxmanifest.xml`: `uap10:Parameters=\"--hidden\"` added to `startupTask`; `DisplayName` attribute removed from `StartupTask`.",
+      "sync_autostart_blocking": "`sync_autostart_from_system` no longer blocks the Tauri `setup` hook, preventing a potential startup hang."
+    },
+    "0.8.5": {
+      "anthem_voice_enum": "`AnthemVoice` enum (`Default`, `MykhailoKhoma`, `OleksandrPonomarov`) with `snake_case` serialization.",
+      "anthem_voice_field": "`anthem_voice` field in `Settings` struct (default: `AnthemVoice::Default`).",
+      "anthem_audio_performers": "Anthem audio performances by Mykhailo Khoma and Oleksandr Ponomarov.",
+      "anthem_voice_param": "`AnthemVoice` parameter in `play_preset` / `AudioEngine` to select the correct anthem file at playback time.",
+      "anthem_voice_dropdown": "Anthem voice selection dropdown in the settings UI; hidden automatically when the active preset has no anthem segment.",
+      "anthem_voice_ts_type": "`AnthemVoice` TypeScript type in `types.ts`.",
+      "anthem_voice_i18n": "i18n strings for anthem voice control (`controls.anthem_voice.*`) in `en.json` and `uk.json`.",
+      "sync_autostart_command": "`sync_autostart` Tauri command for explicit autostart synchronisation on demand.",
+      "autostart_helpers": "`apply_autostart_enabled` and `sync_autostart_from_system` helpers extracted into `platform/mod.rs`.",
+      "autostart_sync_startup": "Autostart state is now synchronised with the actual system state at application startup (`lib.rs`) instead of being applied blindly from the persisted value.",
+      "get_settings_sync": "`get_settings` command syncs the persisted autostart flag against the real platform state before returning, keeping the UI consistent with external changes (e.g. system Settings toggles).",
+      "flag_animation_listener_once": "Flag animation window event listeners now use `once` instead of `listen`, preventing listener accumulation across repeated ceremonies.",
+      "flag_animation_window_close": "Flag animation window was not closing after ceremony end: the global `on_window_event` handler intercepted `CloseRequested` on all windows and called `hide()` instead of closing. Handler is now scoped to the main window only."
+    },
+    "0.8.4": {
+      "flag_animation_window": "Flag animation window (`flag-animation.html`) — a fullscreen animated Ukrainian flag rendered via canvas that appears during the anthem segment of the ceremony.",
+      "show_flag_animation_setting": "New `showFlagAnimation` setting (default: `false`) to toggle the flag animation independently of the visual overlay.",
+      "has_anthem_helper": "`AudioPreset::has_anthem()` helper to check whether a preset includes the anthem segment.",
+      "anthem_tauri_events": "`anthem-start` / `anthem-end` Tauri events emitted by `AudioEngine` for precise flag window lifecycle control.",
+      "msix_startup_task": "MSIX packaged `StartupTask` (`uap5` extension) in `appxmanifest.xml` for proper autostart support on packaged Windows builds.",
+      "msix_autostart_api": "Windows autostart for MSIX now uses `ApplicationModel::StartupTask` API instead of a Startup-folder `.lnk` shortcut; `mslnk` dependency removed.",
+      "winreg_bump": "`winreg` dependency bumped from `0.55` to `0.56`.",
+      "settings_serde_default": "Settings struct now derives `#[serde(default)]` so missing fields in persisted JSON fall back gracefully.",
+      "overlay_flag_row": "Visual overlay toggle now also controls the visibility of the flag animation row in the UI.",
+      "dev_deps_update": "Dev dependency updates: `@tauri-apps/cli` → 2.11.1, `vite` → 8.0.12, `typescript-eslint` → 8.59.3, `rolldown` → 1.0.0 (stable).",
+      "anthem_playback_timing": "Anthem playback timing: metronome end is now detected by waiting for the player queue rather than a hardcoded 30-second sleep, ensuring the anthem starts precisely when the metronome finishes."
+    },
+    "0.8.3": {
+      "msix_startup_lnk": "MSIX autostart now uses Startup-folder shortcut (`.lnk` file) instead of manifest extension, providing better compatibility and control.",
+      "msix_startup_invalid_ext": "Removed invalid MSIX startup task extension from manifest that was using incorrect `desktop` namespace approach."
+    },
+    "0.8.2": {
+      "msix_desktop_namespace": "MSIX startup task now uses correct `desktop` namespace instead of invalid `uap5` for FullTrust applications."
+    },
+    "0.8.1": {
+      "adaptive_tray_icon": "Adaptive tray icon that automatically switches between light and dark versions to match the system theme.",
+      "realtime_theme_watch": "Real-time theme watching for Windows (via registry) and Linux (via XDG Desktop Portal).",
+      "unified_theme_detection": "Unified system theme detection supporting Windows, GNOME, and KDE Plasma.",
+      "gnome_tray_handling": "Specialized handling for GNOME to ensure tray icon visibility on its dark top panel.",
+      "theme_aware_tray_assets": "Replaced the static tray icon with theme-aware assets (`-light` and `-dark` versions)."
+    },
+    "0.8.0": {
+      "flatpak_support": "Flatpak support with autostart via `.desktop` file in `~/.config/autostart/`.",
+      "unified_autostart_detection": "Unified autostart detection for Snap, Flatpak, and standard installations.",
+      "tray_icon_dedicated": "Tray icon now uses dedicated `tray-icon-32.png` instead of default window icon.",
+      "msix_identifier": "MSIX identifier changed to `ua.pp.khvylyna.MinuteOfSilence` for proper store submission.",
+      "binary_name": "Binary name changed from `minute-of-silence` to `MinuteOfSilence`."
+    },
+    "0.7.8": {
+      "resume_playback_setting": "Optional \"Resume playback\" setting to restore paused media after the ceremony.",
+      "targeted_media_handling": "Targeted media handling: the app now tracks which specific players were paused and only resumes them if they are still paused.",
+      "post_sleep_windows": "Real-time post-sleep handling on Windows via `WM_POWERBROADCAST` hook to trigger immediate clock sync upon resume.",
+      "weekdays_only_logic": "\"Weekdays only\" logic now correctly applied to both the ceremony trigger and notifications.",
+      "test_coverage_presets": "Improved test coverage for `Silence` and `VoiceMetronomeEnding` presets in `settings_test.rs`.",
+      "cargo_toml_cleanup": "Cleaned up redundant Win32 features in `Cargo.toml`.",
+      "deps_update_0_7_8": "Updated dependencies: Tauri v2.11.0, Tokio v1.52.2, Vite v8.0.10."
+    },
+    "0.7.7": {
+      "overlay_i18n": "Overlay text i18n support (title and subtitle localized).",
+      "msix_localization": "Windows MSIX localization for app name in system language.",
+      "appxmanifest_ms_resource": "Updated appxmanifest to use ms-resource:AppName for localized DisplayName."
+    },
+    "0.7.6": {
+      "window_title_i18n": "Window title localization (uk/en).",
+      "ntp_status_i18n": "NTP status strings localization.",
+      "locale_detection": "Improved locale detection using navigator.language."
+    },
+    "0.7.5": {
+      "platform_refactor": "Platform code refactored: `platform_windows.rs` + `platform_linux.rs` → `platform/{linux,windows}/` directories. `commands.rs` + `tray.rs` moved to `app/` module. `CeremonyManager` moved to separate `core/ceremony.rs` file. `is_msix()` function moved to `platform/mod.rs`."
+    },
+    "0.7.4": {
+      "snap_interfaces_cleanup": "Removed redundant Snap interfaces (`home`, `login-session-observe`, `upower-observe`, `hardware-observe`, `system-observe`) to streamline Store approval."
+    },
+    "0.7.3": {
+      "snap_autostart_robust": "Robust manual Snap autostart management via `.desktop` file in `$SNAP_USER_DATA/.config/autostart`.",
+      "snap_plugs": "`home` and `login-session-observe` plugs to `snapcraft.yaml` for better integration and autostart support.",
+      "snap_autostart_logic": "Snap autostart logic to use official `snapd` mechanism for confined applications.",
+      "startup_wm_class": "`StartupWMClass` in desktop file to match application binary name.",
+      "snap_autostart_module": "Moved Snap autostart logic to a dedicated `platform_linux::autostart` module.",
+      "deps_bump_0_7_3": "Bumped dependencies: `i18next`, `typescript`, `typescript-eslint`, `eslint`, `zbus`."
+    },
+    "0.7.2": {
+      "window_state_preservation": "Window state preservation before ceremony and restoration after ceremony ends.",
+      "window_permissions_msix": "Window permissions for minimize/hide operations in MSIX packages.",
+      "version_bump_0_7_2": "Updated version to 0.7.2."
+    },
+    "0.7.1": {
+      "auto_show_window": "Auto-show window when ceremony starts, even if minimized or hidden.",
+      "window_permissions_msix_show": "Window permissions for MSIX packages (unminimize/show/set-focus).",
+      "ceremony_end_flashing": "Ceremony-end flashing when restarting ceremony multiple times via test button.",
+      "ceremony_status_update": "Ceremony status now updates before command returns.",
+      "overlay_wording_uk": "Fixed \"повноекранний екран\" → \"оверлей вшанування на весь екран\" in Ukrainian locale.",
+      "is_msix_module": "Moved `is_msix_package()` to dedicated `is_msix.rs` module.",
+      "removed_scheduler_task": "Removed unused Task Scheduler autostart functions from `platform_scheduler_task.rs`.",
+      "readme_project_tree": "Updated project tree in README.md."
+    },
+    "0.7.0": {
+      "msix_toast_notifications": "MSIX Toast Notifications support via WinRT API for Microsoft Store packages.",
+      "msix_notifications_appcontainer": "Reminder notifications not working in MSIX packages due to AppContainer restrictions."
+    },
+    "0.6.6": {
+      "msix_startup_task_0_6_6": "MSIX StartupTask extension for autostart in Microsoft Store packages.",
+      "task_scheduler_module": "Windows Task Scheduler module (platform_scheduler_task.rs).",
+      "voice_announcements_improved": "Improved voice announcements from Sonia Sotnyk and Daria Khomutovskyi.",
+      "deps_bump_0_6_6": "Bump i18next, typescript-eslint, tokio, and vitest dependencies.",
+      "ceremony_grace_trigger": "Ceremony not triggering in grace window when started after 09:00.",
+      "audio_snap_sandbox": "Audio file discovery in Snap sandbox."
+    },
+    "0.6.5": {
+      "bohdan_ending_voice": "New ending voice from Bohdan Hdal with \"Slava Ukrajini\".",
+      "bohdan_ending_updated": "Updated ending voice for Bohdan Hdal to use new \"Slava Ukrajini\" recording.",
+      "unused_ending_file": "Removed unused ending_heroes.ogg file."
+    },
+    "0.6.4": {
+      "voice_selection": "Voice selection for announcement with 4 options: Bohdan Hdal (original), Sonia Sotnyk (Vshanui), Dania Khomutovskyi (Vshanui), Air Alert app.",
+      "preset_with_ending": "New audio presets with endings: \"Voice + metronome + ending\".",
+      "ending_voice_files": "Ending voice files: \"Vichna slava Herojam\" and \"Slava Ukrajini\".",
+      "voice_duration_selected": "Voice duration now uses selected voice instead of hardcoded announcement.",
+      "wait_voice_finish": "Wait for voice announcement to finish before playing metronome.",
+      "skip_ending_air_alert": "Skip ending for Air Alert voice in VoiceMetronomeEnding preset.",
+      "voice_durations_cached": "Voice durations cached at startup to avoid repeated file reads."
+    },
+    "0.6.3": {
+      "precise_timing_voice": "Precise timing for presets with voice announcement to ensure silence starts at exactly 09:00.",
+      "symphonia_duration": "Audio duration detection now uses symphonia for accurate OGG metadata reading.",
+      "linux_audio_deps": "Updated Linux audio dependencies: alsa 0.11 and cpal 0.17.3.",
+      "removed_dynamic_import": "Removed unnecessary dynamic import of syncNtpNow in frontend.",
+      "unused_audio_files": "Removed unused audio files from the package."
+    },
+    "0.6.2": {
+      "silent_preset": "New audio preset that shows visual overlay and pauses other players without playing any sound.",
+      "preset_names_i18n": "Preset names are now translatable via i18n system."
+    },
+    "0.6.1": {
+      "immediately_notification": "Fixed \"immediately\" option not sending notifications."
+    },
+    "0.6.0": {
+      "bohdan_credits": "Added credits to Bohdan Hdal's original mobile app in README.md and About tab.",
+      "rust_deps_0_6_0": "Updated Rust dependencies: rust-i18n 4.0 (up to 3x performance improvement), windows-future 0.3.2, tokio 1.52. MSRV updated to Rust 1.80."
+    },
+    "0.5.3": {
+      "audio_msix_paths": "Audio playback in MSIX packages: switched to Tauri's native path resolver for cross-platform resource paths.",
+      "version_api_tauri": "Frontend version display now uses Tauri's `getVersion()` API instead of duplicating version in `package.json`."
+    },
+    "0.5.2": {
+      "ms_store_identity": "Microsoft Store identity and localized display name (\"Хвилина мовчання\") for official Store distribution."
+    },
+    "0.5.1": {
+      "full_i18n": "Full localization (i18n) with Ukrainian and English support via `i18next` and `rust-i18n`.",
+      "snap_audio_pulseaudio": "Snap audio handling: refactored to use native PulseAudio/PipeWire bridge for reliable playback.",
+      "unified_app_identifiers": "Unified application identifiers and fixed icon paths for correct display in Linux menus and system trays.",
+      "website_url": "Updated official website URL to `khvylyna.pp.ua`.",
+      "windows_sdk_compat": "Windows build compatibility with latest Windows SDK (windows-rs v0.62).",
+      "media_control_async": "Media control reliability: asynchronous pausing prevents backend panics on Linux.",
+      "ui_badge_i18n": "UI badge localization and dashboard status indicator updates.",
+      "deps_bump_0_5_1": "Bumped dependencies: `zbus` (v5.14.0), `cpal` (v0.17.1), `windows` (v0.62.2)."
+    },
+    "0.5.0": {
+      "reminder_notifications": "System reminder notifications before the ceremony (configurable: immediately or up to 10 minutes before).",
+      "reminder_ui_controls": "User interface controls for enabling and configuring reminder notifications.",
+      "windows_media_gsmtc": "Improved Windows media pausing by migrating from legacy `WM_APPCOMMAND` to the modern `GlobalSystemMediaTransportControlsSessionManager` API for reliable playback control.",
+      "version_bump_0_5_0": "Bumped project version to 0.5.0 across all configuration files.",
+      "window_restore_tray": "Fixed window restoration from the system tray by explicitly unminimizing the window before showing it."
+    },
+    "0.4.2": {
+      "windows_media_appcommand": "Windows media pause: switched from `SendInput(VK_MEDIA_PLAY_PAUSE)` to `WM_APPCOMMAND(APPCOMMAND_MEDIA_PAUSE)` for more reliable pausing.",
+      "media_no_resume": "Media players no longer resume after the ceremony ends — they stay paused.",
+      "zbus_import": "Fixed missing `zbus::proxy` import in platform_linux.rs.",
+      "msix_packaging": "MSIX packaging support via `winapp` CLI tool.",
+      "msix_assets": "Application assets (icons, tiles) for Microsoft Store distribution.",
+      "msix_config_files": "`appxmanifest.xml` and `winapp.yaml` configuration files."
+    },
+    "0.4.1": {
+      "snap_connection_refused": "Resolved 'Connection refused' error on Snap autostart by using native Snap command wrapper.",
+      "snap_build_license": "Fixed Snap build validation by switching to a Proprietary license in snapcraft.yaml.",
+      "snap_autostart_duplicate": "Simplified autostart logic and resolved duplicate argument issues in Linux environments.",
+      "readme_screenshots": "Rich README layout with application screenshots for better visual documentation.",
+      "version_bump_0_4_1": "Bumped project version to 0.4.1 across all configuration files.",
+      "cargo_lock_sync": "Synchronized Cargo.lock and project dependencies.",
+      "code_style_librs": "Improved code style and formatting in src-tauri/src/lib.rs."
+    },
+    "0.4.0": {
+      "visual_overlay": "Visual ceremony overlay with brutalist animations and styles for a more immersive experience.",
+      "show_visual_overlay_toggle": "`show_visual_overlay` toggle in settings to enable or disable the ceremonial screen.",
+      "flatpak_support_0_4_0": "Comprehensive Flatpak support with dedicated manifests for Flathub submission.",
+      "appstream_metadata": "AppStream metadata and desktop entry for better integration with Linux software centers.",
+      "flatpak_gnome50": "Upgraded Flatpak runtime to GNOME 50 for improved performance and modern libraries.",
+      "version_bump_0_4_0": "Bumped project version to 0.4.0 across all configuration files."
+    },
+    "0.3.1": {
+      "snap_segfault": "Resolved Critical Segmentation Fault in Snap package by removing duplicate runtime libraries.",
+      "libpxbackend_error": "Fixed `libpxbackend` loading error by adding `glib-networking` to stage-packages.",
+      "snap_build_gnome_sdk": "Corrected Snap build environment to properly link against GNOME SDK on Ubuntu 24.04 (core24).",
+      "desktop_entry_linux": "Integrated `.desktop` entry for proper application visibility in Linux app menus.",
+      "gitignore_snap": "Automatic exclusion of Snap build artifacts and logs in `.gitignore`.",
+      "snap_amd64_only": "Refocused Snap support on `amd64` architecture for better stability and testing.",
+      "version_bump_0_3_1": "Bumped project version to 0.3.1 across all configuration files."
+    },
+    "0.3.0": {
+      "settings_descriptions": "Detailed descriptions and info blocks for all settings in the UI for better clarity.",
+      "auto_unmute": "Auto-unmute feature with a dedicated toggle to restore system sound during the ceremony.",
+      "ceremony_enabled_toggle": "Ceremony enabled toggle to allow temporary deactivation of the daily schedule.",
+      "grace_window_configurable": "Configurable late-start grace window (0-5 minutes) for handling system wake-up after 09:00.",
+      "snapcraft_config": "Snapcraft configuration for Ubuntu App Center with support for amd64 and arm64 architectures.",
+      "single_instance": "Single application instance enforcement (automatically focuses the existing window on relaunch).",
+      "dynamic_versioning": "Dynamic frontend versioning based on `package.json`.",
+      "app_icon_snap": "Integrated official application icon for Snap and Linux desktop environments.",
+      "ntp_stabilized": "Stabilized NTP synchronization by using Google and Cloudflare servers as reliable fallbacks.",
+      "autostart_hidden_arg": "Fixed autostart plugin configuration by removing the unhandled `--hidden` argument.",
+      "media_unmute_order": "Improved media handling: ensured players are paused before unmuting on Windows.",
+      "tray_skip_sync": "Fixed synchronization between the tray menu and the settings window for the \"Skip Next\" status.",
+      "audio_engine_rodio": "Resolved audio engine stability issues by migrating to `rodio 0.22` with proper stream handling.",
+      "build_icon_fields": "Fixed various build-time issues, including invalid icon fields in Tauri configuration.",
+      "vite8_eslint10": "Migrated to Vite 8 and ESLint 10 (Flat Config) for improved development workflow.",
+      "ci_unified": "Refactored the CI/CD pipeline into a unified `ci.yml` with comprehensive build and test stages.",
+      "style_css_moved": "Moved UI styles to a dedicated `style.css` file for better maintainability.",
+      "deps_update_0_3_0": "Updated project dependencies (thiserror, dirs, windows-rs, etc.) to their latest versions."
+    },
+    "0.2.0": {
+      "about_tab": "Dedicated \"About\" tab in the user interface with project information.",
+      "manual_ntp_sync": "Manual NTP synchronization button for immediate time correction.",
+      "unsaved_indicator": "Visual indicator for unsaved settings (color change and asterisk).",
+      "app_logo": "Official application logo in the \"About\" section and updated system icons.",
+      "repo_link": "Clickable repository link using `tauri-plugin-shell`.",
+      "audio_engine_rodio_0_2_0": "Integrated audio playback engine using `rodio` (backend-driven).",
+      "monospace_font": "Switched to a high-quality monospace font stack (Ubuntu Mono, JetBrains Mono).",
+      "full_width_tabs": "Expanded tab buttons to full width for a more balanced layout.",
+      "grace_window_default": "Reduced default late-start grace window from 5 minutes to 1 minute.",
+      "scheduler_loop_freq": "Optimized internal scheduler loop frequency to 1 second.",
+      "text_selection_disabled": "Disabled text selection and browser context menu for a native desktop feel.",
+      "ui_status_sync": "Improved UI status synchronization after saving settings.",
+      "rust_clippy_warnings": "Resolved numerous Rust clippy warnings and formatting issues."
+    },
+    "0.1.0": {
+      "initial_scaffold": "Initial project scaffold (Tauri 2 + Rust + TypeScript/Vite).",
+      "daily_scheduler": "Daily scheduler with NTP time correction and configurable late-start grace window.",
+      "audio_presets_initial": "Five audio presets: Voice+Silence+Bell, Voice+Anthem, Voice+Metronome, Voice+Metronome+Anthem, Metronome-only.",
+      "system_tray": "System Tray icon with context menu (Open, Skip Tomorrow, Quit).",
+      "persistent_settings": "Persistent JSON settings stored in the platform config directory.",
+      "windows_media_pause": "Windows media pause/resume via `SendInput(VK_MEDIA_PLAY_PAUSE)`.",
+      "linux_media_pause": "Linux media pause/resume via `xdotool` fallback (MPRIS D-Bus planned).",
+      "visual_overlay_initial": "Visual ceremony overlay (brutalist full-screen indicator).",
+      "power_broadcast": "`WM_POWERBROADCAST` handling for post-sleep scheduler correction (Windows).",
+      "autostart_login": "Autostart on system login via `tauri-plugin-autostart`.",
+      "structured_logging": "Structured logging with log rotation via `tauri-plugin-log`.",
+      "ci_cd_pipeline": "CI/CD pipeline on GitHub Actions (lint, test, build for Windows + Linux).",
+      "conventional_commits": "Conventional Commits enforcement documented in CONTRIBUTING.md.",
+      "audio_not_implemented_note": "Audio playback engine is **not yet implemented**; the scheduler fires events and the overlay appears, but no sound is produced in this release."
+    }
   }
 }

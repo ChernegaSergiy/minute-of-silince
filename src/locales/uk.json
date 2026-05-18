@@ -137,5 +137,286 @@
   "overlay": {
     "title": "ХВИЛИНА МОВЧАННЯ",
     "subtitle": "ПАМ'ЯТАЄМО КОЖНОГО"
+  },
+  "changelog": {
+    "categories": {
+      "added": "Додано",
+      "changed": "Змінено",
+      "fixed": "Виправлено",
+      "removed": "Вилучено",
+      "deprecated": "Застаріле",
+      "security": "Безпека"
+    },
+    "0.9.1": {
+      "theme_preference_settings": "Налаштування теми інтерфейсу: нові параметри `useSystemTheme` (слідувати системі) та `uiTheme` (`light` | `dark`), доступні у фронтенді та збережені бекендом. Новий елемент керування на вкладці Налаштування дозволяє або слідувати системній темі, або вибрати Світлу/Темну вручну.",
+      "theme_preference_frontend": "Підтримка `useSystemTheme`/`uiTheme` на фронтенді в `types.ts`, `App.tsx` і `SettingsTab.tsx`, щоб інтерфейс враховував збережене налаштування та зміни системи.",
+      "memoize_fluent_theme": "Кешування створення Fluent-теми на фронтенді, щоб не створювати об'єкти теми на кожному рендері та зменшити зайві перерахунки макета.",
+      "i18n_theme_strings": "i18n: додано рядки для нових керувань темою в `en.json` і `uk.json`.",
+      "localization_encoding_fixes": "Невеликі виправлення локалізації та кодування в `uk.json` і `snapcraft.yaml`."
+    },
+    "0.9.0": {
+      "changelog_tab": "`ChangelogTab` з нескінченним прокручуванням — changelog парситься з `CHANGELOG.md` під час збірки через імпорт Vite `?raw`, без мережевих запитів.",
+      "tabs_changelog_i18n": "Ключ i18n `tabs.changelog` (uk: `ЗМІНИ`, en: `CHANGELOG`).",
+      "settings_section_headings": "Заголовки розділів у `SettingsTab` через нові ключі i18n `sections.*`.",
+      "fluent_ui_migration": "**Фронтенд повністю перенесено з FAST/web-components на Fluent UI React v9** (`@fluentui/react-components`, `@fluentui/react-icons`, `react`, `react-dom`, `react-markdown`, `@vitejs/plugin-react` додано).",
+      "ui_component_split": "Інтерфейс розділено на окремі React-компоненти: `App.tsx`, `SettingsTab.tsx`, `AboutTab.tsx`, `Overlay.tsx`, `ChangelogTab.tsx` (lazy-loaded).",
+      "nav_drawer": "Навігацію замінено на Fluent `NavDrawer` + `NavItem` з іконками.",
+      "window_size": "Розмір головного вікна збільшено з 360×460 до 640×520 (мінімум 500×400).",
+      "autostart_nonblocking": "Синхронізацію автозапуску під час старту зроблено неблокувальною через `tauri::async_runtime::spawn_blocking`.",
+      "flatpak_locale": "Flatpak `.desktop` і `metainfo.xml`: англійську задано як локаль за замовчуванням, українську — як варіант `[uk]`, що відповідає практикам AppStream/Flathub.",
+      "flatpak_ci": "Flatpak CI: додано `ppa:flatpak/stable`, щоб виправити помилки збірки lib64 на GitHub Actions.",
+      "msix_manifest": "MSIX `appxmanifest.xml`: до `startupTask` додано `uap10:Parameters=\"--hidden\"`; атрибут `DisplayName` вилучено з `StartupTask`.",
+      "sync_autostart_blocking": "`sync_autostart_from_system` більше не блокує хук `setup` у Tauri, що усуває потенційне зависання під час запуску."
+    },
+    "0.8.5": {
+      "anthem_voice_enum": "Enum `AnthemVoice` (`Default`, `MykhailoKhoma`, `OleksandrPonomarov`) із серіалізацією у `snake_case`.",
+      "anthem_voice_field": "Поле `anthem_voice` у структурі `Settings` (за замовчуванням: `AnthemVoice::Default`).",
+      "anthem_audio_performers": "Аудіозаписи виконання гімну від Михайла Хоми та Олександра Пономарьова.",
+      "anthem_voice_param": "Параметр `AnthemVoice` у `play_preset` / `AudioEngine` для вибору правильного файлу гімну під час відтворення.",
+      "anthem_voice_dropdown": "Випадаючий список вибору голосу гімну в налаштуваннях; автоматично приховується, якщо активний пресет не має сегмента гімну.",
+      "anthem_voice_ts_type": "TypeScript-тип `AnthemVoice` у `types.ts`.",
+      "anthem_voice_i18n": "Рядки i18n для керування голосом гімну (`controls.anthem_voice.*`) у `en.json` і `uk.json`.",
+      "sync_autostart_command": "Команда Tauri `sync_autostart` для явної синхронізації автозапуску за потреби.",
+      "autostart_helpers": "Допоміжні функції `apply_autostart_enabled` і `sync_autostart_from_system` винесено в `platform/mod.rs`.",
+      "autostart_sync_startup": "Стан автозапуску тепер синхронізується з реальним станом системи під час старту застосунку (`lib.rs`), а не застосовується сліпо із збереженого значення.",
+      "get_settings_sync": "Команда `get_settings` синхронізує збережений прапорець автозапуску з реальним станом платформи перед поверненням, щоб інтерфейс відповідав зовнішнім змінам (наприклад, перемикачу в системних налаштуваннях).",
+      "flag_animation_listener_once": "Слухачі подій вікна анімації прапора тепер використовують `once` замість `listen`, що запобігає накопиченню слухачів між повторними церемоніями.",
+      "flag_animation_window_close": "Вікно анімації прапора не закривалося після завершення церемонії: глобальний обробник `on_window_event` перехоплював `CloseRequested` для всіх вікон і викликав `hide()` замість закриття. Тепер обробник обмежено лише головним вікном."
+    },
+    "0.8.4": {
+      "flag_animation_window": "Вікно анімації прапора (`flag-animation.html`) — повноекранний анімований український прапор, намальований через canvas, який з'являється під час сегмента гімну церемонії.",
+      "show_flag_animation_setting": "Нове налаштування `showFlagAnimation` (за замовчуванням: `false`) для окремого вмикання анімації прапора незалежно від візуального оверлею.",
+      "has_anthem_helper": "Допоміжна функція `AudioPreset::has_anthem()` для перевірки, чи містить пресет сегмент гімну.",
+      "anthem_tauri_events": "Події Tauri `anthem-start` / `anthem-end`, які надсилає `AudioEngine` для точного керування життєвим циклом вікна прапора.",
+      "msix_startup_task": "Упакований MSIX `StartupTask` (розширення `uap5`) в `appxmanifest.xml` для коректної підтримки автозапуску в Windows-збірках.",
+      "msix_autostart_api": "Автозапуск у MSIX для Windows тепер використовує API `ApplicationModel::StartupTask` замість ярлика `.lnk` у Startup; залежність `mslnk` вилучено.",
+      "winreg_bump": "Залежність `winreg` оновлено з `0.55` до `0.56`.",
+      "settings_serde_default": "Структура `Settings` тепер має `#[serde(default)]`, тож відсутні поля в збереженому JSON коректно підставляють значення за замовчуванням.",
+      "overlay_flag_row": "Перемикач візуального оверлею тепер також керує видимістю рядка анімації прапора в інтерфейсі.",
+      "dev_deps_update": "Оновлення dev-залежностей: `@tauri-apps/cli` → 2.11.1, `vite` → 8.0.12, `typescript-eslint` → 8.59.3, `rolldown` → 1.0.0 (stable).",
+      "anthem_playback_timing": "Точність відтворення гімну: кінець метронома тепер визначається очікуванням черги плеєра замість жорстко заданої паузи на 30 секунд, тож гімн стартує рівно після завершення метронома."
+    },
+    "0.8.3": {
+      "msix_startup_lnk": "Автозапуск MSIX тепер використовує ярлик Startup Folder (`.lnk`), а не розширення маніфесту, що дає кращу сумісність і контроль.",
+      "msix_startup_invalid_ext": "Вилучено неправильне розширення startup task із маніфесту, яке використовувало некоректний підхід через простір імен `desktop`."
+    },
+    "0.8.2": {
+      "msix_desktop_namespace": "Startup task MSIX тепер використовує правильний простір імен `desktop` замість некоректного `uap5` для FullTrust-застосунків."
+    },
+    "0.8.1": {
+      "adaptive_tray_icon": "Адаптивна іконка трея, яка автоматично перемикається між світлою та темною версіями відповідно до системної теми.",
+      "realtime_theme_watch": "Моніторинг теми в реальному часі для Windows (через реєстр) і Linux (через XDG Desktop Portal).",
+      "unified_theme_detection": "Уніфіковане визначення системної теми з підтримкою Windows, GNOME і KDE Plasma.",
+      "gnome_tray_handling": "Спеціальна обробка для GNOME, щоб іконка трея була видимою на темній верхній панелі.",
+      "theme_aware_tray_assets": "Статичну іконку трея замінено на theme-aware assets (`-light` і `-dark` версії)."
+    },
+    "0.8.0": {
+      "flatpak_support": "Підтримка Flatpak з автозапуском через файл `.desktop` у `~/.config/autostart/`.",
+      "unified_autostart_detection": "Уніфіковане визначення автозапуску для Snap, Flatpak і стандартних інсталяцій.",
+      "tray_icon_dedicated": "Іконка трея тепер використовує окремий `tray-icon-32.png` замість стандартної іконки вікна.",
+      "msix_identifier": "Ідентифікатор MSIX змінено на `ua.pp.khvylyna.MinuteOfSilence` для коректної подачі в магазин.",
+      "binary_name": "Назву бінарника змінено з `minute-of-silence` на `MinuteOfSilence`."
+    },
+    "0.7.8": {
+      "resume_playback_setting": "Додаткове налаштування \"Відновлювати відтворення\", щоб повернути призупинені медіа після церемонії.",
+      "targeted_media_handling": "Цільова обробка медіа: застосунок тепер відстежує, які саме плеєри було призупинено, і відновлює лише ті, що все ще на паузі.",
+      "post_sleep_windows": "Обробка після пробудження в реальному часі у Windows через хук `WM_POWERBROADCAST` для негайної синхронізації годинника після відновлення.",
+      "weekdays_only_logic": "Логіка \"Лише в будні\" тепер коректно застосовується і до тригера церемонії, і до сповіщень.",
+      "test_coverage_presets": "Покращено тестове покриття для пресетів `Silence` і `VoiceMetronomeEnding` у `settings_test.rs`.",
+      "cargo_toml_cleanup": "Прибрано зайві Win32-фічі з `Cargo.toml`.",
+      "deps_update_0_7_8": "Оновлено залежності: Tauri v2.11.0, Tokio v1.52.2, Vite v8.0.10."
+    },
+    "0.7.7": {
+      "overlay_i18n": "Підтримка i18n для тексту оверлею (заголовок і підзаголовок локалізовано).",
+      "msix_localization": "Локалізація MSIX для назви застосунку мовою системи.",
+      "appxmanifest_ms_resource": "Оновлено appxmanifest, щоб використовувати ms-resource:AppName для локалізованого DisplayName."
+    },
+    "0.7.6": {
+      "window_title_i18n": "Локалізація заголовка вікна (uk/en).",
+      "ntp_status_i18n": "Локалізація рядків стану NTP.",
+      "locale_detection": "Покращено визначення локалі через navigator.language."
+    },
+    "0.7.5": {
+      "platform_refactor": "Рефакторинг platform-коду: `platform_windows.rs` + `platform_linux.rs` → каталоги `platform/{linux,windows}/`. `commands.rs` + `tray.rs` перенесено в модуль `app/`. `CeremonyManager` винесено в окремий файл `core/ceremony.rs`. Функцію `is_msix()` перенесено в `platform/mod.rs`."
+    },
+    "0.7.4": {
+      "snap_interfaces_cleanup": "Прибрано зайві Snap-інтерфейси (`home`, `login-session-observe`, `upower-observe`, `hardware-observe`, `system-observe`) для спрощення проходження Store approval."
+    },
+    "0.7.3": {
+      "snap_autostart_robust": "Надійне ручне керування автозапуском у Snap через файл `.desktop` у `$SNAP_USER_DATA/.config/autostart`.",
+      "snap_plugs": "Плагіни `home` і `login-session-observe` додано до `snapcraft.yaml` для кращої інтеграції та підтримки автозапуску.",
+      "snap_autostart_logic": "Логіку автозапуску Snap переведено на офіційний механізм `snapd` для ізольованих застосунків.",
+      "startup_wm_class": "`StartupWMClass` у desktop-файлі, щоб він збігався з назвою бінарника.",
+      "snap_autostart_module": "Логіку автозапуску Snap перенесено в окремий модуль `platform_linux::autostart`.",
+      "deps_bump_0_7_3": "Оновлено залежності: `i18next`, `typescript`, `typescript-eslint`, `eslint`, `zbus`."
+    },
+    "0.7.2": {
+      "window_state_preservation": "Збереження стану вікна перед церемонією та відновлення після її завершення.",
+      "window_permissions_msix": "Права вікна для операцій згортання/приховування в MSIX-пакетах.",
+      "version_bump_0_7_2": "Оновлено версію до 0.7.2."
+    },
+    "0.7.1": {
+      "auto_show_window": "Автоматичне показування вікна під час старту церемонії, навіть якщо воно згорнуте або приховане.",
+      "window_permissions_msix_show": "Права вікна для MSIX-пакетів (розгортання/показ/фокус).",
+      "ceremony_end_flashing": "Мерехтіння наприкінці церемонії під час повторного запуску через тестову кнопку.",
+      "ceremony_status_update": "Стан церемонії оновлюється до повернення з команди.",
+      "overlay_wording_uk": "Виправлено \"повноекранний екран\" → \"оверлей вшанування на весь екран\" в українській локалі.",
+      "is_msix_module": "`is_msix_package()` перенесено в окремий модуль `is_msix.rs`.",
+      "removed_scheduler_task": "Прибрано невикористані функції автозапуску Task Scheduler з `platform_scheduler_task.rs`.",
+      "readme_project_tree": "Оновлено дерево проєкту в README.md."
+    },
+    "0.7.0": {
+      "msix_toast_notifications": "Підтримка MSIX Toast Notifications через WinRT API для пакетів Microsoft Store.",
+      "msix_notifications_appcontainer": "Нагадування не працюють у MSIX-пакетах через обмеження AppContainer."
+    },
+    "0.6.6": {
+      "msix_startup_task_0_6_6": "Розширення MSIX StartupTask для автозапуску в пакетах Microsoft Store.",
+      "task_scheduler_module": "Модуль Windows Task Scheduler (`platform_scheduler_task.rs`).",
+      "voice_announcements_improved": "Покращено голосові оголошення від Соні Сотник і Дарії Хомутовської.",
+      "deps_bump_0_6_6": "Оновлено залежності i18next, typescript-eslint, tokio та vitest.",
+      "ceremony_grace_trigger": "Церемонія не запускалася у вікні допуску, якщо стартувала після 09:00.",
+      "audio_snap_sandbox": "Пошук аудіофайлів у Snap sandbox."
+    },
+    "0.6.5": {
+      "bohdan_ending_voice": "Новий завершальний голос від Богдана Гдаля зі словами \"Слава Україні\".",
+      "bohdan_ending_updated": "Оновлено завершальний голос Богдана Гдаля на новий запис \"Слава Україні\".",
+      "unused_ending_file": "Прибрано невикористаний файл ending_heroes.ogg."
+    },
+    "0.6.4": {
+      "voice_selection": "Вибір голосу для оголошення з 4 варіантами: Богдан Гдаль (оригінал), Соня Сотник (Вшануй), Даня Хомутовський (Вшануй), застосунок Повітряна тривога.",
+      "preset_with_ending": "Нові аудіопресети із завершенням: \"Голос + метроном + завершення\".",
+      "ending_voice_files": "Файли завершального голосу: \"Вічна слава Героям\" і \"Слава Україні\".",
+      "voice_duration_selected": "Тривалість голосу тепер визначається вибраним голосом, а не жорстко зашитим оголошенням.",
+      "wait_voice_finish": "Очікування завершення голосового оголошення перед відтворенням метронома.",
+      "skip_ending_air_alert": "Пропуск завершення для голосу Повітряної тривоги в пресеті VoiceMetronomeEnding.",
+      "voice_durations_cached": "Тривалості голосів кешуються під час старту, щоб уникнути повторних читань файлів."
+    },
+    "0.6.3": {
+      "precise_timing_voice": "Точний таймінг для пресетів із голосовим оголошенням, щоб тиша починалася рівно о 09:00.",
+      "symphonia_duration": "Визначення тривалості аудіо тепер використовує symphonia для точного читання метаданих OGG.",
+      "linux_audio_deps": "Оновлено Linux audio-залежності: alsa 0.11 і cpal 0.17.3.",
+      "removed_dynamic_import": "Прибрано непотрібний динамічний імпорт syncNtpNow на фронтенді.",
+      "unused_audio_files": "Вилучено невикористані аудіофайли з пакета."
+    },
+    "0.6.2": {
+      "silent_preset": "Новий аудіопресет, який показує візуальний оверлей і ставить інші плеєри на паузу без відтворення звуку.",
+      "preset_names_i18n": "Назви пресетів тепер перекладаються через систему i18n."
+    },
+    "0.6.1": {
+      "immediately_notification": "Виправлено, що опція \"одразу\" не надсилала сповіщення."
+    },
+    "0.6.0": {
+      "bohdan_credits": "Додано згадку про оригінальний мобільний застосунок Богдана Гдаля в README.md і вкладці About.",
+      "rust_deps_0_6_0": "Оновлено Rust-залежності: rust-i18n 4.0 (до 3× краща продуктивність), windows-future 0.3.2, tokio 1.52. MSRV оновлено до Rust 1.80."
+    },
+    "0.5.3": {
+      "audio_msix_paths": "Відтворення аудіо в MSIX-пакетах: перейдено на нативний path resolver Tauri для кросплатформних шляхів до ресурсів.",
+      "version_api_tauri": "Фронтенд тепер показує версію через API Tauri `getVersion()` замість дублювання версії в `package.json`."
+    },
+    "0.5.2": {
+      "ms_store_identity": "Ідентичність Microsoft Store і локалізована назва відображення (\"Хвилина мовчання\") для офіційного розповсюдження в Store."
+    },
+    "0.5.1": {
+      "full_i18n": "Повна локалізація (i18n) з підтримкою української та англійської через `i18next` і `rust-i18n`.",
+      "snap_audio_pulseaudio": "Обробку аудіо в Snap перероблено на нативний міст PulseAudio/PipeWire для надійного відтворення.",
+      "unified_app_identifiers": "Уніфіковано ідентифікатори застосунку та виправлено шляхи до іконок для коректного відображення в Linux-меню і системних треях.",
+      "website_url": "Оновлено офіційний сайт до `khvylyna.pp.ua`.",
+      "windows_sdk_compat": "Сумісність збірки Windows з останнім Windows SDK (windows-rs v0.62).",
+      "media_control_async": "Надійність керування медіа: асинхронне призупинення запобігає панікам бекенду на Linux.",
+      "ui_badge_i18n": "Локалізація бейджів інтерфейсу та оновлення індикатора стану на панелі.",
+      "deps_bump_0_5_1": "Оновлено залежності: `zbus` (v5.14.0), `cpal` (v0.17.1), `windows` (v0.62.2)."
+    },
+    "0.5.0": {
+      "reminder_notifications": "Системні нагадування перед церемонією (налаштовувані: одразу або до 10 хвилин до неї).",
+      "reminder_ui_controls": "Елементи керування інтерфейсу для ввімкнення та налаштування нагадувань.",
+      "windows_media_gsmtc": "Покращене призупинення медіа в Windows шляхом переходу з застарілого `WM_APPCOMMAND` на сучасний API `GlobalSystemMediaTransportControlsSessionManager` для надійного керування відтворенням.",
+      "version_bump_0_5_0": "Оновлено версію проєкту до 0.5.0 в усіх конфігураційних файлах.",
+      "window_restore_tray": "Виправлено відновлення вікна з системного трея шляхом явного зняття згортання перед показом."
+    },
+    "0.4.2": {
+      "windows_media_appcommand": "Призупинення медіа в Windows: замінено `SendInput(VK_MEDIA_PLAY_PAUSE)` на `WM_APPCOMMAND(APPCOMMAND_MEDIA_PAUSE)` для надійнішого паузування.",
+      "media_no_resume": "Медіаплеєри більше не відновлюються після завершення церемонії — вони залишаються на паузі.",
+      "zbus_import": "Виправлено відсутній імпорт `zbus::proxy` у `platform_linux.rs`.",
+      "msix_packaging": "Підтримка пакування MSIX через CLI-інструмент `winapp`.",
+      "msix_assets": "Ресурси застосунку (іконки, плитки) для розповсюдження в Microsoft Store.",
+      "msix_config_files": "Файли конфігурації `appxmanifest.xml` і `winapp.yaml`."
+    },
+    "0.4.1": {
+      "snap_connection_refused": "Усунено помилку 'Connection refused' у Snap-автозапуску через використання нативної обгортки Snap-команд.",
+      "snap_build_license": "Виправлено перевірку збірки Snap шляхом зміни ліцензії на Proprietary у `snapcraft.yaml`.",
+      "snap_autostart_duplicate": "Спрощено логіку автозапуску та усунено дублювання аргументів у Linux-середовищах.",
+      "readme_screenshots": "Багатший макет README із знімками екрана застосунку для кращої візуальної документації.",
+      "version_bump_0_4_1": "Оновлено версію проєкту до 0.4.1 в усіх конфігураційних файлах.",
+      "cargo_lock_sync": "Синхронізовано `Cargo.lock` і залежності проєкту.",
+      "code_style_librs": "Покращено стиль і форматування коду в `src-tauri/src/lib.rs`."
+    },
+    "0.4.0": {
+      "visual_overlay": "Візуальний оверлей церемонії з бруталістичними анімаціями та стилями для більш зануреного сприйняття.",
+      "show_visual_overlay_toggle": "Перемикач `show_visual_overlay` у налаштуваннях для вмикання або вимикання церемоніального екрана.",
+      "flatpak_support_0_4_0": "Повноцінна підтримка Flatpak із окремими маніфестами для подання на Flathub.",
+      "appstream_metadata": "Метадані AppStream і desktop-entrу для кращої інтеграції з Linux-магазинами програм.",
+      "flatpak_gnome50": "Оновлено Flatpak runtime до GNOME 50 для кращої продуктивності та сучасних бібліотек.",
+      "version_bump_0_4_0": "Оновлено версію проєкту до 0.4.0 в усіх конфігураційних файлах."
+    },
+    "0.3.1": {
+      "snap_segfault": "Усунено критичний segmentation fault у Snap-пакеті шляхом видалення дубльованих runtime-бібліотек.",
+      "libpxbackend_error": "Виправлено помилку завантаження `libpxbackend` шляхом додавання `glib-networking` до stage-packages.",
+      "snap_build_gnome_sdk": "Виправлено середовище збірки Snap, щоб коректно лінкуватися з GNOME SDK на Ubuntu 24.04 (core24).",
+      "desktop_entry_linux": "Додано `.desktop`-entry для коректної видимості застосунку в меню Linux.",
+      "gitignore_snap": "Автоматично виключено артефакти збірки Snap і логи в `.gitignore`.",
+      "snap_amd64_only": "Підтримку Snap сфокусовано на архітектурі `amd64` для кращої стабільності та тестування.",
+      "version_bump_0_3_1": "Оновлено версію проєкту до 0.3.1 в усіх конфігураційних файлах."
+    },
+    "0.3.0": {
+      "settings_descriptions": "Детальні описи та інформаційні блоки для всіх налаштувань у UI для кращої зрозумілості.",
+      "auto_unmute": "Функція автоувімкнення звуку з окремим перемикачем для відновлення звуку системи під час церемонії.",
+      "ceremony_enabled_toggle": "Перемикач увімкнення церемонії для тимчасового вимкнення щоденного розкладу.",
+      "grace_window_configurable": "Налаштовуване вікно допуску при запізненні (0-5 хвилин) для обробки пробудження системи після 09:00.",
+      "snapcraft_config": "Конфігурація Snapcraft для Ubuntu App Center із підтримкою архітектур amd64 і arm64.",
+      "single_instance": "Примус до одного екземпляра застосунку (автоматично фокусує вже відкрите вікно при повторному запуску).",
+      "dynamic_versioning": "Динамічне версіонування фронтенду на основі `package.json`.",
+      "app_icon_snap": "Інтегровано офіційну іконку застосунку для Snap і Linux-середовищ.",
+      "ntp_stabilized": "Стабілізовано синхронізацію NTP за допомогою серверів Google і Cloudflare як надійних резервних джерел.",
+      "autostart_hidden_arg": "Виправлено конфігурацію плагіна автозапуску шляхом видалення не оброблюваного аргументу `--hidden`.",
+      "media_unmute_order": "Покращено обробку медіа: переконанося, що плеєри спершу ставляться на паузу, а вже потім розмикається звук у Windows.",
+      "tray_skip_sync": "Виправлено синхронізацію між меню трея та вікном налаштувань для статусу \"Пропустити наступне\".",
+      "audio_engine_rodio": "Усунено проблеми стабільності аудіо-рушія шляхом переходу на `rodio 0.22` із коректним керуванням потоком.",
+      "build_icon_fields": "Виправлено різні проблеми збірки, зокрема некоректні поля іконок у конфігурації Tauri.",
+      "vite8_eslint10": "Міграція на Vite 8 і ESLint 10 (Flat Config) для кращого процесу розробки.",
+      "ci_unified": "Рефакторинг CI/CD-пайплайна в єдиний `ci.yml` із повними етапами збірки та тестування.",
+      "style_css_moved": "Стилі UI перенесено в окремий файл `style.css` для кращої підтримуваності.",
+      "deps_update_0_3_0": "Оновлено залежності проєкту (thiserror, dirs, windows-rs тощо) до актуальних версій."
+    },
+    "0.2.0": {
+      "about_tab": "Окрема вкладка \"Про програму\" в інтерфейсі з інформацією про проєкт.",
+      "manual_ntp_sync": "Кнопка ручної синхронізації NTP для негайного виправлення часу.",
+      "unsaved_indicator": "Візуальний індикатор незбережених налаштувань (зміна кольору й зірочка).",
+      "app_logo": "Офіційний логотип застосунку в розділі \"Про програму\" і оновлені системні іконки.",
+      "repo_link": "Клікабельне посилання на репозиторій через `tauri-plugin-shell`.",
+      "audio_engine_rodio_0_2_0": "Інтегровано рушій аудіовідтворення на базі `rodio` (керування з бекенду).",
+      "monospace_font": "Перехід на якісний моноширинний стек шрифтів (Ubuntu Mono, JetBrains Mono).",
+      "full_width_tabs": "Кнопки вкладок розтягнуто на всю ширину для більш збалансованого макета.",
+      "grace_window_default": "Зменшено стандартне вікно допуску при запізненні з 5 хвилин до 1 хвилини.",
+      "scheduler_loop_freq": "Оптимізовано частоту внутрішнього циклу планувальника до 1 секунди.",
+      "text_selection_disabled": "Вимкнено виділення тексту та браузерне контекстне меню для більш нативного вигляду desktop-застосунку.",
+      "ui_status_sync": "Покращено синхронізацію стану інтерфейсу після збереження налаштувань.",
+      "rust_clippy_warnings": "Усунено численні попередження Rust Clippy та проблеми форматування."
+    },
+    "0.1.0": {
+      "initial_scaffold": "Початковий каркас проєкту (Tauri 2 + Rust + TypeScript/Vite).",
+      "daily_scheduler": "Щоденний планувальник із корекцією часу через NTP і налаштовуваним вікном допуску при запізненні.",
+      "audio_presets_initial": "П'ять аудіопресетів: Голос+Тиша+Дзвін, Голос+Гімн, Голос+Метроном, Голос+Метроном+Гімн, лише Метроном.",
+      "system_tray": "Іконка системного трея з контекстним меню (Відкрити, Пропустити завтра, Вийти).",
+      "persistent_settings": "Постійні JSON-налаштування, збережені в платформеному каталозі конфігурації.",
+      "windows_media_pause": "Призупинення/відновлення медіа у Windows через `SendInput(VK_MEDIA_PLAY_PAUSE)`.",
+      "linux_media_pause": "Призупинення/відновлення медіа в Linux через fallback `xdotool` (MPRIS D-Bus заплановано).",
+      "visual_overlay_initial": "Візуальний церемоніальний оверлей (бруталістський повноекранний індикатор).",
+      "power_broadcast": "`WM_POWERBROADCAST`-обробка для корекції планувальника після сну (Windows).",
+      "autostart_login": "Автозапуск при вході в систему через `tauri-plugin-autostart`.",
+      "structured_logging": "Структуроване логування з ротацією логів через `tauri-plugin-log`.",
+      "ci_cd_pipeline": "CI/CD-пайплайн на GitHub Actions (lint, test, build для Windows + Linux).",
+      "conventional_commits": "Підтримка Conventional Commits описана в CONTRIBUTING.md.",
+      "audio_not_implemented_note": "Аудіорушій **ще не реалізовано**; планувальник надсилає події, оверлей з'являється, але звуку в цій версії немає."
+    }
   }
 }
