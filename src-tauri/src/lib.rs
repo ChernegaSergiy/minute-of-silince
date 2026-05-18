@@ -129,6 +129,7 @@ pub fn run() {
             app::commands::unskip_next,
             app::commands::trigger_ceremony_now,
             app::commands::finish_ceremony_now,
+            app::commands::get_log_contents,
         ])
         .run(tauri::generate_context!())
         .expect("error while running Minute of Silence");
