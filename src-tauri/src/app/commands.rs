@@ -1,6 +1,11 @@
 //! Tauri IPC commands exposed to the frontend via `invoke()`.
 
-use std::fs;
+use std::{
+    collections::VecDeque,
+    fs,
+    io::{BufRead, BufReader},
+    time::SystemTime,
+};
 
 use tauri::{AppHandle, Manager, State};
 
@@ -108,14 +113,25 @@ pub async fn finish_ceremony_now(app: AppHandle) -> Result<()> {
 /// Return debug info and a tail of the latest application log file.
 #[tauri::command]
 pub fn get_log_contents(app: AppHandle) -> Result<String> {
+    const MAX_LOG_TAIL_LINES: usize = 200;
+
     let log_dir = app.path().app_log_dir()?;
 
-    let mut log_files = fs::read_dir(&log_dir)?
+    let latest_log = fs::read_dir(&log_dir)?
         .filter_map(|entry| entry.ok())
-        .filter(|entry| entry.path().extension().and_then(|ext| ext.to_str()) == Some("log"))
-        .collect::<Vec<_>>();
-
-    log_files.sort_by_key(|entry| entry.metadata().and_then(|m| m.modified()).ok());
+        .filter(|entry| {
+            entry
+                .path()
+                .extension()
+                .and_then(|ext| ext.to_str())
+                .is_some_and(|ext| ext.eq_ignore_ascii_case("log"))
+        })
+        .max_by_key(|entry| {
+            entry
+                .metadata()
+                .and_then(|meta| meta.modified())
+                .unwrap_or(SystemTime::UNIX_EPOCH)
+        });
 
     let package = app.package_info();
     let mut lines = vec![
@@ -126,22 +142,29 @@ pub fn get_log_contents(app: AppHandle) -> Result<String> {
         format!("log_dir: {}", log_dir.display()),
     ];
 
-    if let Some(last) = log_files.last() {
+    if let Some(last) = latest_log {
         let log_path = last.path();
-        let content = fs::read_to_string(&log_path)?;
-        let content_lines = content.lines().collect::<Vec<_>>();
-        let tail = content_lines
-            .iter()
-            .rev()
-            .take(200)
-            .rev()
-            .copied()
-            .collect::<Vec<_>>();
+        let file = fs::File::open(&log_path)?;
+        let reader = BufReader::new(file);
+        let mut tail = VecDeque::with_capacity(MAX_LOG_TAIL_LINES);
+
+        for chunk in reader.split(b'\n') {
+            let bytes = chunk?;
+            let mut line = String::from_utf8_lossy(&bytes).into_owned();
+            if line.ends_with('\r') {
+                line.pop();
+            }
+
+            if tail.len() == MAX_LOG_TAIL_LINES {
+                tail.pop_front();
+            }
+            tail.push_back(line);
+        }
 
         lines.push(format!("log_file: {}", log_path.display()));
         lines.push(format!("lines_copied: {}", tail.len()));
         lines.push(String::from("---"));
-        lines.push(tail.join("\n"));
+        lines.extend(tail);
     } else {
         lines.push(String::from("log_file: not found"));
         lines.push(String::from("lines_copied: 0"));
