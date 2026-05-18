@@ -1,5 +1,7 @@
-import { Link, makeStyles, tokens } from "@fluentui/react-components";
+import { Button, Link, makeStyles, tokens } from "@fluentui/react-components";
+import { ClipboardRegular } from "@fluentui/react-icons";
 import { open } from "@tauri-apps/plugin-shell";
+import { getLogContents } from "./api";
 import { t } from "./i18n";
 
 interface AboutTabProps {
@@ -36,6 +38,11 @@ const useStyles = makeStyles({
     flexDirection: "column",
     gap: tokens.spacingVerticalS,
   },
+  aboutTools: {
+    marginTop: tokens.spacingVerticalL,
+    display: "flex",
+    justifyContent: "center",
+  },
   aboutLicense: {
     fontSize: tokens.fontSizeBase100,
     color: tokens.colorNeutralForeground3,
@@ -45,6 +52,11 @@ const useStyles = makeStyles({
 
 export default function AboutTab({ version }: AboutTabProps) {
   const styles = useStyles();
+
+  const handleCopyLogs = async () => {
+    const logs = await getLogContents();
+    await navigator.clipboard.writeText(logs);
+  };
 
   return (
     <div className={styles.aboutContent}>
@@ -66,6 +78,11 @@ export default function AboutTab({ version }: AboutTabProps) {
         >
           github.com/ChernegaSergiy/minute-of-silence
         </Link>
+      </div>
+      <div className={styles.aboutTools}>
+        <Button appearance="subtle" icon={<ClipboardRegular />} onClick={handleCopyLogs}>
+          {t("about.copy_logs")}
+        </Button>
       </div>
       <div className={styles.aboutLicense}>
         {t("about.license")}
