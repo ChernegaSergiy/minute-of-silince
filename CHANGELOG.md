@@ -9,6 +9,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.9.1] - 2026-05-18
+
+### Added
+- UI theme preference: new `useSystemTheme` (follow system) and `uiTheme` (`light` | `dark`) settings exposed to the frontend and persisted by the backend. A new control in the Settings tab allows choosing to follow the system theme or select Light/Dark manually.
+- Frontend support for `useSystemTheme`/`uiTheme` in `types.ts`, `App.tsx`, and `SettingsTab.tsx` so the UI respects the persisted preference and system changes.
+
+### Changed
+- Memoize Fluent theme creation in the frontend to avoid recreating theme objects on every render and reduce unnecessary reflows.
+- i18n: added strings for the new theme controls in `en.json` and `uk.json`.
+
+### Fixed
+- Minor localization/encoding fixes in `uk.json` and `snapcraft.yaml`.
+
 ## [0.9.0] - 2026-05-17
  
 ### Added
