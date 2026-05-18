@@ -1,0 +1,541 @@
+- version: "0.9.1"
+  date: "2026-05-18"
+  entries:
+    - category: added
+      key: "theme_preference_settings"
+    - category: added
+      key: "theme_preference_frontend"
+    - category: changed
+      key: "memoize_fluent_theme"
+    - category: changed
+      key: "i18n_theme_strings"
+    - category: fixed
+      key: "localization_encoding_fixes"
+
+- version: "0.9.0"
+  date: "2026-05-17"
+  entries:
+    - category: added
+      key: "changelog_tab"
+    - category: added
+      key: "tabs_changelog_i18n"
+    - category: added
+      key: "settings_section_headings"
+    - category: changed
+      key: "fluent_ui_migration"
+    - category: changed
+      key: "ui_component_split"
+    - category: changed
+      key: "nav_drawer"
+    - category: changed
+      key: "window_size"
+    - category: changed
+      key: "autostart_nonblocking"
+    - category: changed
+      key: "flatpak_locale"
+    - category: changed
+      key: "flatpak_ci"
+    - category: changed
+      key: "msix_manifest"
+    - category: fixed
+      key: "sync_autostart_blocking"
+
+- version: "0.8.5"
+  date: "2026-05-16"
+  entries:
+    - category: added
+      key: "anthem_voice_enum"
+    - category: added
+      key: "anthem_voice_field"
+    - category: added
+      key: "anthem_audio_performers"
+    - category: added
+      key: "anthem_voice_param"
+    - category: added
+      key: "anthem_voice_dropdown"
+    - category: added
+      key: "anthem_voice_ts_type"
+    - category: added
+      key: "anthem_voice_i18n"
+    - category: added
+      key: "sync_autostart_command"
+    - category: added
+      key: "autostart_helpers"
+    - category: changed
+      key: "autostart_sync_startup"
+    - category: changed
+      key: "get_settings_sync"
+    - category: fixed
+      key: "flag_animation_listener_once"
+    - category: fixed
+      key: "flag_animation_window_close"
+
+- version: "0.8.4"
+  date: "2026-05-13"
+  entries:
+    - category: added
+      key: "flag_animation_window"
+    - category: added
+      key: "show_flag_animation_setting"
+    - category: added
+      key: "has_anthem_helper"
+    - category: added
+      key: "anthem_tauri_events"
+    - category: added
+      key: "msix_startup_task"
+    - category: changed
+      key: "msix_autostart_api"
+    - category: changed
+      key: "winreg_bump"
+    - category: changed
+      key: "settings_serde_default"
+    - category: changed
+      key: "overlay_flag_row"
+    - category: changed
+      key: "dev_deps_update"
+    - category: fixed
+      key: "anthem_playback_timing"
+
+- version: "0.8.3"
+  date: "2026-05-12"
+  entries:
+    - category: changed
+      key: "msix_startup_lnk"
+    - category: fixed
+      key: "msix_startup_invalid_ext"
+
+- version: "0.8.2"
+  date: "2026-05-12"
+  entries:
+    - category: fixed
+      key: "msix_desktop_namespace"
+
+- version: "0.8.1"
+  date: "2026-05-11"
+  entries:
+    - category: added
+      key: "adaptive_tray_icon"
+    - category: added
+      key: "realtime_theme_watch"
+    - category: added
+      key: "unified_theme_detection"
+    - category: added
+      key: "gnome_tray_handling"
+    - category: changed
+      key: "theme_aware_tray_assets"
+
+- version: "0.8.0"
+  date: "2026-05-10"
+  entries:
+    - category: added
+      key: "flatpak_support"
+    - category: added
+      key: "unified_autostart_detection"
+    - category: fixed
+      key: "tray_icon_dedicated"
+    - category: changed
+      key: "msix_identifier"
+    - category: changed
+      key: "binary_name"
+
+- version: "0.7.8"
+  date: "2026-05-06"
+  entries:
+    - category: added
+      key: "resume_playback_setting"
+    - category: added
+      key: "targeted_media_handling"
+    - category: added
+      key: "post_sleep_windows"
+    - category: fixed
+      key: "weekdays_only_logic"
+    - category: fixed
+      key: "test_coverage_presets"
+    - category: changed
+      key: "cargo_toml_cleanup"
+    - category: changed
+      key: "deps_update_0_7_8"
+
+- version: "0.7.7"
+  date: "2026-05-03"
+  entries:
+    - category: added
+      key: "overlay_i18n"
+    - category: added
+      key: "msix_localization"
+    - category: changed
+      key: "appxmanifest_ms_resource"
+
+- version: "0.7.6"
+  date: "2026-04-30"
+  entries:
+    - category: added
+      key: "window_title_i18n"
+    - category: added
+      key: "ntp_status_i18n"
+    - category: changed
+      key: "locale_detection"
+
+- version: "0.7.5"
+  date: "2026-04-30"
+  entries:
+    - category: changed
+      key: "platform_refactor"
+
+- version: "0.7.4"
+  date: "2026-04-29"
+  entries:
+    - category: changed
+      key: "snap_interfaces_cleanup"
+
+- version: "0.7.3"
+  date: "2026-04-29"
+  entries:
+    - category: added
+      key: "snap_autostart_robust"
+    - category: added
+      key: "snap_plugs"
+    - category: fixed
+      key: "snap_autostart_logic"
+    - category: fixed
+      key: "startup_wm_class"
+    - category: changed
+      key: "snap_autostart_module"
+    - category: changed
+      key: "deps_bump_0_7_3"
+
+- version: "0.7.2"
+  date: "2026-04-28"
+  entries:
+    - category: added
+      key: "window_state_preservation"
+    - category: fixed
+      key: "window_permissions_msix"
+    - category: changed
+      key: "version_bump_0_7_2"
+
+- version: "0.7.1"
+  date: "2026-04-26"
+  entries:
+    - category: added
+      key: "auto_show_window"
+    - category: added
+      key: "window_permissions_msix_show"
+    - category: fixed
+      key: "ceremony_end_flashing"
+    - category: fixed
+      key: "ceremony_status_update"
+    - category: fixed
+      key: "overlay_wording_uk"
+    - category: changed
+      key: "is_msix_module"
+    - category: changed
+      key: "removed_scheduler_task"
+    - category: changed
+      key: "readme_project_tree"
+
+- version: "0.7.0"
+  date: "2026-04-24"
+  entries:
+    - category: added
+      key: "msix_toast_notifications"
+    - category: fixed
+      key: "msix_notifications_appcontainer"
+
+- version: "0.6.6"
+  date: "2026-04-23"
+  entries:
+    - category: added
+      key: "msix_startup_task_0_6_6"
+    - category: added
+      key: "task_scheduler_module"
+    - category: changed
+      key: "voice_announcements_improved"
+    - category: changed
+      key: "deps_bump_0_6_6"
+    - category: fixed
+      key: "ceremony_grace_trigger"
+    - category: fixed
+      key: "audio_snap_sandbox"
+
+- version: "0.6.5"
+  date: "2026-04-19"
+  entries:
+    - category: added
+      key: "bohdan_ending_voice"
+    - category: changed
+      key: "bohdan_ending_updated"
+    - category: removed
+      key: "unused_ending_file"
+
+- version: "0.6.4"
+  date: "2026-04-19"
+  entries:
+    - category: added
+      key: "voice_selection"
+    - category: added
+      key: "preset_with_ending"
+    - category: added
+      key: "ending_voice_files"
+    - category: fixed
+      key: "voice_duration_selected"
+    - category: fixed
+      key: "wait_voice_finish"
+    - category: fixed
+      key: "skip_ending_air_alert"
+    - category: fixed
+      key: "voice_durations_cached"
+
+- version: "0.6.3"
+  date: "2026-04-17"
+  entries:
+    - category: added
+      key: "precise_timing_voice"
+    - category: changed
+      key: "symphonia_duration"
+    - category: changed
+      key: "linux_audio_deps"
+    - category: fixed
+      key: "removed_dynamic_import"
+    - category: removed
+      key: "unused_audio_files"
+
+- version: "0.6.2"
+  date: "2026-04-15"
+  entries:
+    - category: added
+      key: "silent_preset"
+    - category: added
+      key: "preset_names_i18n"
+
+- version: "0.6.1"
+  date: "2026-04-15"
+  entries:
+    - category: fixed
+      key: "immediately_notification"
+
+- version: "0.6.0"
+  date: "2026-04-15"
+  entries:
+    - category: added
+      key: "bohdan_credits"
+    - category: added
+      key: "rust_deps_0_6_0"
+
+- version: "0.5.3"
+  date: "2026-04-14"
+  entries:
+    - category: fixed
+      key: "audio_msix_paths"
+    - category: changed
+      key: "version_api_tauri"
+
+- version: "0.5.2"
+  date: "2026-04-14"
+  entries:
+    - category: added
+      key: "ms_store_identity"
+
+- version: "0.5.1"
+  date: "2026-04-12"
+  entries:
+    - category: added
+      key: "full_i18n"
+    - category: changed
+      key: "snap_audio_pulseaudio"
+    - category: changed
+      key: "unified_app_identifiers"
+    - category: changed
+      key: "website_url"
+    - category: fixed
+      key: "windows_sdk_compat"
+    - category: fixed
+      key: "media_control_async"
+    - category: fixed
+      key: "ui_badge_i18n"
+    - category: changed
+      key: "deps_bump_0_5_1"
+
+- version: "0.5.0"
+  date: "2026-04-07"
+  entries:
+    - category: added
+      key: "reminder_notifications"
+    - category: added
+      key: "reminder_ui_controls"
+    - category: changed
+      key: "windows_media_gsmtc"
+    - category: changed
+      key: "version_bump_0_5_0"
+    - category: fixed
+      key: "window_restore_tray"
+
+- version: "0.4.2"
+  date: "2026-04-05"
+  entries:
+    - category: changed
+      key: "windows_media_appcommand"
+    - category: changed
+      key: "media_no_resume"
+    - category: fixed
+      key: "zbus_import"
+    - category: added
+      key: "msix_packaging"
+    - category: added
+      key: "msix_assets"
+    - category: added
+      key: "msix_config_files"
+
+- version: "0.4.1"
+  date: "2026-04-04"
+  entries:
+    - category: fixed
+      key: "snap_connection_refused"
+    - category: fixed
+      key: "snap_build_license"
+    - category: fixed
+      key: "snap_autostart_duplicate"
+    - category: added
+      key: "readme_screenshots"
+    - category: changed
+      key: "version_bump_0_4_1"
+    - category: changed
+      key: "cargo_lock_sync"
+    - category: changed
+      key: "code_style_librs"
+
+- version: "0.4.0"
+  date: "2026-04-03"
+  entries:
+    - category: added
+      key: "visual_overlay"
+    - category: added
+      key: "show_visual_overlay_toggle"
+    - category: added
+      key: "flatpak_support_0_4_0"
+    - category: added
+      key: "appstream_metadata"
+    - category: changed
+      key: "flatpak_gnome50"
+    - category: changed
+      key: "version_bump_0_4_0"
+
+- version: "0.3.1"
+  date: "2026-04-03"
+  entries:
+    - category: fixed
+      key: "snap_segfault"
+    - category: fixed
+      key: "libpxbackend_error"
+    - category: fixed
+      key: "snap_build_gnome_sdk"
+    - category: added
+      key: "desktop_entry_linux"
+    - category: added
+      key: "gitignore_snap"
+    - category: changed
+      key: "snap_amd64_only"
+    - category: changed
+      key: "version_bump_0_3_1"
+
+- version: "0.3.0"
+  date: "2026-04-02"
+  entries:
+    - category: added
+      key: "settings_descriptions"
+    - category: added
+      key: "auto_unmute"
+    - category: added
+      key: "ceremony_enabled_toggle"
+    - category: added
+      key: "grace_window_configurable"
+    - category: added
+      key: "snapcraft_config"
+    - category: added
+      key: "single_instance"
+    - category: added
+      key: "dynamic_versioning"
+    - category: added
+      key: "app_icon_snap"
+    - category: fixed
+      key: "ntp_stabilized"
+    - category: fixed
+      key: "autostart_hidden_arg"
+    - category: fixed
+      key: "media_unmute_order"
+    - category: fixed
+      key: "tray_skip_sync"
+    - category: fixed
+      key: "audio_engine_rodio"
+    - category: fixed
+      key: "build_icon_fields"
+    - category: changed
+      key: "vite8_eslint10"
+    - category: changed
+      key: "ci_unified"
+    - category: changed
+      key: "style_css_moved"
+    - category: changed
+      key: "deps_update_0_3_0"
+
+- version: "0.2.0"
+  date: "2026-03-29"
+  entries:
+    - category: added
+      key: "about_tab"
+    - category: added
+      key: "manual_ntp_sync"
+    - category: added
+      key: "unsaved_indicator"
+    - category: added
+      key: "app_logo"
+    - category: added
+      key: "repo_link"
+    - category: added
+      key: "audio_engine_rodio_0_2_0"
+    - category: changed
+      key: "monospace_font"
+    - category: changed
+      key: "full_width_tabs"
+    - category: changed
+      key: "grace_window_default"
+    - category: changed
+      key: "scheduler_loop_freq"
+    - category: fixed
+      key: "text_selection_disabled"
+    - category: fixed
+      key: "ui_status_sync"
+    - category: fixed
+      key: "rust_clippy_warnings"
+
+- version: "0.1.0"
+  date: "2026-03-29"
+  entries:
+    - category: added
+      key: "initial_scaffold"
+    - category: added
+      key: "daily_scheduler"
+    - category: added
+      key: "audio_presets_initial"
+    - category: added
+      key: "system_tray"
+    - category: added
+      key: "persistent_settings"
+    - category: added
+      key: "windows_media_pause"
+    - category: added
+      key: "linux_media_pause"
+    - category: added
+      key: "visual_overlay_initial"
+    - category: added
+      key: "power_broadcast"
+    - category: added
+      key: "autostart_login"
+    - category: added
+      key: "structured_logging"
+    - category: added
+      key: "ci_cd_pipeline"
+    - category: added
+      key: "conventional_commits"
+    - category: added
+      key: "audio_not_implemented_note"
