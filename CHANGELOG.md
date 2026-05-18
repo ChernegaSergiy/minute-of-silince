@@ -9,6 +9,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.9.2] - 2026-05-18
+
+### Added
+- Changelog moved from raw Markdown to structured YAML (`CHANGELOG.yaml`) as a single source of truth for version history.
+- Changelog entries localized via i18next namespace `changelog.[version].[key]`, enabling full translations for all changelog entries across all versions.
+
+### Changed
+- ChangelogTab refactored to consume structured YAML data and i18next translations instead of parsing Markdown, improving maintainability and enabling easy localization.
+
 ## [0.9.1] - 2026-05-18
 
 ### Added

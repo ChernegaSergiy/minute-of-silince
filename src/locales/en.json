@@ -147,6 +147,11 @@
       "deprecated": "Deprecated",
       "security": "Security"
     },
+    "0.9.2": {
+      "changelog_yaml_structure": "Changelog moved from raw Markdown to structured YAML (`CHANGELOG.yaml`) as a single source of truth for version history.",
+      "changelog_translations": "Changelog entries localized via i18next namespace `changelog.[version].[key]`, enabling full translations for all changelog entries across all versions.",
+      "changelog_tab_refactor": "ChangelogTab refactored to consume structured YAML data and i18next translations instead of parsing Markdown, improving maintainability and enabling easy localization."
+    },
     "0.9.1": {
       "theme_preference_settings": "UI theme preference: new `useSystemTheme` (follow system) and `uiTheme` (`light` | `dark`) settings exposed to the frontend and persisted by the backend. A new control in the Settings tab allows choosing to follow the system theme or select Light/Dark manually.",
       "theme_preference_frontend": "Frontend support for `useSystemTheme`/`uiTheme` in `types.ts`, `App.tsx`, and `SettingsTab.tsx` so the UI respects the persisted preference and system changes.",
