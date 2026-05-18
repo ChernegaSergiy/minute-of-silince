@@ -148,13 +148,8 @@ pub fn get_log_contents(app: AppHandle) -> Result<String> {
         let reader = BufReader::new(file);
         let mut tail = VecDeque::with_capacity(MAX_LOG_TAIL_LINES);
 
-        for chunk in reader.split(b'\n') {
-            let bytes = chunk?;
-            let mut line = String::from_utf8_lossy(&bytes).into_owned();
-            if line.ends_with('\r') {
-                line.pop();
-            }
-
+        for line in reader.lines() {
+            let line = line?;
             if tail.len() == MAX_LOG_TAIL_LINES {
                 tail.pop_front();
             }
