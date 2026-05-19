@@ -14,9 +14,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - Copy debug logs feature: the About tab now has a button that collects the latest application log tail with debug metadata and copies it to the clipboard for easier troubleshooting.
 - Backend `get_log_contents` command returns the newest application log file tail with app/version/platform metadata, so support requests can be filed without manual log hunting.
-
-### Changed
-- Copy logs flow now shows clipboard success/failure feedback directly in the About tab, making the diagnostic action clearer for users.
+- Copy logs flow shows clipboard success/failure feedback directly in the About tab, making the diagnostic action clearer for users.
 
 ## [0.9.2] - 2026-05-18
 
