@@ -263,6 +263,7 @@ impl AudioEngine {
                     AnnouncementVoice::BohdanHdal => "ending.ogg",
                     AnnouncementVoice::SoniaSotnyk => "ending_sotnyk.ogg",
                     AnnouncementVoice::DaniaKhomutovskyi => "ending_khomutovskyi.ogg",
+                    AnnouncementVoice::RadioBg => "ending_radio_bg.ogg",
                     AnnouncementVoice::AirAlert => unreachable!(),
                 };
                 let ending = self.get_path(ending_file)?;
@@ -385,6 +386,7 @@ impl AudioEngine {
             AnnouncementVoice::BohdanHdal => "announcement.ogg".to_string(),
             AnnouncementVoice::SoniaSotnyk => "announcement_sotnyk.ogg".to_string(),
             AnnouncementVoice::DaniaKhomutovskyi => "announcement_khomutovskyi.ogg".to_string(),
+            AnnouncementVoice::RadioBg => "announcement_radio_bg.ogg".to_string(),
             AnnouncementVoice::AirAlert => "announcement_air_alert.ogg".to_string(),
         }
     }
