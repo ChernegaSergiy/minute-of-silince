@@ -36,6 +36,7 @@ const announcementVoices: AnnouncementVoice[] = [
   "bohdan_hdal",
   "sonia_sotnyk",
   "dania_khomutovskyi",
+  "radio_bg",
   "air_alert",
 ];
 
