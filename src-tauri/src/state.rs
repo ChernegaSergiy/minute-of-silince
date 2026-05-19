@@ -24,7 +24,6 @@ pub struct AppState {
 #[derive(Debug)]
 pub struct Inner {
     pub settings: Settings,
-    pub skip_date: Option<chrono::NaiveDate>,
     pub ceremony_active: bool,
     pub last_activation: Option<DateTime<Local>>,
 }
@@ -33,7 +32,6 @@ impl Default for Inner {
     fn default() -> Self {
         Self {
             settings: Settings::load_or_default(),
-            skip_date: None,
             ceremony_active: false,
             last_activation: None,
         }
@@ -50,7 +48,6 @@ impl AppState {
         Self {
             inner: Arc::new(Mutex::new(Inner {
                 settings: settings.clone(),
-                skip_date: None,
                 ceremony_active: false,
                 last_activation: None,
             })),
@@ -91,7 +88,7 @@ impl AppState {
 
         StatusSnapshot {
             ceremony_active: inner.ceremony_active,
-            skip_tomorrow: inner.skip_date == Some(tomorrow),
+            skip_tomorrow: inner.settings.skip_date == Some(tomorrow),
             last_activation: inner
                 .last_activation
                 .map(|dt| dt.format("%H:%M:%S").to_string()),
