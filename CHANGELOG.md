@@ -12,7 +12,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [0.9.4] - 2026-05-19
 
 ### Added
-- New announcement voice: "Grinchenko University Radio" (Radio BG) — audio recording from the Grinchenko University radio, included with permission.
+- New announcement voice: "Grinchenko University Radio" (Radio BG) — audio recording from Grinchenko University Radio.
 
 ## [0.9.3] - 2026-05-19
 

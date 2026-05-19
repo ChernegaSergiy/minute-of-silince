@@ -152,7 +152,7 @@
       "security": "Security"
     },
     "0.9.4": {
-      "radio_bg_voice": "New announcement voice: \"Grinchenko University Radio\" (Radio BG) — audio recording from the Grinchenko University radio, included with permission."
+      "radio_bg_voice": "New announcement voice: \"Grinchenko University Radio\" (Radio BG) — audio recording from Grinchenko University Radio."
     },
     "0.9.3": {
       "copy_logs_about_button": "About tab: added a Copy debug logs button that packages the latest application log tail with debug metadata and copies it to the clipboard for easier troubleshooting.",
