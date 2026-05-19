@@ -223,13 +223,13 @@ export default function App() {
         <div className={styles.layout}>
           <div className={styles.body}>
             <NavDrawer
-              defaultSelectedValue={selectedNav}
+              selectedValue={selectedNav}
               onNavItemSelect={(_, data) => setSelectedNav(data.value as string)}
               open
               type="inline"
               density="small"
             >
-              <NavDrawerBody>
+              <NavDrawerBody key={selectedNav}>
                 <NavItem value="settings" icon={<Settings20Regular />}>
                   {t("tabs.settings")}
                 </NavItem>
