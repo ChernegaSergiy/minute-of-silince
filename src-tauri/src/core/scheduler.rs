@@ -30,12 +30,14 @@ impl CeremonyScheduler {
             AnnouncementVoice::BohdanHdal,
             AnnouncementVoice::SoniaSotnyk,
             AnnouncementVoice::DaniaKhomutovskyi,
+            AnnouncementVoice::RadioBg,
             AnnouncementVoice::AirAlert,
         ] {
             let filename = match voice {
                 AnnouncementVoice::BohdanHdal => "announcement.ogg".to_string(),
                 AnnouncementVoice::SoniaSotnyk => "announcement_sotnyk.ogg".to_string(),
                 AnnouncementVoice::DaniaKhomutovskyi => "announcement_khomutovskyi.ogg".to_string(),
+                AnnouncementVoice::RadioBg => "announcement_radio_bg.ogg".to_string(),
                 AnnouncementVoice::AirAlert => "announcement_air_alert.ogg".to_string(),
             };
             let duration = audio.get_duration(&filename).unwrap_or(Duration::ZERO);
