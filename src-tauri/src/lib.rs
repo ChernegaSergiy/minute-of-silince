@@ -51,27 +51,7 @@ pub fn run() {
                 settings.clone(),
             ));
 
-            // --- 3. Autostart & Snap Logic ---
-            let is_hidden = std::env::args().any(|arg| arg == "--hidden");
-
-            #[cfg(not(test))]
-            {
-                let settings = app.state::<AppState>().lock().settings.clone();
-
-                let is_snap = std::env::var("SNAP").is_ok();
-                let is_flatpak = std::env::var("FLATPAK_ID").is_ok();
-
-                if (is_snap || is_flatpak) && is_hidden && !settings.autostart_enabled {
-                    log::info!(
-                        "Autostart is disabled in settings. \
-                         Exiting {} instance launched with --hidden.",
-                        if is_snap { "Snap" } else { "Flatpak" }
-                    );
-                    std::process::exit(0);
-                }
-            }
-
-            // --- 4. UI Initialization ---
+            // --- 3. UI Initialization ---
             app::tray::build_tray(app)?;
 
             #[cfg(target_os = "windows")]
@@ -80,6 +60,7 @@ pub fn run() {
             #[cfg(target_os = "linux")]
             crate::platform::linux::theme::start_theme_watcher(handle.clone());
 
+            let is_hidden = std::env::args().any(|arg| arg == "--hidden");
             let window =
                 tauri::WebviewWindowBuilder::new(app, "main", tauri::WebviewUrl::default())
                     .title("Minute of Silence")
@@ -117,7 +98,7 @@ pub fn run() {
                 });
             }
 
-            // --- 5. Core Services ---
+            // --- 4. Core Services ---
             let app_handle = handle.clone();
             tauri::async_runtime::spawn(async move {
                 core::scheduler::run(app_handle).await;
