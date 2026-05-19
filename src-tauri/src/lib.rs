@@ -97,7 +97,6 @@ pub fn run() {
 
             #[cfg(target_os = "windows")]
             {
-                window.set_skip_taskbar(true)?;
                 crate::platform::windows::power::register_power_hook(&window);
             }
 
