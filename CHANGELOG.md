@@ -9,6 +9,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.9.6] - 2026-05-20
+
+### Changed
+- The main window is now created programmatically with explicit startup visibility, preventing the blank flash when the app is launched hidden or from autostart.
+
+### Fixed
+- Disabled the default browser context menu in the webview, so right-click no longer shows Share, Print, Reload, Back and similar actions.
+
 ## [0.9.5] - 2026-05-19
 
 ### Added

@@ -1,3 +1,11 @@
+- version: "0.9.6"
+  date: "2026-05-20"
+  entries:
+    - category: changed
+      key: "main_window_programmatic"
+    - category: fixed
+      key: "browser_context_menu_disabled"
+
 - version: "0.9.5"
   date: "2026-05-19"
   entries:

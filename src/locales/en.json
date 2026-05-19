@@ -151,6 +151,10 @@
       "deprecated": "Deprecated",
       "security": "Security"
     },
+    "0.9.6": {
+      "main_window_programmatic": "The main window is now created programmatically with explicit startup visibility, preventing the blank flash when the app is launched hidden or from autostart.",
+      "browser_context_menu_disabled": "Disabled the default browser context menu in the webview, so right-click no longer shows Share, Print, Reload, Back and similar actions."
+    },
     "0.9.5": {
       "skip_date_persistence": "The \"Skip Tomorrow\" state is now saved to settings, surviving application restarts.",
       "skip_date_auto_clear": "The skip status is automatically cleared after the skipped ceremony time passes.",
