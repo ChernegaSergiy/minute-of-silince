@@ -80,12 +80,10 @@ pub fn run() {
             #[cfg(target_os = "linux")]
             crate::platform::linux::theme::start_theme_watcher(handle.clone());
 
-            let window = tauri::WebviewWindowBuilder::from_config(
-                app,
-                &app.config().app.windows[0],
-            )?
-            .visible(!is_hidden)
-            .build()?;
+            let window =
+                tauri::WebviewWindowBuilder::from_config(app, &app.config().app.windows[0])?
+                    .visible(!is_hidden)
+                    .build()?;
 
             let main_window = window.clone();
             window.on_window_event(move |event| {
