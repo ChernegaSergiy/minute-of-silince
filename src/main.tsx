@@ -4,6 +4,8 @@ import "./i18n";
 import "./style.css";
 import App from "./App";
 
+document.addEventListener("contextmenu", (e) => e.preventDefault());
+
 const root = document.getElementById("app");
 if (!root) throw new Error("#app element not found");
 
