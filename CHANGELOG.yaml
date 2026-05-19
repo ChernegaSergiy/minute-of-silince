@@ -1,3 +1,19 @@
+- version: "0.9.5"
+  date: "2026-05-19"
+  entries:
+    - category: added
+      key: "skip_date_persistence"
+    - category: added
+      key: "skip_date_auto_clear"
+    - category: added
+      key: "desktop_entry_localization"
+    - category: fixed
+      key: "linux_navdrawer_ghosting"
+    - category: fixed
+      key: "linux_desktop_launch"
+    - category: fixed
+      key: "snap_autostart_cleanup"
+
 - version: "0.9.4"
   date: "2026-05-19"
   entries:

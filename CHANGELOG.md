@@ -9,6 +9,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.9.5] - 2026-05-19
+
+### Added
+- The "Skip Tomorrow" state is now saved to settings, surviving application restarts.
+- The skip status is automatically cleared after the skipped ceremony time passes.
+- Added localized name and comment to the Linux `.desktop` application entry.
+
+### Fixed
+- Fixed a visual glitch on Linux where navigation menu indicators would incorrectly remain highlighted.
+- Fixed application launch from the Linux application menu and corrected window grouping (`StartupWMClass`).
+- Cleaned up deprecated autostart flags and simplified `.desktop` files for better Snap compatibility.
+
 ## [0.9.4] - 2026-05-19
 
 ### Added

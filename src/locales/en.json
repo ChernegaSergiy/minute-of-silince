@@ -151,6 +151,14 @@
       "deprecated": "Deprecated",
       "security": "Security"
     },
+    "0.9.5": {
+      "skip_date_persistence": "The \"Skip Tomorrow\" state is now saved to settings, surviving application restarts.",
+      "skip_date_auto_clear": "The skip status is automatically cleared after the skipped ceremony time passes.",
+      "desktop_entry_localization": "Added localized name and comment to the Linux `.desktop` application entry.",
+      "linux_navdrawer_ghosting": "Fixed a visual glitch on Linux where navigation menu indicators would incorrectly remain highlighted.",
+      "linux_desktop_launch": "Fixed application launch from the Linux application menu and corrected window grouping (`StartupWMClass`).",
+      "snap_autostart_cleanup": "Cleaned up deprecated autostart flags and simplified `.desktop` files for better Snap compatibility."
+    },
     "0.9.4": {
       "radio_bg_voice": "New announcement voice: \"Grinchenko University Radio\" (Radio BG) — audio recording from Grinchenko University Radio."
     },
