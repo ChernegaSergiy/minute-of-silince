@@ -2436,7 +2436,7 @@ dependencies = [
 
 [[package]]
 name = "minute-of-silence"
-version = "0.9.4"
+version = "0.9.5"
 dependencies = [
  "alsa",
  "anyhow",
