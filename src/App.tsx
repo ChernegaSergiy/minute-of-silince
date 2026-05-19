@@ -223,7 +223,7 @@ export default function App() {
         <div className={styles.layout}>
           <div className={styles.body}>
             <NavDrawer
-              selectedValue={selectedNav}
+              defaultSelectedValue={selectedNav}
               onNavItemSelect={(_, data) => setSelectedNav(data.value as string)}
               open
               type="inline"
