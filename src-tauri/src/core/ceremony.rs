@@ -220,6 +220,18 @@ impl CeremonyManager {
             }
         }
 
+        // Clear skip_date after successful ceremony
+        {
+            let state = app.state::<AppState>();
+            let mut inner = state.lock();
+            if inner.settings.skip_date.is_some() {
+                inner.settings.skip_date = None;
+                if let Err(e) = inner.settings.save() {
+                    log::warn!("Failed to clear skip_date: {}", e);
+                }
+            }
+        }
+
         let _ = app.emit("ceremony-end", ());
     }
 }
