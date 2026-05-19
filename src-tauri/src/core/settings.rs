@@ -88,6 +88,7 @@ pub enum AnnouncementVoice {
     BohdanHdal,
     SoniaSotnyk,
     DaniaKhomutovskyi,
+    RadioBg,
     AirAlert,
 }
 
