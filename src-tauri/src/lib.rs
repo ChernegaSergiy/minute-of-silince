@@ -81,7 +81,14 @@ pub fn run() {
             crate::platform::linux::theme::start_theme_watcher(handle.clone());
 
             let window =
-                tauri::WebviewWindowBuilder::from_config(app, &app.config().app.windows[0])?
+                tauri::WebviewWindowBuilder::new(app, "main", tauri::WebviewUrl::default())
+                    .title("Minute of Silence")
+                    .inner_size(640.0, 520.0)
+                    .min_inner_size(500.0, 400.0)
+                    .center()
+                    .resizable(true)
+                    .decorations(true)
+                    .skip_taskbar(true)
                     .visible(!is_hidden)
                     .build()?;
 
