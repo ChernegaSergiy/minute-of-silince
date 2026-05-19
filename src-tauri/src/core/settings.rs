@@ -73,6 +73,10 @@ pub struct Settings {
 
     /// Manual UI theme when `use_system_theme` is false.
     pub ui_theme: UiTheme,
+
+    /// Date to skip the next ceremony (one-time skip). Persisted to disk.
+    #[serde(default)]
+    pub skip_date: Option<chrono::NaiveDate>,
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Serialize, Deserialize)]
@@ -123,6 +127,7 @@ impl Default for Settings {
             anthem_voice: AnthemVoice::Default,
             use_system_theme: true,
             ui_theme: UiTheme::Light,
+            skip_date: None,
         }
     }
 }
