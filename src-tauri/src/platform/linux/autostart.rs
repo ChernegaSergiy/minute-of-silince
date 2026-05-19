@@ -26,11 +26,11 @@ fn manage_snap(enable: bool, snap_user_data: &str) {
         }
         let content = "[Desktop Entry]\n\
             Type=Application\n\
-            Name=Хвилина мовчання\n\
+            Name=Minute of Silence\n\
             Exec=minute-of-silence --hidden\n\
+            Icon=minute-of-silence\n\
             Hidden=false\n\
-            NoDisplay=false\n\
-            X-GNOME-Autostart-enabled=true\n";
+            NoDisplay=false\n";
         match std::fs::write(&desktop_path, content) {
             Ok(_) => log::info!("snap autostart: enabled ({:?})", desktop_path),
             Err(e) => log::warn!("snap autostart: write failed: {}", e),
@@ -59,13 +59,11 @@ fn manage_flatpak(enable: bool, flatpak_id: &str) {
         let content = format!(
             "[Desktop Entry]\n\
             Type=Application\n\
-            Name=Хвилина мовчання\n\
+            Name=Minute of Silence\n\
             Exec=flatpak run {} --hidden\n\
             Hidden=false\n\
-            NoDisplay=false\n\
-            X-GNOME-Autostart-enabled=true\n\
-            X-Flatpak={}\n",
-            flatpak_id, flatpak_id
+            NoDisplay=false\n",
+            flatpak_id
         );
         match std::fs::write(&desktop_path, content) {
             Ok(_) => log::info!("flatpak autostart: enabled ({:?})", desktop_path),
