@@ -151,6 +151,9 @@
       "deprecated": "Deprecated",
       "security": "Security"
     },
+    "0.9.4": {
+      "radio_bg_voice": "New announcement voice: \"Grinchenko University Radio\" (Radio BG) — audio recording from the Grinchenko University radio, included with permission."
+    },
     "0.9.3": {
       "copy_logs_about_button": "About tab: added a Copy debug logs button that packages the latest application log tail with debug metadata and copies it to the clipboard for easier troubleshooting.",
       "copy_logs_backend_command": "Backend `get_log_contents` command now returns the newest application log file tail together with app/version/platform metadata, so support requests can be made without manual log hunting.",
