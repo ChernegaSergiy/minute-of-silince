@@ -40,7 +40,11 @@ pub fn build_tray(app: &App) -> tauri::Result<()> {
             "skip_next" => {
                 let state = app.state::<AppState>();
                 let tomorrow = (chrono::Local::now() + chrono::Duration::days(1)).date_naive();
-                state.lock().skip_date = Some(tomorrow);
+                {
+                    let mut inner = state.lock();
+                    inner.settings.skip_date = Some(tomorrow);
+                    let _ = inner.settings.save();
+                }
                 log::info!("Tray: next ceremony skipped ({tomorrow})");
 
                 // Notify the frontend that the status has changed
