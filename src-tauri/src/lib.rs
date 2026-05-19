@@ -80,23 +80,25 @@ pub fn run() {
             #[cfg(target_os = "linux")]
             crate::platform::linux::theme::start_theme_watcher(handle.clone());
 
-            if let Some(window) = app.get_webview_window("main") {
-                let main_window = window.clone();
-                window.on_window_event(move |event| {
-                    if let tauri::WindowEvent::CloseRequested { api, .. } = event {
-                        api.prevent_close();
-                        let _ = main_window.hide();
-                    }
-                });
+            let window = tauri::WebviewWindowBuilder::from_config(
+                app,
+                &app.config().app.windows[0],
+            )?
+            .visible(!is_hidden)
+            .build()?;
 
-                if is_hidden {
-                    window.hide()?;
+            let main_window = window.clone();
+            window.on_window_event(move |event| {
+                if let tauri::WindowEvent::CloseRequested { api, .. } = event {
+                    api.prevent_close();
+                    let _ = main_window.hide();
                 }
-                #[cfg(target_os = "windows")]
-                {
-                    window.set_skip_taskbar(true)?;
-                    crate::platform::windows::power::register_power_hook(&window);
-                }
+            });
+
+            #[cfg(target_os = "windows")]
+            {
+                window.set_skip_taskbar(true)?;
+                crate::platform::windows::power::register_power_hook(&window);
             }
 
             #[cfg(not(test))]
