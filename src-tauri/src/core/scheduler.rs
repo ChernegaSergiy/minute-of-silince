@@ -115,7 +115,7 @@ impl CeremonyScheduler {
                 if !inner.settings.reminder_enabled
                     || !inner.settings.ceremony_enabled
                     || (inner.settings.weekdays_only && today.weekday().number_from_monday() > 5)
-                    || inner.skip_date == Some(today)
+                    || inner.settings.skip_date == Some(today)
                     || inner.last_activation.map(|dt| dt.date_naive()) == Some(today)
                     || last_reminded_date == Some(today)
                 {
@@ -162,7 +162,7 @@ impl CeremonyScheduler {
 
                     // Check if already triggered today
                     let last_activated = inner.last_activation.map(|dt| dt.date_naive());
-                    if last_activated == Some(today) || inner.skip_date == Some(today) {
+                    if last_activated == Some(today) || inner.settings.skip_date == Some(today) {
                         false
                     } else {
                         let voice = inner.settings.announcement_voice;
