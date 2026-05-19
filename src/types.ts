@@ -1,6 +1,6 @@
 // Mirror of Rust `AnnouncementVoice` enum
 
-export type AnnouncementVoice = "bohdan_hdal" | "sonia_sotnyk" | "dania_khomutovskyi" | "air_alert";
+export type AnnouncementVoice = "bohdan_hdal" | "sonia_sotnyk" | "dania_khomutovskyi" | "radio_bg" | "air_alert";
 
 // Mirror of Rust `AnthemVoice` enum
 
