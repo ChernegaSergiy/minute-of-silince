@@ -13,7 +13,7 @@
     "withGlobalTauri": true,
     "windows": [
       {
-        "title": "Хвилина мовчання",
+        "title": "Minute of Silence",
         "label": "main",
         "width": 640,
         "height": 520,
