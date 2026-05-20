@@ -21,6 +21,7 @@ import type { PersonalDate, Settings } from "./types";
 import { t } from "./i18n";
 import i18next from "./i18n";
 import { DatePicker, defaultDatePickerStrings } from "@fluentui/react-datepicker-compat";
+import type { CalendarStrings } from "@fluentui/react-datepicker-compat";
 
 const useStyles = makeStyles({
   card: {
@@ -286,6 +287,8 @@ export default function PersonalDatesTab() {
                 initial={d}
                 onCancel={() => setEditingIndex(null)}
                 onSave={(v) => saveEdit(idx, v)}
+                calendarStrings={calendarStrings}
+                formatDate={formatDate}
               />
             </div>
           ) : (
@@ -334,10 +337,14 @@ function EditForm({
   initial,
   onSave,
   onCancel,
+  calendarStrings,
+  formatDate,
 }: {
   initial: PersonalDate;
   onSave: (v: PersonalDate) => void;
   onCancel: () => void;
+  calendarStrings: CalendarStrings;
+  formatDate: (date?: Date | null) => string;
 }) {
   const styles = useStyles();
   const [date, setDate] = useState<Date | null>(() => {
