@@ -8,11 +8,13 @@ Minute of Silence is a lightweight desktop application built with [Tauri 2](http
 
 ## Screenshots
 
-| Main Settings | About Tab |
+| Main Settings | Audio Settings |
 | :---: | :---: |
-| ![Main Settings Tab](docs/images/01-settings-main.png) | ![About Tab](docs/images/02-about-tab.png) |
-| **Audio Settings** | **Active Ceremony Overlay** |
-| ![Audio Settings](docs/images/03-settings-audio.png) | ![Active Ceremony Overlay](docs/images/04-active-overlay.png) |
+| ![Main Settings Tab](docs/images/01-settings-main.png) | ![Audio Settings](docs/images/03-settings-audio.png) |
+| **Theme Collage** | **About Tab** |
+| ![Theme Collage](docs/images/00-theme-collage.png) | ![About Tab](docs/images/02-about-tab.png) |
+| **Changelog Tab** | **Active Ceremony Overlay** |
+| ![Changelog Tab](docs/images/05-changelog-tab.png) | ![Active Ceremony Overlay](docs/images/04-active-overlay.png) |
 
 ## Features
 
