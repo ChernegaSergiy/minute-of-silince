@@ -5,6 +5,7 @@ use serde::{Deserialize, Serialize};
 use std::sync::{Arc, Mutex};
 use tauri::AppHandle;
 
+use crate::app::next_skip_date;
 use crate::core::audio::AudioEngine;
 use crate::core::ntp_service::NtpService;
 use crate::core::settings::Settings;
@@ -75,7 +76,7 @@ pub struct StatusSnapshot {
 impl AppState {
     pub fn get_snapshot(&self) -> StatusSnapshot {
         let inner = self.lock();
-        let tomorrow = (Local::now() + chrono::Duration::days(1)).date_naive();
+        let skip_target = next_skip_date(Local::now());
 
         let ntp_status = if inner.settings.system_time_only {
             Some(t!("ntp_disabled").to_string())
@@ -88,7 +89,7 @@ impl AppState {
 
         StatusSnapshot {
             ceremony_active: inner.ceremony_active,
-            skip_tomorrow: inner.settings.skip_date == Some(tomorrow),
+            skip_tomorrow: inner.settings.skip_date == Some(skip_target),
             last_activation: inner
                 .last_activation
                 .map(|dt| dt.format("%H:%M:%S").to_string()),

@@ -1,5 +1,6 @@
 //! System-tray icon setup and context-menu event handling.
 
+use crate::app::next_skip_date;
 use crate::platform::is_dark_mode;
 use rust_i18n::t;
 use tauri::{
@@ -39,13 +40,13 @@ pub fn build_tray(app: &App) -> tauri::Result<()> {
             }
             "skip_next" => {
                 let state = app.state::<AppState>();
-                let tomorrow = (chrono::Local::now() + chrono::Duration::days(1)).date_naive();
+                let skip_date = next_skip_date(chrono::Local::now());
                 {
                     let mut inner = state.lock();
-                    inner.settings.skip_date = Some(tomorrow);
+                    inner.settings.skip_date = Some(skip_date);
                     let _ = inner.settings.save();
                 }
-                log::info!("Tray: next ceremony skipped ({tomorrow})");
+                log::info!("Tray: next ceremony skipped ({skip_date})");
 
                 // Notify the frontend that the status has changed
                 let _ = app.emit("status-updated", ());

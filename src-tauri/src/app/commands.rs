@@ -11,6 +11,7 @@ use tauri::{AppHandle, Manager, State};
 #[allow(unused_imports)]
 use crate::{
     AppError, Result,
+    app::next_skip_date,
     core::settings::Settings,
     state::{AppState, StatusSnapshot},
 };
@@ -70,11 +71,11 @@ pub fn get_status(state: State<'_, AppState>) -> StatusSnapshot {
 /// Skip the ceremony for the next calendar day.
 #[tauri::command]
 pub fn skip_next(state: State<'_, AppState>) -> Result<()> {
-    let tomorrow = (chrono::Local::now() + chrono::Duration::days(1)).date_naive();
+    let skip_date = next_skip_date(chrono::Local::now());
     let mut inner = state.lock();
-    inner.settings.skip_date = Some(tomorrow);
+    inner.settings.skip_date = Some(skip_date);
     inner.settings.save()?;
-    log::info!("Next ceremony skipped (date: {tomorrow})");
+    log::info!("Next ceremony skipped (date: {skip_date})");
     Ok(())
 }
 
