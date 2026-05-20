@@ -60,9 +60,9 @@ impl AudioEngine {
     }
 
     pub fn get_duration(&self, filename: &str) -> Result<Duration> {
-        use symphonia::core::formats::probe::Hint;
         use symphonia::core::formats::FormatOptions;
         use symphonia::core::formats::TrackType;
+        use symphonia::core::formats::probe::Hint;
         use symphonia::core::io::MediaSourceStream;
         use symphonia::core::meta::MetadataOptions;
 

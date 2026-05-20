@@ -3,10 +3,10 @@
 //! MSIX uses a packaged StartupTask so Windows can manage registration and
 //! cleanup automatically when the app is removed.
 
-use crate::{error::Result, AppError};
+use crate::{AppError, error::Result};
 
-use windows::core::HSTRING;
 use windows::ApplicationModel::StartupTask;
+use windows::core::HSTRING;
 
 const STARTUP_TASK_ID: &str = "MinuteOfSilenceStartupTask";
 

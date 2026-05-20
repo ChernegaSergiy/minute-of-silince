@@ -3,12 +3,12 @@
 
 use std::thread;
 use tauri::AppHandle;
-use windows::core::PCWSTR;
 use windows::Win32::Foundation::HANDLE;
 use windows::Win32::System::Registry::{
-    RegCloseKey, RegNotifyChangeKeyValue, RegOpenKeyExW, HKEY, HKEY_CURRENT_USER, KEY_NOTIFY,
-    REG_NOTIFY_CHANGE_LAST_SET,
+    HKEY, HKEY_CURRENT_USER, KEY_NOTIFY, REG_NOTIFY_CHANGE_LAST_SET, RegCloseKey,
+    RegNotifyChangeKeyValue, RegOpenKeyExW,
 };
+use windows::core::PCWSTR;
 
 pub fn start_theme_watcher(app_handle: AppHandle) {
     let subkey: Vec<u16> = "Software\\Microsoft\\Windows\\CurrentVersion\\Themes\\Personalize\0"

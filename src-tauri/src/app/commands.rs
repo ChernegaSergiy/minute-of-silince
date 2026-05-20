@@ -10,9 +10,9 @@ use tauri::{AppHandle, Manager, State};
 
 #[allow(unused_imports)]
 use crate::{
+    AppError, Result,
     core::settings::Settings,
     state::{AppState, StatusSnapshot},
-    AppError, Result,
 };
 
 // Settings

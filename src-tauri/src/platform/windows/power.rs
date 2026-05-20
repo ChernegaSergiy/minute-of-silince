@@ -5,7 +5,7 @@ use std::sync::OnceLock;
 use tauri::{AppHandle, Emitter, Manager, WebviewWindow};
 use windows::Win32::Foundation::{HWND, LPARAM, LRESULT, WPARAM};
 use windows::Win32::UI::WindowsAndMessaging::{
-    CallWindowProcW, SetWindowLongPtrW, GWLP_WNDPROC, WM_POWERBROADCAST,
+    CallWindowProcW, GWLP_WNDPROC, SetWindowLongPtrW, WM_POWERBROADCAST,
 };
 
 static ORIGINAL_WNDPROC: OnceLock<isize> = OnceLock::new();

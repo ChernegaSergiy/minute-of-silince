@@ -7,9 +7,9 @@ use std::time::Duration;
 use tauri::{AppHandle, Emitter, Listener, Manager};
 use tauri_plugin_notification::NotificationExt;
 
+use crate::core::CeremonyManager;
 use crate::core::audio::AudioEngine;
 use crate::core::settings::{AnnouncementVoice, AudioPreset};
-use crate::core::CeremonyManager;
 use crate::state::AppState;
 
 /// Scheduler for the daily ceremony.
@@ -134,11 +134,7 @@ impl CeremonyScheduler {
                         && now_time.minute() == remind_at.minute()
                         && now_time.second() == 0;
 
-                    if fire {
-                        Some(mins)
-                    } else {
-                        None
-                    }
+                    if fire { Some(mins) } else { None }
                 }
             };
 

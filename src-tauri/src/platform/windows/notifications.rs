@@ -5,9 +5,9 @@
 
 #[cfg(target_os = "windows")]
 use windows::{
-    core::HSTRING,
     Data::Xml::Dom::XmlDocument,
     UI::Notifications::{ToastNotification, ToastNotificationManager},
+    core::HSTRING,
 };
 
 /// Send a toast notification using WinRT API (for MSIX packages).

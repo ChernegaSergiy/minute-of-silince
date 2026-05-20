@@ -8,8 +8,8 @@ use crate::error::Result;
 
 #[cfg(target_os = "windows")]
 pub fn detect_system_theme() -> bool {
-    use winreg::enums::HKEY_CURRENT_USER;
     use winreg::RegKey;
+    use winreg::enums::HKEY_CURRENT_USER;
 
     let hkcu = RegKey::predef(HKEY_CURRENT_USER);
     if let Ok(key) =
@@ -129,8 +129,8 @@ pub fn system_autostart_enabled() -> Option<bool> {
         if !is_msix() {
             None
         } else {
-            use ::windows::core::HSTRING;
             use ::windows::ApplicationModel::{StartupTask, StartupTaskState};
+            use ::windows::core::HSTRING;
 
             let task = StartupTask::GetAsync(&HSTRING::from("MinuteOfSilenceStartupTask"))
                 .ok()?

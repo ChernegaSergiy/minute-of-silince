@@ -3,9 +3,9 @@
 use crate::platform::is_dark_mode;
 use rust_i18n::t;
 use tauri::{
+    App, Emitter, Manager,
     menu::{Menu, MenuItem, PredefinedMenuItem},
     tray::{MouseButton, MouseButtonState, TrayIconBuilder, TrayIconEvent},
-    App, Emitter, Manager,
 };
 
 use crate::AppState;
