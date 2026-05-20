@@ -51,7 +51,8 @@ Minute of Silence is a lightweight desktop application built with [Tauri 2](http
 | 1 | Bohdan Hdal | Original voice with "Slava Ukrajini" ending |
 | 2 | Sonia Sotnyk | Voice from Vshanui with "Slava Ukrajini" ending |
 | 3 | Dania Khomutovskyi | Voice from Vshanui with "Slava Ukrajini" ending |
-| 4 | Air Alert | Voice from the Air Alert app (announcement only, no ending) |
+| 4 | Radio BG | Audio recording from Grinchenko University Radio (announcement and ending available) |
+| 5 | Air Alert | Voice from the Air Alert app (announcement only, no ending) |
 
 ## Installation
 
