@@ -21,6 +21,7 @@
     "ntp_syncing": "Synchronizing...",
     "ntp_error": "Error"
   },
+  "loading": "Loading...",
   "controls": {
     "ceremony": {
       "label": "Ceremony at 09:00",

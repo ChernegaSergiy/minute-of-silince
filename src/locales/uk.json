@@ -21,6 +21,7 @@
     "ntp_syncing": "Синхронізація...",
     "ntp_error": "Помилка"
   },
+  "loading": "Завантаження...",
   "controls": {
     "ceremony": {
       "label": "Церемонія о 09:00",
