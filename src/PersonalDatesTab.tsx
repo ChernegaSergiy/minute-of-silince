@@ -3,7 +3,7 @@ import {
   Button,
   Card,
   Text,
-  TextField,
+  Input,
   makeStyles,
   tokens,
 } from "@fluentui/react-components";
@@ -113,28 +113,28 @@ export default function PersonalDatesTab() {
         </Text>
 
         <div className={styles.row}>
-          <TextField
+          <Input
             placeholder={t("personal_dates.month") ?? "MM"}
             value={newMonth}
             onChange={(_, d) => setNewMonth(d.value)}
             type="number"
             style={{ width: 80 }}
           />
-          <TextField
+          <Input
             placeholder={t("personal_dates.day") ?? "DD"}
             value={newDay}
             onChange={(_, d) => setNewDay(d.value)}
             type="number"
             style={{ width: 80 }}
           />
-          <TextField
+          <Input
             placeholder={t("personal_dates.year") ?? "YYYY (optional)"}
             value={newYear}
             onChange={(_, d) => setNewYear(d.value)}
             type="number"
             style={{ width: 140 }}
           />
-          <TextField
+          <Input
             placeholder={t("personal_dates.label") ?? "Label"}
             value={newLabel}
             onChange={(_, d) => setNewLabel(d.value)}
@@ -200,10 +200,10 @@ function EditForm({ initial, onSave, onCancel }: { initial: PersonalDate; onSave
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: tokens.spacingVerticalS }}>
       <div style={{ display: "flex", gap: tokens.spacingHorizontalS }}>
-        <TextField value={month} onChange={(_, d) => setMonth(d.value)} type="number" style={{ width: 80 }} />
-        <TextField value={day} onChange={(_, d) => setDay(d.value)} type="number" style={{ width: 80 }} />
-        <TextField value={year} onChange={(_, d) => setYear(d.value)} type="number" style={{ width: 120 }} />
-        <TextField value={label} onChange={(_, d) => setLabel(d.value)} style={{ flex: 1 }} />
+        <Input value={month} onChange={(_, d) => setMonth(d.value)} type="number" style={{ width: 80 }} />
+        <Input value={day} onChange={(_, d) => setDay(d.value)} type="number" style={{ width: 80 }} />
+        <Input value={year} onChange={(_, d) => setYear(d.value)} type="number" style={{ width: 120 }} />
+        <Input value={label} onChange={(_, d) => setLabel(d.value)} style={{ flex: 1 }} />
       </div>
       <div style={{ display: "flex", gap: tokens.spacingHorizontalS }}>
         <Button appearance="primary" onClick={() => onSave({ month: Number(month), day: Number(day), year: year ? Number(year) : null, label: label.trim() })}>
