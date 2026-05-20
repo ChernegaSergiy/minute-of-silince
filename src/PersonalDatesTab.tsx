@@ -19,7 +19,7 @@ import {
 import { getSettings, saveSettings } from "./api";
 import type { PersonalDate, Settings } from "./types";
 import { t } from "./i18n";
-import { DatePicker } from "@fluentui/react-datepicker-compat";
+import { DatePicker, defaultDatePickerStrings } from "@fluentui/react-datepicker-compat";
 
 const useStyles = makeStyles({
   card: {
@@ -127,6 +127,7 @@ export default function PersonalDatesTab() {
     const shortDays = Array.from({ length: 7 }, (_, i) => new Intl.DateTimeFormat(locale, { weekday: "narrow" }).format(new Date(2020, 5, i + 7)));
 
     return {
+      ...defaultDatePickerStrings,
       months,
       shortMonths,
       days,
