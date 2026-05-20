@@ -79,7 +79,7 @@ chmod +x minute-of-silence_0.9.6_amd64.AppImage
 ### Prerequisites
 
 | Tool | Minimum version |
-| --- | --- | --- |
+| --- | --- |
 | Rust | 1.85 |
 | Node.js | 20 LTS |
 | Tauri CLI | 2.x |
