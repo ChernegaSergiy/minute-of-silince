@@ -147,6 +147,15 @@ export default function PersonalDatesTab() {
       dayMarkedAriaLabel: t("calendar.dayMarkedAriaLabel"),
     };
   }, [locale]);
+
+  const formatDate = useMemo(() => (date: Date | null) => {
+    if (!date) return '';
+    try {
+      return new Intl.DateTimeFormat(locale, { day: '2-digit', month: 'short', year: 'numeric' }).format(date);
+    } catch {
+      return date.toDateString();
+    }
+  }, [locale]);
   const [dates, setDates] = useState<PersonalDate[]>([]);
   const [loading, setLoading] = useState(true);
   const [newDate, setNewDate] = useState<Date | null>(null);
@@ -221,6 +230,7 @@ export default function PersonalDatesTab() {
                 value={newDate}
                 onSelectDate={(d) => setNewDate(d ?? null)}
                 strings={calendarStrings}
+                formatDate={formatDate}
               />
             </Field>
           </div>
@@ -349,6 +359,7 @@ function EditForm({
               value={date}
               onSelectDate={(d) => setDate(d ?? null)}
               strings={calendarStrings}
+              formatDate={formatDate}
             />
           </Field>
         </div>
