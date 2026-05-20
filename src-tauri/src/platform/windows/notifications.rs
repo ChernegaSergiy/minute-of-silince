@@ -22,11 +22,7 @@ pub fn send_toast(title: &str, body: &str) -> Result<(), crate::AppError> {
     let family = id
         .FamilyName()
         .map_err(|e| crate::AppError::Windows(e.to_string()))?;
-    let aumid = format!(
-        "{}!{}",
-        family.to_string(),
-        "ua.pp.khvylyna.MinuteOfSilence"
-    );
+    let aumid = format!("{}!{}", family, "ua.pp.khvylyna.MinuteOfSilence");
 
     tauri_winrt_notification::Toast::new(&aumid)
         .scenario(tauri_winrt_notification::Scenario::Reminder)
