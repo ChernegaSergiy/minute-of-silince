@@ -126,7 +126,9 @@
     "sync": "SYNCHRONIZE",
     "test": "TEST",
     "save": "SAVE",
-    "save_dirty": "SAVE *"
+    "save_dirty": "SAVE *",
+    "add": "ADD",
+    "cancel": "CANCEL"
   },
   "about": {
     "description": "The application was created to honor the memory of fallen defenders and victims of war.",
@@ -141,6 +143,16 @@
   "overlay": {
     "title": "MINUTE OF SILENCE",
     "subtitle": "WE REMEMBER EVERYONE"
+  },
+  "personal_dates": {
+    "title": "Personal dates",
+    "month": "Month",
+    "day": "Day",
+    "year": "Year (optional)",
+    "label": "Label",
+    "list_title": "Saved dates",
+    "empty": "No personal dates.",
+    "edit_title": "Edit date"
   },
   "changelog": {
     "categories": {
