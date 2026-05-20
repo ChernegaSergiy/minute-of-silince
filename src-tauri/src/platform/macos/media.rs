@@ -73,10 +73,7 @@ fn try_pause(name: &str) -> bool {
         name.replace("\"", "\\\"")
     );
 
-    match Command::new("osascript")
-        .args(["-e", &script])
-        .output()
-    {
+    match Command::new("osascript").args(["-e", &script]).output() {
         Ok(output) => String::from_utf8_lossy(&output.stdout).trim() == "paused",
         Err(_) => false,
     }
