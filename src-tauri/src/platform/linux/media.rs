@@ -16,7 +16,7 @@ trait MediaPlayer2Player {
 }
 
 pub async fn pause_all() -> Result<Vec<String>> {
-    let result = tokio::task::spawn_blocking(|| {
+    tokio::task::spawn_blocking(|| {
         let conn =
             zbus::blocking::Connection::session().map_err(|e| AppError::Platform(e.to_string()))?;
         let dbus = zbus::blocking::fdo::DBusProxy::new(&conn)
@@ -44,9 +44,7 @@ pub async fn pause_all() -> Result<Vec<String>> {
         Ok(paused_names)
     })
     .await
-    .map_err(|e| AppError::Platform(e.to_string()))?;
-
-    result
+    .map_err(|e| AppError::Platform(e.to_string()))?
 }
 
 pub async fn resume_specific(players: Vec<String>) -> Result<()> {
@@ -54,7 +52,7 @@ pub async fn resume_specific(players: Vec<String>) -> Result<()> {
         return Ok(());
     }
 
-    let result = tokio::task::spawn_blocking(move || {
+    tokio::task::spawn_blocking(move || {
         let conn =
             zbus::blocking::Connection::session().map_err(|e| AppError::Platform(e.to_string()))?;
 
@@ -74,7 +72,5 @@ pub async fn resume_specific(players: Vec<String>) -> Result<()> {
         Ok(())
     })
     .await
-    .map_err(|e| AppError::Platform(e.to_string()))?;
-
-    result
+    .map_err(|e| AppError::Platform(e.to_string()))?
 }
