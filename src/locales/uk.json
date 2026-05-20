@@ -5,7 +5,8 @@
   "tabs": {
     "settings": "НАЛАШТУВАННЯ",
     "about": "ПРО ПРОГРАМУ",
-    "changelog": "ЗМІНИ"
+    "changelog": "ЗМІНИ",
+    "personal_dates": "ОСОБИСТІ ДАТИ"
   },
   "sections": {
     "general": "ОСНОВНІ",
