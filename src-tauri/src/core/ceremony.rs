@@ -86,7 +86,6 @@ impl CeremonyManager {
                     .title(t!("tray_tooltip").as_ref())
                     .fullscreen(true)
                     .decorations(false)
-                    .transparent(true)
                     .always_on_top(false)
                     .skip_taskbar(false)
                     .build()
