@@ -174,21 +174,21 @@ export default function PersonalDatesTab() {
     setEditingIndex(null);
   };
 
-  if (loading) return <Text>{t("loading") ?? "Loading…"}</Text>;
+  if (loading) return <Text>{t("loading")}</Text>;
 
   return (
     <>
       {/* Форма додавання */}
       <Card className={styles.card}>
         <Text weight="semibold" size={200} block>
-          {t("personal_dates.title") ?? "Особисті дати"}
+          {t("personal_dates.title")}
         </Text>
 
         <div className={styles.addRow}>
           <div className={styles.addDateField}>
-            <Field label={t("personal_dates.date") ?? "Date"}>
+            <Field label={t("personal_dates.date")}>
               <DatePicker
-                placeholder={t("personal_dates.date") ?? "Select date…"}
+                placeholder={t("personal_dates.date")}
                 value={newDate}
                 onSelectDate={(d) => setNewDate(d ?? null)}
               />
@@ -196,9 +196,9 @@ export default function PersonalDatesTab() {
           </div>
 
           <div className={styles.addLabelField}>
-            <Field label={t("personal_dates.label") ?? "Назва"}>
+            <Field label={t("personal_dates.label")}>
               <Input
-                placeholder={t("personal_dates.label") ?? "Назва"}
+                placeholder={t("personal_dates.label")}
                 value={newLabel}
                 onChange={(_, d) => setNewLabel(d.value)}
                 onKeyDown={(e) => e.key === "Enter" && addDate()}
@@ -213,7 +213,7 @@ export default function PersonalDatesTab() {
             onClick={addDate}
             disabled={!newDate || !newLabel.trim()}
           >
-            {t("buttons.add") ?? "Додати"}
+            {t("buttons.add")}
           </Button>
         </div>
       </Card>
@@ -221,12 +221,12 @@ export default function PersonalDatesTab() {
       {/* Список */}
       <Card className={styles.card}>
         <Text weight="semibold" size={200} block>
-          {t("personal_dates.list_title") ?? "Збережені дати"}
+          {t("personal_dates.list_title")}
         </Text>
 
         {dates.length === 0 && (
           <Text size={200} style={{ color: tokens.colorNeutralForeground3 }}>
-            {t("personal_dates.empty") ?? "Немає особистих дат."}
+            {t("personal_dates.empty")}
           </Text>
         )}
 
@@ -256,7 +256,7 @@ export default function PersonalDatesTab() {
 
               <div className={styles.actions}>
                 <Tooltip
-                  content={t("buttons.edit") ?? "Редагувати"}
+                  content={t("buttons.edit")}
                   relationship="label"
                 >
                   <Button
@@ -266,7 +266,7 @@ export default function PersonalDatesTab() {
                   />
                 </Tooltip>
                 <Tooltip
-                  content={t("buttons.delete") ?? "Видалити"}
+                  content={t("buttons.delete")}
                   relationship="label"
                 >
                   <Button
@@ -314,7 +314,7 @@ function EditForm({
     <>
       <div className={styles.editRow}>
         <div className={styles.editDateField}>
-          <Field label={t("personal_dates.month") ?? "Дата"}>
+          <Field label={t("personal_dates.date")}>
             <DatePicker
               value={date}
               onSelectDate={(d) => setDate(d ?? null)}
@@ -322,7 +322,7 @@ function EditForm({
           </Field>
         </div>
         <div className={styles.editLabelField}>
-          <Field label={t("personal_dates.label") ?? "Назва"}>
+          <Field label={t("personal_dates.label")}>
             <Input
               value={label}
               onChange={(_, d) => setLabel(d.value)}
@@ -338,7 +338,7 @@ function EditForm({
           icon={<Dismiss20Regular />}
           onClick={onCancel}
         >
-          {t("buttons.cancel") ?? "Скасувати"}
+          {t("buttons.cancel")}
         </Button>
         <Button
           appearance="primary"
@@ -346,7 +346,7 @@ function EditForm({
           onClick={handleSave}
           disabled={!date || !label.trim()}
         >
-          {t("buttons.save") ?? "Зберегти"}
+          {t("buttons.save")}
         </Button>
       </div>
     </>
