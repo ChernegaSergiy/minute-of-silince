@@ -19,6 +19,7 @@ import {
 import { getSettings, saveSettings } from "./api";
 import type { PersonalDate, Settings } from "./types";
 import { t } from "./i18n";
+import i18next from "./i18n";
 import { DatePicker, defaultDatePickerStrings } from "@fluentui/react-datepicker-compat";
 
 const useStyles = makeStyles({
@@ -118,7 +119,7 @@ const useStyles = makeStyles({
 
 export default function PersonalDatesTab() {
   const styles = useStyles();
-  const locale = (typeof navigator !== "undefined" && navigator.language) || "en-US";
+  const locale = i18next.language || ((typeof navigator !== "undefined" && navigator.language) || "en-US");
 
   const calendarStrings = useMemo(() => {
     const months = Array.from({ length: 12 }, (_, i) => new Intl.DateTimeFormat(locale, { month: "long" }).format(new Date(2000, i, 1)));
