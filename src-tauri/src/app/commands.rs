@@ -8,9 +8,8 @@ use std::{
 
 use tauri::{AppHandle, Manager, State};
 
-#[allow(unused_imports)]
 use crate::{
-    AppError, Result,
+    Result,
     app::next_skip_date,
     core::settings::Settings,
     state::{AppState, StatusSnapshot},
