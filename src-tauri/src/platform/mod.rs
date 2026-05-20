@@ -186,9 +186,13 @@ pub fn apply_autostart_enabled(app: &tauri::AppHandle, enabled: bool) {
                         if let Err(e) = crate::platform::windows::autostart::enable_autostart() {
                             log::error!("Failed to enable autostart for MSIX: {}", e);
                         }
-                    } else if let Err(e) = crate::platform::windows::autostart::disable_autostart()
-                    {
-                        log::error!("Failed to disable autostart for MSIX: {}", e);
+                    } else {
+                        match crate::platform::windows::autostart::disable_autostart() {
+                            Err(e) => {
+                                log::error!("Failed to disable autostart for MSIX: {}", e);
+                            }
+                            _ => {}
+                        }
                     }
                 }
             } else {

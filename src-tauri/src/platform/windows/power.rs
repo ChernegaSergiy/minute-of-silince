@@ -32,25 +32,27 @@ pub fn register_power_hook(window: &WebviewWindow) {
 
 /// Window procedure to handle WM_POWERBROADCAST.
 unsafe extern "system" fn wndproc(hwnd: HWND, msg: u32, wparam: WPARAM, lparam: LPARAM) -> LRESULT {
-    if msg == WM_POWERBROADCAST {
-        let wp = wparam.0;
-        if wp == PBT_APMRESUMEAUTOMATIC || wp == PBT_APMRESUMESUSPEND {
-            log::info!("System resume from sleep detected (WP: {wp})");
-            if let Some(handle) = APP_HANDLE.get() {
-                let _ = handle.emit("resume-from-sleep", ());
+    unsafe {
+        if msg == WM_POWERBROADCAST {
+            let wp = wparam.0;
+            if wp == PBT_APMRESUMEAUTOMATIC || wp == PBT_APMRESUMESUSPEND {
+                log::info!("System resume from sleep detected (WP: {wp})");
+                if let Some(handle) = APP_HANDLE.get() {
+                    let _ = handle.emit("resume-from-sleep", ());
+                }
             }
         }
-    }
 
-    let original = ORIGINAL_WNDPROC.get().expect("Original WndProc not set");
-    CallWindowProcW(
-        Some(std::mem::transmute::<
-            isize,
-            unsafe extern "system" fn(HWND, u32, WPARAM, LPARAM) -> LRESULT,
-        >(*original)),
-        hwnd,
-        msg,
-        wparam,
-        lparam,
-    )
+        let original = ORIGINAL_WNDPROC.get().expect("Original WndProc not set");
+        CallWindowProcW(
+            Some(std::mem::transmute::<
+                isize,
+                unsafe extern "system" fn(HWND, u32, WPARAM, LPARAM) -> LRESULT,
+            >(*original)),
+            hwnd,
+            msg,
+            wparam,
+            lparam,
+        )
+    }
 }
