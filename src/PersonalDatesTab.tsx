@@ -35,7 +35,6 @@ const useStyles = makeStyles({
   addDateField: {
     flex: "1 1 160px",
     minWidth: "160px",
-    maxWidth: "220px",
   },
   addLabelField: {
     flex: "2 1 180px",
@@ -105,7 +104,6 @@ const useStyles = makeStyles({
   editDateField: {
     flex: "1 1 160px",
     minWidth: "160px",
-    maxWidth: "220px",
   },
   editLabelField: {
     flex: "2 1 180px",
