@@ -77,6 +77,25 @@ pub struct Settings {
     /// Date to skip the next ceremony (one-time skip). Persisted to disk.
     #[serde(default)]
     pub skip_date: Option<chrono::NaiveDate>,
+
+    /// Personal dates (month/day) that the user wants to remember specially.
+    /// Stored as part of settings; repeating yearly unless `year` is set.
+    #[serde(default)]
+    pub personal_dates: Vec<PersonalDate>,
+}
+
+/// A user-provided personal date (monthly/day) entry.
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct PersonalDate {
+    /// Month number 1..=12
+    pub month: u8,
+    /// Day number 1..=31
+    pub day: u8,
+    /// Label to display (e.g. "In memory of ...")
+    pub label: String,
+    /// Optional year for one-off dates. If None, the date repeats every year.
+    #[serde(default)]
+    pub year: Option<i32>,
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Serialize, Deserialize)]
@@ -128,6 +147,7 @@ impl Default for Settings {
             use_system_theme: true,
             ui_theme: UiTheme::Light,
             skip_date: None,
+            personal_dates: Vec::new(),
         }
     }
 }
