@@ -60,48 +60,39 @@ impl AudioEngine {
     }
 
     pub fn get_duration(&self, filename: &str) -> Result<Duration> {
+        use symphonia::core::formats::probe::Hint;
         use symphonia::core::formats::FormatOptions;
+        use symphonia::core::formats::TrackType;
         use symphonia::core::io::MediaSourceStream;
         use symphonia::core::meta::MetadataOptions;
-        use symphonia::core::probe::Hint;
 
         let path = self.get_path(filename)?;
-        let file = File::open(&path)?;
-        let mss = MediaSourceStream::new(Box::new(file), Default::default());
+        let mss = MediaSourceStream::new(Box::new(File::open(&path)?), Default::default());
 
         let mut hint = Hint::new();
         hint.with_extension("ogg");
 
-        let format_opts = FormatOptions::default();
-        let metadata_opts = MetadataOptions::default();
+        let format = symphonia::default::get_probe()
+            .probe(
+                &hint,
+                mss,
+                FormatOptions::default(),
+                MetadataOptions::default(),
+            )
+            .map_err(|e| AppError::Audio(format!("Failed to probe audio file: {e}")))?;
 
-        let probed = symphonia::default::get_probe()
-            .format(&hint, mss, &format_opts, &metadata_opts)
-            .map_err(|e| AppError::Audio(format!("Failed to probe audio file: {}", e)))?;
+        let track = format
+            .default_track(TrackType::Audio)
+            .ok_or_else(|| AppError::Audio(format!("No audio track in {filename}")))?;
 
-        let format = probed.format;
+        let (duration, time_base) = track
+            .duration
+            .zip(track.time_base)
+            .ok_or_else(|| AppError::Audio(format!("No duration metadata in {filename}")))?;
 
-        if let Some(track) = format.default_track() {
-            if let Some(n_frames) = track.codec_params.n_frames {
-                if let Some(sample_rate) = track.codec_params.sample_rate {
-                    let duration_secs = n_frames as f64 / sample_rate as f64;
-                    return Ok(Duration::from_secs_f64(duration_secs));
-                }
-            }
-            if let Some(time_base) = track.codec_params.time_base {
-                if let Some(n_frames) = track.codec_params.n_frames {
-                    let duration_secs =
-                        n_frames as f64 * time_base.numer as f64 / time_base.denom as f64;
-                    return Ok(Duration::from_secs_f64(duration_secs));
-                }
-            }
-        }
-
-        log::warn!(
-            "Could not determine duration of {}, using default 2s",
-            filename
-        );
-        Ok(Duration::from_secs(2))
+        let secs =
+            duration.get() as f64 * time_base.numer.get() as f64 / time_base.denom.get() as f64;
+        Ok(Duration::from_secs_f64(secs))
     }
 
     pub fn play_preset(
