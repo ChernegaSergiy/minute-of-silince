@@ -32,7 +32,7 @@ Minute of Silence is a lightweight desktop application built with [Tauri 2](http
 ## Audio Presets
 
 | # | Preset | Description |
-|---|--------|-------------|
+| --- | --- | --- |
 | 1 | Voice + Metronome | Announcement with a metronome for the silence duration |
 | 2 | Metronome | Metronome only (no voice) |
 | 3 | Voice + Silence + Bell | Announcement, 60 s of silence, closing bell |
@@ -47,7 +47,7 @@ Minute of Silence is a lightweight desktop application built with [Tauri 2](http
 ## Voice Selection
 
 | # | Voice | Description |
-|---|-------|-------------|
+| --- | --- | --- |
 | 1 | Bohdan Hdal | Original voice with "Slava Ukrajini" ending |
 | 2 | Sonia Sotnyk | Voice from Vshanui with "Slava Ukrajini" ending |
 | 3 | Dania Khomutovskyi | Voice from Vshanui with "Slava Ukrajini" ending |
@@ -79,7 +79,7 @@ chmod +x minute-of-silence_0.9.6_amd64.AppImage
 ### Prerequisites
 
 | Tool | Minimum version |
-|------|----------------|
+| --- | --- | --- |
 | Rust | 1.85 |
 | Node.js | 20 LTS |
 | Tauri CLI | 2.x |
