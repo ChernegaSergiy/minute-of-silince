@@ -129,7 +129,9 @@
     "save": "SAVE",
     "save_dirty": "SAVE *",
     "add": "ADD",
-    "cancel": "CANCEL"
+    "cancel": "CANCEL",
+    "edit": "EDIT",
+    "delete": "DELETE"
   },
   "about": {
     "description": "The application was created to honor the memory of fallen defenders and victims of war.",
@@ -147,9 +149,7 @@
   },
   "personal_dates": {
     "title": "Personal dates",
-    "month": "Month",
-    "day": "Day",
-    "year": "Year (optional)",
+    "date": "Date",
     "label": "Label",
     "list_title": "Saved dates",
     "empty": "No personal dates.",

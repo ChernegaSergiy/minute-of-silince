@@ -186,9 +186,9 @@ export default function PersonalDatesTab() {
 
         <div className={styles.addRow}>
           <div className={styles.addDateField}>
-            <Field label={t("personal_dates.month") ?? "Дата"}>
+            <Field label={t("personal_dates.date") ?? "Date"}>
               <DatePicker
-                placeholder={t("personal_dates.month") ?? "Оберіть дату…"}
+                placeholder={t("personal_dates.date") ?? "Select date…"}
                 value={newDate}
                 onSelectDate={(d) => setNewDate(d ?? null)}
               />
