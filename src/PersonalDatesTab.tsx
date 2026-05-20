@@ -150,14 +150,18 @@ export default function PersonalDatesTab() {
     };
   }, [locale]);
 
-  const formatDate = useMemo(() => (date: Date | null) => {
-    if (!date) return '';
-    try {
-      return new Intl.DateTimeFormat(locale, { day: '2-digit', month: 'short', year: 'numeric' }).format(date);
-    } catch {
-      return date.toDateString();
-    }
-  }, [locale]);
+  // DatePicker may call formatDate with undefined (or null) — accept optional param
+  const formatDate = useMemo(
+    () => (date?: Date | null): string => {
+      if (!date) return "";
+      try {
+        return new Intl.DateTimeFormat(locale, { day: "2-digit", month: "short", year: "numeric" }).format(date);
+      } catch {
+        return date.toDateString();
+      }
+    },
+    [locale]
+  );
   const [dates, setDates] = useState<PersonalDate[]>([]);
   const [loading, setLoading] = useState(true);
   const [newDate, setNewDate] = useState<Date | null>(null);
