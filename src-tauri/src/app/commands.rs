@@ -31,7 +31,6 @@ pub fn sync_autostart_from_system(state: State<'_, AppState>) -> Result<()> {
 
 /// Persist updated settings and apply side-effects (e.g. autostart toggle).
 #[tauri::command]
-#[allow(unused_variables)]
 pub fn save_settings(app: AppHandle, state: State<'_, AppState>, settings: Settings) -> Result<()> {
     // Persist to disk.
     settings.save()?;
