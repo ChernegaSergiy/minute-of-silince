@@ -104,7 +104,14 @@ export default function PersonalDatesTab() {
   if (loading) return <div>{t("loading") ?? "Loading..."}</div>;
 
   return (
-          <Field label={t("personal_dates.title") ?? "Date"} className={styles.row}>
+    <>
+      <Card className={styles.card}>
+        <Text weight="semibold" size={200} block>
+          {t("personal_dates.title") ?? "Personal Dates"}
+        </Text>
+
+        <div className={styles.row}>
+          <Field label={t("personal_dates.title") ?? "Date"}>
             <DatePicker
               placeholder={t("personal_dates.month") ?? "Select a date..."}
               value={newDate}
@@ -112,19 +119,14 @@ export default function PersonalDatesTab() {
               className={styles.row}
             />
           </Field>
-          <Input
-            placeholder={t("personal_dates.year") ?? "YYYY (optional)"}
-            value={newYear}
-            onChange={(_, d) => setNewYear(d.value)}
-            type="number"
-            style={{ width: 140 }}
-          />
+
           <Input
             placeholder={t("personal_dates.label") ?? "Label"}
             value={newLabel}
             onChange={(_, d) => setNewLabel(d.value)}
             style={{ flex: 1 }}
           />
+
           <Button appearance="primary" icon={<Add20Regular />} onClick={addDate}>
             {t("buttons.add") ?? "Add"}
           </Button>
