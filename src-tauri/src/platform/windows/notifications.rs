@@ -13,12 +13,14 @@ pub fn send_toast(title: &str, body: &str) -> Result<(), crate::AppError> {
         return Ok(());
     }
 
-    // Keep the same package AUMID, but let the library build and send the toast.
-    tauri_winrt_notification::Toast::new("BF570F0A.313786C1665D6_t7fhw3d0jsaty!minuteOfSilence")
-        .title(title)
-        .text1(body)
-        .show()
-        .map_err(|e| crate::AppError::Windows(e.to_string()))?;
+    // Keep the same package AUMID, but use the manifest Application Id.
+    tauri_winrt_notification::Toast::new(
+        "BF570F0A.313786C1665D6_t7fhw3d0jsaty!ua.pp.khvylyna.MinuteOfSilence",
+    )
+    .title(title)
+    .text1(body)
+    .show()
+    .map_err(|e| crate::AppError::Windows(e.to_string()))?;
 
     Ok(())
 }
