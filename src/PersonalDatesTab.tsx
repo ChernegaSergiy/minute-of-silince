@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useState, useMemo } from "react";
 import {
   Button,
   Card,
@@ -118,6 +118,35 @@ const useStyles = makeStyles({
 
 export default function PersonalDatesTab() {
   const styles = useStyles();
+  const locale = (typeof navigator !== "undefined" && navigator.language) || "en-US";
+
+  const calendarStrings = useMemo(() => {
+    const months = Array.from({ length: 12 }, (_, i) => new Intl.DateTimeFormat(locale, { month: "long" }).format(new Date(2000, i, 1)));
+    const shortMonths = Array.from({ length: 12 }, (_, i) => new Intl.DateTimeFormat(locale, { month: "short" }).format(new Date(2000, i, 1)));
+    const days = Array.from({ length: 7 }, (_, i) => new Intl.DateTimeFormat(locale, { weekday: "long" }).format(new Date(2020, 5, i + 7)));
+    const shortDays = Array.from({ length: 7 }, (_, i) => new Intl.DateTimeFormat(locale, { weekday: "narrow" }).format(new Date(2020, 5, i + 7)));
+
+    return {
+      months,
+      shortMonths,
+      days,
+      shortDays,
+      goToToday: t("calendar.goToToday"),
+      weekNumberFormatString: t("calendar.weekNumberFormatString"),
+      prevMonthAriaLabel: t("calendar.prevMonthAriaLabel"),
+      nextMonthAriaLabel: t("calendar.nextMonthAriaLabel"),
+      prevYearAriaLabel: t("calendar.prevYearAriaLabel"),
+      nextYearAriaLabel: t("calendar.nextYearAriaLabel"),
+      prevYearRangeAriaLabel: t("calendar.prevYearRangeAriaLabel"),
+      nextYearRangeAriaLabel: t("calendar.nextYearRangeAriaLabel"),
+      closeButtonAriaLabel: t("calendar.closeButtonAriaLabel"),
+      selectedDateFormatString: t("calendar.selectedDateFormatString"),
+      todayDateFormatString: t("calendar.todayDateFormatString"),
+      monthPickerHeaderAriaLabel: t("calendar.monthPickerHeaderAriaLabel"),
+      yearPickerHeaderAriaLabel: t("calendar.yearPickerHeaderAriaLabel"),
+      dayMarkedAriaLabel: t("calendar.dayMarkedAriaLabel"),
+    };
+  }, [locale]);
   const [dates, setDates] = useState<PersonalDate[]>([]);
   const [loading, setLoading] = useState(true);
   const [newDate, setNewDate] = useState<Date | null>(null);
@@ -191,6 +220,7 @@ export default function PersonalDatesTab() {
                 placeholder={t("personal_dates.date")}
                 value={newDate}
                 onSelectDate={(d) => setNewDate(d ?? null)}
+                strings={calendarStrings}
               />
             </Field>
           </div>
@@ -318,6 +348,7 @@ function EditForm({
             <DatePicker
               value={date}
               onSelectDate={(d) => setDate(d ?? null)}
+              strings={calendarStrings}
             />
           </Field>
         </div>

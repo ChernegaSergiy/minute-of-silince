@@ -22,6 +22,22 @@
     "ntp_error": "Error"
   },
   "loading": "Loading...",
+  "calendar": {
+    "goToToday": "Go to today",
+    "weekNumberFormatString": "Week number {0}",
+    "prevMonthAriaLabel": "Previous month",
+    "nextMonthAriaLabel": "Next month",
+    "prevYearAriaLabel": "Previous year",
+    "nextYearAriaLabel": "Next year",
+    "prevYearRangeAriaLabel": "Previous year range",
+    "nextYearRangeAriaLabel": "Next year range",
+    "closeButtonAriaLabel": "Close",
+    "selectedDateFormatString": "Selected date {0}",
+    "todayDateFormatString": "Today's date {0}",
+    "monthPickerHeaderAriaLabel": "{0}, change year",
+    "yearPickerHeaderAriaLabel": "{0}, change month",
+    "dayMarkedAriaLabel": "marked"
+  },
   "controls": {
     "ceremony": {
       "label": "Ceremony at 09:00",

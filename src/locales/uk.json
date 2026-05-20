@@ -22,6 +22,22 @@
     "ntp_error": "Помилка"
   },
   "loading": "Завантаження...",
+  "calendar": {
+    "goToToday": "До сьогодні",
+    "weekNumberFormatString": "Номер тижня {0}",
+    "prevMonthAriaLabel": "Попередній місяць",
+    "nextMonthAriaLabel": "Наступний місяць",
+    "prevYearAriaLabel": "Попередній рік",
+    "nextYearAriaLabel": "Наступний рік",
+    "prevYearRangeAriaLabel": "Попередній діапазон років",
+    "nextYearRangeAriaLabel": "Наступний діапазон років",
+    "closeButtonAriaLabel": "Закрити",
+    "selectedDateFormatString": "Вибрана дата {0}",
+    "todayDateFormatString": "Сьогодні {0}",
+    "monthPickerHeaderAriaLabel": "{0}, змінити рік",
+    "yearPickerHeaderAriaLabel": "{0}, змінити місяць",
+    "dayMarkedAriaLabel": "позначено"
+  },
   "controls": {
     "ceremony": {
       "label": "Церемонія о 09:00",
