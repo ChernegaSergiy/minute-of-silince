@@ -1,3 +1,21 @@
+- version: "0.9.7"
+  date: "2026-05-20"
+  entries:
+    - category: added
+      key: "macos_platform"
+    - category: added
+      key: "tauri_winrt_notification"
+    - category: changed
+      key: "bump_tauri"
+    - category: changed
+      key: "symphonia_0_6_migration"
+    - category: changed
+      key: "dependency_updates_and_refactors"
+    - category: fixed
+      key: "windows_toast_aumid_runtime"
+    - category: fixed
+      key: "windows_toast_reminder_scenario"
+
 - version: "0.9.6"
   date: "2026-05-20"
   entries:

@@ -151,6 +151,15 @@
       "deprecated": "Deprecated",
       "security": "Security"
     },
+    "0.9.7": {
+      "macos_platform": "Initial macOS platform implementation: media controls integration and volume control utilities.",
+      "tauri_winrt_notification": "Add `tauri-winrt-notification` dependency to provide WinRT/MSIX toast notifications for packaged Windows builds.",
+      "bump_tauri": "Bumped Tauri and related crates to 2.11.2 and updated build tooling and formatting.",
+      "symphonia_0_6_migration": "Upgraded `symphonia` to 0.6.0 and migrated `get_duration` to the new API.",
+      "dependency_updates_and_refactors": "Miscellaneous dependency updates and code refactors.",
+      "windows_toast_aumid_runtime": "Align toast AUMID with the package manifest and construct AUMID at runtime so notifications are delivered for MSIX-installed packages.",
+      "windows_toast_reminder_scenario": "Use the Reminder scenario for WinRT toasts so notifications remain visible/persistent."
+    },
     "0.9.6": {
       "main_window_programmatic": "The main window is now created programmatically with explicit startup visibility, preventing the blank flash when the app is launched hidden or from autostart.",
       "browser_context_menu_disabled": "Disabled the default browser context menu in the webview, so right-click no longer shows Share, Print, Reload, Back and similar actions."

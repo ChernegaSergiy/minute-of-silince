@@ -9,6 +9,21 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.9.7] - 2026-05-20
+
+### Added
+- Initial macOS platform implementation: media controls integration and volume control utilities.
+- Add `tauri-winrt-notification` dependency to provide WinRT/MSIX toast notifications for packaged Windows builds.
+
+### Changed
+- Bumped Tauri and related crates to 2.11.2 and updated build tooling and formatting.
+- Upgraded `symphonia` to 0.6.0 and migrated `get_duration` to the new API.
+- Miscellaneous dependency updates and code refactors.
+
+### Fixed
+- Align toast AUMID with the package manifest and construct AUMID at runtime so notifications are delivered for MSIX-installed packages.
+- Use the Reminder scenario for WinRT toasts so notifications remain visible/persistent.
+
 ## [0.9.6] - 2026-05-20
 
 ### Changed
