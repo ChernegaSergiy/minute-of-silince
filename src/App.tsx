@@ -18,6 +18,7 @@ import {
   Play20Regular,
   Save20Regular,
   Settings20Regular,
+  CalendarMonth20Regular,
 } from "@fluentui/react-icons";
 import { getCurrentWindow } from "@tauri-apps/api/window";
 import { getVersion } from "@tauri-apps/api/app";
@@ -37,6 +38,7 @@ import { t } from "./i18n";
 import AboutTab from "./AboutTab";
 import Overlay from "./Overlay";
 import SettingsTab from "./SettingsTab";
+import PersonalDatesTab from "./PersonalDatesTab";
 
 const ChangelogTab = lazy(() => import("./ChangelogTab"));
 
@@ -238,6 +240,9 @@ export default function App() {
                 <NavItem value="settings" icon={<Settings20Regular />}>
                   {t("tabs.settings")}
                 </NavItem>
+                <NavItem value="personal_dates" icon={<CalendarMonth20Regular />}>
+                  {t("tabs.personal_dates")}
+                </NavItem>
                 <NavItem value="about" icon={<Info20Regular />}>
                   {t("tabs.about")}
                 </NavItem>
@@ -270,6 +275,8 @@ export default function App() {
                       onVolumeChange={setVolumeValue}
                       onSyncNtp={handleSyncNtp}
                     />
+                  ) : selectedNav === "personal_dates" ? (
+                    <PersonalDatesTab />
                   ) : (
                     <AboutTab version={version} />
                   )}
