@@ -14,7 +14,9 @@
     "test:watch": "vitest"
   },
   "dependencies": {
-    "@fluentui/react-components": "^9.74.0",
+  "@fluentui/react-calendar-compat": "^0.4.1",
+  "@fluentui/react-components": "^9.73.8",
+  "@fluentui/react-datepicker-compat": "^0.6.31",
     "@fluentui/react-icons": "^2.0.326",
     "@fluentui/web-components": "^2.6.1",
     "@tauri-apps/api": "^2.11.0",
