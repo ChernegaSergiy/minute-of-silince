@@ -11,6 +11,8 @@ import { Delete20Regular, Edit20Regular, Add20Regular } from "@fluentui/react-ic
 import { getSettings, saveSettings } from "./api";
 import type { PersonalDate, Settings } from "./types";
 import { t } from "./i18n";
+import { Field } from "@fluentui/react-components";
+import { DatePicker } from "@fluentui/react-datepicker-compat";
 
 const useStyles = makeStyles({
   card: {
@@ -43,9 +45,7 @@ export default function PersonalDatesTab() {
   const [dates, setDates] = useState<PersonalDate[]>([]);
   const [loading, setLoading] = useState(true);
 
-  const [newMonth, setNewMonth] = useState<string>("");
-  const [newDay, setNewDay] = useState<string>("");
-  const [newYear, setNewYear] = useState<string>("");
+  const [newDate, setNewDate] = useState<Date | null>(null);
   const [newLabel, setNewLabel] = useState<string>("");
 
   const [editingIndex, setEditingIndex] = useState<number | null>(null);
@@ -75,20 +75,18 @@ export default function PersonalDatesTab() {
   }, []);
 
   const addDate = useCallback(async () => {
-    const month = Number(newMonth);
-    const day = Number(newDay);
-    const year = newYear ? Number(newYear) : undefined;
-    if (!month || !day || !newLabel.trim()) return;
+    if (!newDate || !newLabel.trim()) return;
+    const month = newDate.getMonth() + 1;
+    const day = newDate.getDate();
+    const year = newDate.getFullYear();
     const next: PersonalDate[] = [
       ...dates,
-      { month, day, label: newLabel.trim(), year: year ?? null },
+      { month, day, label: newLabel.trim(), year },
     ];
     await persist(next);
-    setNewMonth("");
-    setNewDay("");
-    setNewYear("");
+    setNewDate(null);
     setNewLabel("");
-  }, [dates, newDay, newLabel, newMonth, newYear, persist]);
+  }, [dates, newDate, newLabel, persist]);
 
   const removeDate = useCallback(async (idx: number) => {
     const next = dates.filter((_, i) => i !== idx);
@@ -106,27 +104,14 @@ export default function PersonalDatesTab() {
   if (loading) return <div>{t("loading") ?? "Loading..."}</div>;
 
   return (
-    <>
-      <Card className={styles.card}>
-        <Text weight="semibold" size={200} block>
-          {t("personal_dates.title") ?? "Personal Dates"}
-        </Text>
-
-        <div className={styles.row}>
-          <Input
-            placeholder={t("personal_dates.month") ?? "MM"}
-            value={newMonth}
-            onChange={(_, d) => setNewMonth(d.value)}
-            type="number"
-            style={{ width: 80 }}
-          />
-          <Input
-            placeholder={t("personal_dates.day") ?? "DD"}
-            value={newDay}
-            onChange={(_, d) => setNewDay(d.value)}
-            type="number"
-            style={{ width: 80 }}
-          />
+          <Field label={t("personal_dates.title") ?? "Date"} className={styles.row}>
+            <DatePicker
+              placeholder={t("personal_dates.month") ?? "Select a date..."}
+              value={newDate}
+              onSelectDate={(d) => setNewDate(d ?? null)}
+              className={styles.row}
+            />
+          </Field>
           <Input
             placeholder={t("personal_dates.year") ?? "YYYY (optional)"}
             value={newYear}
