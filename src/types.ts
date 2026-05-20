@@ -47,6 +47,8 @@ export interface Settings {
   useSystemTheme?: boolean;
   /** Manual UI theme when not using system theme: 'light' | 'dark' */
   uiTheme?: "light" | "dark";
+  /** User-defined personal dates (month/day) */
+  personalDates?: PersonalDate[];
 }
 
 // Mirror of Rust `StatusSnapshot` struct
@@ -81,4 +83,12 @@ export const DEFAULT_SETTINGS: Settings = {
   anthemVoice: "default",
   useSystemTheme: true,
   uiTheme: "light",
+  personalDates: [],
 };
+
+export interface PersonalDate {
+  month: number; // 1-12
+  day: number; // 1-31
+  label: string;
+  year?: number | null;
+}
