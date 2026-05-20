@@ -6,7 +6,7 @@ authors = ["Serhii Cherneha"]
 license-file = "../LICENSE"
 repository = "https://github.com/ChernegaSergiy/minute-of-silence"
 edition = "2021"
-rust-version = "1.80"
+rust-version = "1.85"
 
 [lib]
 name = "minute_of_silence_lib"
