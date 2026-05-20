@@ -32,22 +32,32 @@
     <screenshot type="default">
       <caption>Main settings window</caption>
       <caption xml:lang="uk">Головне вікно налаштувань</caption>
-      <image>https://raw.githubusercontent.com/ChernegaSergiy/minute-of-silence/ba0e0275d95c421d874d9abc49fc6654cdd575ac/docs/images/01-settings-main.png</image>
+      <image>https://raw.githubusercontent.com/ChernegaSergiy/minute-of-silence/2a1f00b712545129c05ecb4f540649c2626da00d/docs/images/01-settings-main.png</image>
     </screenshot>
     <screenshot>
       <caption>Audio preset selection</caption>
       <caption xml:lang="uk">Вибір аудіо пресетів</caption>
-      <image>https://raw.githubusercontent.com/ChernegaSergiy/minute-of-silence/ba0e0275d95c421d874d9abc49fc6654cdd575ac/docs/images/03-settings-audio.png</image>
+      <image>https://raw.githubusercontent.com/ChernegaSergiy/minute-of-silence/2a1f00b712545129c05ecb4f540649c2626da00d/docs/images/03-settings-audio.png</image>
+    </screenshot>
+    <screenshot>
+      <caption>Theme collage</caption>
+      <caption xml:lang="uk">Колаж тем</caption>
+      <image>https://raw.githubusercontent.com/ChernegaSergiy/minute-of-silence/2a1f00b712545129c05ecb4f540649c2626da00d/docs/images/00-theme-collage.png</image>
     </screenshot>
     <screenshot>
       <caption>About tab</caption>
       <caption xml:lang="uk">Вікно «Про програму»</caption>
-      <image>https://raw.githubusercontent.com/ChernegaSergiy/minute-of-silence/ba0e0275d95c421d874d9abc49fc6654cdd575ac/docs/images/02-about-tab.png</image>
+      <image>https://raw.githubusercontent.com/ChernegaSergiy/minute-of-silence/2a1f00b712545129c05ecb4f540649c2626da00d/docs/images/02-about-tab.png</image>
+    </screenshot>
+    <screenshot>
+      <caption>Changelog tab</caption>
+      <caption xml:lang="uk">Вкладка «Зміни»</caption>
+      <image>https://raw.githubusercontent.com/ChernegaSergiy/minute-of-silence/2a1f00b712545129c05ecb4f540649c2626da00d/docs/images/05-changelog-tab.png</image>
     </screenshot>
     <screenshot>
       <caption>Active ceremony overlay</caption>
       <caption xml:lang="uk">Активне вікно церемонії</caption>
-      <image>https://raw.githubusercontent.com/ChernegaSergiy/minute-of-silence/ba0e0275d95c421d874d9abc49fc6654cdd575ac/docs/images/04-active-overlay.png</image>
+      <image>https://raw.githubusercontent.com/ChernegaSergiy/minute-of-silence/2a1f00b712545129c05ecb4f540649c2626da00d/docs/images/04-active-overlay.png</image>
     </screenshot>
   </screenshots>
 
