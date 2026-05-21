@@ -40,17 +40,6 @@ const mediaWrapperStyle: React.CSSProperties = {
   height: `${RING_SIZE}px`,
 };
 
-const candleStyle: React.CSSProperties = {
-  position: "absolute",
-  top: "50%",
-  left: "50%",
-  transform: "translate(-50%, -50%)",
-  width: `${CANDLE_SIZE}px`,
-  height: `${CANDLE_SIZE}px`,
-  objectFit: "contain",
-  zIndex: 0,
-};
-
 const canvasStyle: React.CSSProperties = {
   position: "absolute",
   inset: 0,
@@ -136,9 +125,52 @@ function useApngPlayer(
   }, [active, src, durationSeconds, canvasRef]);
 }
 
+function useCandleDrawer(
+  canvasRef: React.RefObject<HTMLCanvasElement | null>,
+  active: boolean,
+) {
+  useEffect(() => {
+    if (!active) return;
+    let rafId: number;
+    let frames: ImageBitmap[] = [];
+    let startTime: number | null = null;
+
+    const run = async () => {
+      try { frames = await decodeApngFrames(candleUrl); }
+      catch (e) { console.error("Candle decode failed:", e); return; }
+      if (frames.length === 0) return;
+
+      const CANDLE_FPS = 24;
+
+      const tick = (now: number) => {
+        if (!startTime) startTime = now;
+        const elapsed   = (now - startTime) / 1000;
+        const candleIdx = Math.floor(elapsed * CANDLE_FPS) % frames.length;
+
+        const canvas = canvasRef.current;
+        if (!canvas) return;
+        const ctx = canvas.getContext("2d")!;
+        ctx.drawImage(frames[candleIdx], 0, 0, canvas.width, canvas.height);
+
+        rafId = requestAnimationFrame(tick);
+      };
+      rafId = requestAnimationFrame(tick);
+    };
+
+    run();
+    return () => {
+      cancelAnimationFrame(rafId);
+      frames.forEach((bm) => bm.close());
+    };
+  }, [active, canvasRef]);
+}
+
 export default function Overlay({ show, durationSeconds = 60 }: OverlayProps) {
-  const canvasRef = useRef<HTMLCanvasElement>(null);
-  useApngPlayer(canvasRef, ringUrl, durationSeconds, show);
+  const candleCanvasRef = useRef<HTMLCanvasElement>(null);
+  const ringCanvasRef   = useRef<HTMLCanvasElement>(null);
+
+  useCandleDrawer(candleCanvasRef, show);
+  useApngPlayer(ringCanvasRef, ringUrl, durationSeconds, show);
 
   if (!show) return null;
 
@@ -146,8 +178,18 @@ export default function Overlay({ show, durationSeconds = 60 }: OverlayProps) {
     <div style={containerStyle}>
       <div style={innerStyle}>
         <div style={mediaWrapperStyle}>
-          <img src={candleUrl} style={candleStyle} alt="" aria-hidden="true" />
-          <canvas ref={canvasRef} style={canvasStyle} aria-hidden="true" />
+          <canvas
+            ref={candleCanvasRef}
+            style={{ ...canvasStyle, zIndex: 0 }}
+            width={CANDLE_SIZE}
+            height={CANDLE_SIZE}
+            aria-hidden="true"
+          />
+          <canvas
+            ref={ringCanvasRef}
+            style={{ ...canvasStyle, zIndex: 1 }}
+            aria-hidden="true"
+          />
         </div>
         <div style={titleStyle}>{t("overlay.title")}</div>
         <div style={subStyle}>{t("overlay.subtitle")}</div>
