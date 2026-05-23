@@ -3,6 +3,7 @@ use crate::core::settings::AudioPreset;
 use crate::platform::Platform;
 use crate::state::AppState;
 use rust_i18n::t;
+use serde_json::json;
 use std::sync::atomic::{AtomicU32, Ordering};
 use std::sync::{Arc, Mutex};
 use tauri::{AppHandle, Emitter, Listener, Manager, WebviewWindowBuilder};
@@ -106,8 +107,21 @@ impl CeremonyManager {
             });
         }
 
-        // 3. Notify UI
-        let _ = self.app.emit("ceremony-start", ());
+        // 3. Notify UI with estimated duration (ms)
+        let duration_ms: u64 =
+            match self
+                .audio
+                .estimate_preset_duration(preset, announcement_voice, anthem_voice)
+            {
+                Ok(d) => d.as_millis() as u64,
+                Err(e) => {
+                    log::warn!("Failed to estimate ceremony duration: {}", e);
+                    60_000u64
+                }
+            };
+
+        let payload = json!({ "duration_ms": duration_ms });
+        let _ = self.app.emit("ceremony-start", payload);
 
         // 3. Pause players
         if should_pause_players {
