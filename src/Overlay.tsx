@@ -110,7 +110,7 @@ function useApngPlayer(
         const progress = Math.min((now - wallStart) / 1000 / durationSeconds, 1);
         const frameCount = frames.length;
         const frameIdx = frameCount > 1
-          ? Math.min(Math.floor(progress * (frameCount - 1)), frameCount - 1)
+          ? Math.min(Math.floor(progress * frameCount), frameCount - 1)
           : 0;
         ctx.clearRect(0, 0, width, height);
         ctx.drawImage(frames[frameIdx], 0, 0);
