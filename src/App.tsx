@@ -95,6 +95,7 @@ export default function App() {
   const [status, setStatus] = useState<StatusSnapshot>(DEFAULT_STATUS);
   const [version, setVersion] = useState("...");
   const [showOverlay, setShowOverlay] = useState(false);
+  const [ceremonyDurationMs, setCeremonyDurationMs] = useState<number | undefined>(undefined);
   const [volumeValue, setVolumeValue] = useState(80);
   const [syncing, setSyncing] = useState(false);
   const [hydrated, setHydrated] = useState(false);
@@ -136,7 +137,7 @@ export default function App() {
     const unlisteners: (() => void)[] = [];
     (async () => {
       unlisteners.push(
-        await onCeremonyStart(refresh),
+        await onCeremonyStart((_p) => refresh()),
         await onCeremonyEnd(refresh),
         await listen("ntp-synced", refresh),
         await listen("status-updated", refresh)
@@ -158,9 +159,10 @@ export default function App() {
 
     (async () => {
       unlisteners.push(
-        await onCeremonyStart(async () => {
+        await onCeremonyStart(async (payload) => {
           if (cancelled) return;
           setShowOverlay(true);
+          setCeremonyDurationMs(payload?.duration_ms);
           try {
             await bringWindowToFront();
           } catch {
@@ -168,7 +170,10 @@ export default function App() {
           }
         }),
         await onCeremonyEnd(() => {
-          if (!cancelled) setShowOverlay(false);
+          if (!cancelled) {
+            setShowOverlay(false);
+            setCeremonyDurationMs(undefined);
+          }
         })
       );
 
@@ -296,7 +301,7 @@ export default function App() {
         </div>
       </FluentProvider>
 
-      <Overlay show={showOverlay} />
+      <Overlay show={showOverlay} durationSeconds={ceremonyDurationMs ? ceremonyDurationMs / 1000 : undefined} />
     </>
   );
 }
