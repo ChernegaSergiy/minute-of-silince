@@ -256,6 +256,32 @@ impl AudioEngine {
         out
     }
 
+    /// Estimate total duration of a preset by summing file durations and explicit pauses.
+    pub fn estimate_preset_duration(
+        &self,
+        preset: AudioPreset,
+        voice: AnnouncementVoice,
+        anthem_voice: AnthemVoice,
+    ) -> Result<Duration> {
+        let mut total = Duration::from_secs(0);
+        let steps = self.preset_steps(preset, voice, anthem_voice);
+        for step in steps {
+            match step {
+                Step::File(f) | Step::Anthem(f) => {
+                    let dur = self.get_duration(&f)?;
+                    total = total.checked_add(dur).unwrap_or(total);
+                }
+                Step::Pause(d) => {
+                    total = total.checked_add(d).unwrap_or(total);
+                }
+                Step::Wait => {
+                    // no-op: waits are covered by file durations
+                }
+            }
+        }
+        Ok(total)
+    }
+
     fn get_announcement_filename(&self, voice: AnnouncementVoice) -> String {
         match voice {
             AnnouncementVoice::BohdanHdal => "announcement.ogg".to_string(),
