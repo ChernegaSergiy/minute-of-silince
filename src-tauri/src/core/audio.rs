@@ -20,6 +20,14 @@ pub struct AudioEngine {
     stop_counter: AtomicU64,
 }
 
+/// A single step in a preset playback sequence.
+enum Step {
+    File(String),
+    Pause(Duration),
+    Wait,           // wait for the current player to drain
+    Anthem(String), // like File but emits anthem-start/anthem-end events
+}
+
 impl AudioEngine {
     pub fn new(app_handle: AppHandle) -> Self {
         Self {
@@ -113,263 +121,139 @@ impl AudioEngine {
         let volume_float = volume as f32 / 100.0;
         player.set_volume(volume_float);
 
-        match (preset, voice) {
-            (AudioPreset::VoiceMetronome, _) => {
-                if self.is_stopped(start_counter) {
-                    return Ok(());
-                }
-                let announcement_file = self.get_announcement_filename(voice);
-                let announcement = self.get_path(&announcement_file)?;
-                let metronome = self.get_path("metronome.ogg")?;
+        // Build the playback step sequence once and execute it.
+        let steps = self.preset_steps(preset, voice, anthem_voice);
 
-                if let Ok(source) = Decoder::new(BufReader::new(File::open(&announcement)?)) {
-                    player.append(source);
-                }
-
-                if self.wait_player_interruptible(&player, start_counter) {
-                    return Ok(());
-                }
-                if self.sleep_interruptible(Duration::from_secs(1), start_counter) {
-                    return Ok(());
-                }
-
-                if let Ok(source) = Decoder::new(BufReader::new(File::open(&metronome)?)) {
-                    player.append(source);
-                }
-            }
-            (AudioPreset::MetronomeOnly, _) => {
-                if self.is_stopped(start_counter) {
-                    return Ok(());
-                }
-                let metronome = self.get_path("metronome.ogg")?;
-                if let Ok(source) = Decoder::new(BufReader::new(File::open(&metronome)?)) {
-                    player.append(source);
-                }
-            }
-            (AudioPreset::VoiceSilenceBell, _) => {
-                if self.is_stopped(start_counter) {
-                    return Ok(());
-                }
-                let announcement_file = self.get_announcement_filename(voice);
-                let announcement = self.get_path(&announcement_file)?;
-                let bell = self.get_path("bell.ogg")?;
-
-                if let Ok(source) = Decoder::new(BufReader::new(File::open(&announcement)?)) {
-                    player.append(source);
-                }
-
-                if self.wait_player_interruptible(&player, start_counter) {
-                    return Ok(());
-                }
-                if self.sleep_interruptible(Duration::from_secs(60), start_counter) {
-                    return Ok(());
-                }
-
-                if let Ok(source) = Decoder::new(BufReader::new(File::open(&bell)?)) {
-                    player.append(source);
-                }
-            }
-            (AudioPreset::VoiceSilence, _) => {
-                if self.is_stopped(start_counter) {
-                    return Ok(());
-                }
-                let announcement_file = self.get_announcement_filename(voice);
-                let announcement = self.get_path(&announcement_file)?;
-                if let Ok(source) = Decoder::new(BufReader::new(File::open(&announcement)?)) {
-                    player.append(source);
-                }
-                if self.wait_player_interruptible(&player, start_counter) {
-                    return Ok(());
-                }
-                if self.sleep_interruptible(Duration::from_secs(60), start_counter) {
-                    return Ok(());
-                }
+        for step in steps {
+            if self.is_stopped(start_counter) {
                 return Ok(());
             }
-            (AudioPreset::VoiceMetronomeAnthem, _) => {
-                if self.is_stopped(start_counter) {
-                    return Ok(());
-                }
-                let announcement_file = self.get_announcement_filename(voice);
-                let announcement = self.get_path(&announcement_file)?;
-                let metronome = self.get_path("metronome.ogg")?;
-                let anthem_filename = self.get_anthem_filename(anthem_voice);
-                let anthem = self.get_path(&anthem_filename)?;
 
-                if let Ok(source) = Decoder::new(BufReader::new(File::open(&announcement)?)) {
-                    player.append(source);
-                }
-
-                if self.wait_player_interruptible(&player, start_counter) {
-                    return Ok(());
-                }
-                if self.sleep_interruptible(Duration::from_secs(1), start_counter) {
-                    return Ok(());
-                }
-
-                if let Ok(source) = Decoder::new(BufReader::new(File::open(&metronome)?)) {
-                    player.append(source);
-                }
-
-                if self.wait_player_interruptible(&player, start_counter) {
-                    return Ok(());
-                }
-
-                let _ = self.app_handle.emit("anthem-start", ());
-                if let Ok(source) = Decoder::new(BufReader::new(File::open(&anthem)?)) {
-                    player.append(source);
-                }
-                if self.wait_player_interruptible(&player, start_counter) {
-                    let _ = self.app_handle.emit("anthem-end", ());
-                    return Ok(());
-                }
-                let _ = self.app_handle.emit("anthem-end", ());
-            }
-            (AudioPreset::VoiceMetronomeEnding, voice) => {
-                if self.is_stopped(start_counter) {
-                    return Ok(());
-                }
-                let announcement_file = self.get_announcement_filename(voice);
-                let announcement = self.get_path(&announcement_file)?;
-                let metronome = self.get_path("metronome.ogg")?;
-
-                if let AnnouncementVoice::AirAlert = voice {
-                    if let Ok(source) = Decoder::new(BufReader::new(File::open(&announcement)?)) {
+            match step {
+                Step::File(fname) => {
+                    let path = self.get_path(&fname)?;
+                    if let Ok(source) = Decoder::new(BufReader::new(File::open(&path)?)) {
                         player.append(source);
                     }
+                }
+                Step::Pause(dur) => {
+                    if self.sleep_interruptible(dur, start_counter) {
+                        return Ok(());
+                    }
+                }
+                Step::Wait => {
                     if self.wait_player_interruptible(&player, start_counter) {
                         return Ok(());
                     }
-                    if self.sleep_interruptible(Duration::from_secs(1), start_counter) {
-                        return Ok(());
-                    }
-                    if let Ok(source) = Decoder::new(BufReader::new(File::open(&metronome)?)) {
+                }
+                Step::Anthem(fname) => {
+                    let anthem_path = self.get_path(&fname)?;
+                    let _ = self.app_handle.emit("anthem-start", ());
+                    if let Ok(source) = Decoder::new(BufReader::new(File::open(&anthem_path)?)) {
                         player.append(source);
                     }
-                    self.wait_player_interruptible(&player, start_counter);
-                    return Ok(());
-                }
-
-                let ending_file = match voice {
-                    AnnouncementVoice::BohdanHdal => "ending.ogg",
-                    AnnouncementVoice::SoniaSotnyk => "ending_sotnyk.ogg",
-                    AnnouncementVoice::DaniaKhomutovskyi => "ending_khomutovskyi.ogg",
-                    AnnouncementVoice::RadioBg => "ending_radio_bg.ogg",
-                    AnnouncementVoice::AirAlert => unreachable!(),
-                };
-                let ending = self.get_path(ending_file)?;
-
-                if let Ok(source) = Decoder::new(BufReader::new(File::open(&announcement)?)) {
-                    player.append(source);
-                }
-
-                if self.wait_player_interruptible(&player, start_counter) {
-                    return Ok(());
-                }
-                if self.sleep_interruptible(Duration::from_secs(1), start_counter) {
-                    return Ok(());
-                }
-
-                if let Ok(source) = Decoder::new(BufReader::new(File::open(&metronome)?)) {
-                    player.append(source);
-                }
-
-                if self.sleep_interruptible(Duration::from_secs(30), start_counter) {
-                    return Ok(());
-                }
-
-                if let Ok(source) = Decoder::new(BufReader::new(File::open(&ending)?)) {
-                    player.append(source);
-                }
-            }
-            (AudioPreset::MetronomeAnthem, _) => {
-                if self.is_stopped(start_counter) {
-                    return Ok(());
-                }
-                let metronome = self.get_path("metronome.ogg")?;
-                let anthem_filename = self.get_anthem_filename(anthem_voice);
-                let anthem = self.get_path(&anthem_filename)?;
-
-                if let Ok(source) = Decoder::new(BufReader::new(File::open(&metronome)?)) {
-                    player.append(source);
-                }
-
-                if self.wait_player_interruptible(&player, start_counter) {
-                    return Ok(());
-                }
-
-                let _ = self.app_handle.emit("anthem-start", ());
-                if let Ok(source) = Decoder::new(BufReader::new(File::open(&anthem)?)) {
-                    player.append(source);
-                }
-                if self.wait_player_interruptible(&player, start_counter) {
+                    if self.wait_player_interruptible(&player, start_counter) {
+                        let _ = self.app_handle.emit("anthem-end", ());
+                        return Ok(());
+                    }
                     let _ = self.app_handle.emit("anthem-end", ());
-                    return Ok(());
-                }
-                let _ = self.app_handle.emit("anthem-end", ());
-            }
-            (AudioPreset::BellSilenceBell, _) => {
-                if self.is_stopped(start_counter) {
-                    return Ok(());
-                }
-                let bell = self.get_path("bell.ogg")?;
-
-                if let Ok(source) = Decoder::new(BufReader::new(File::open(&bell)?)) {
-                    player.append(source);
-                }
-
-                if self.wait_player_interruptible(&player, start_counter) {
-                    return Ok(());
-                }
-                if self.sleep_interruptible(Duration::from_secs(60), start_counter) {
-                    return Ok(());
-                }
-
-                if let Ok(source) = Decoder::new(BufReader::new(File::open(&bell)?)) {
-                    player.append(source);
-                }
-            }
-            (AudioPreset::BellMetronomeBell, _) => {
-                if self.is_stopped(start_counter) {
-                    return Ok(());
-                }
-                let bell = self.get_path("bell.ogg")?;
-                let metronome = self.get_path("metronome.ogg")?;
-
-                if let Ok(source) = Decoder::new(BufReader::new(File::open(&bell)?)) {
-                    player.append(source);
-                }
-
-                if self.wait_player_interruptible(&player, start_counter) {
-                    return Ok(());
-                }
-                if self.sleep_interruptible(Duration::from_secs(1), start_counter) {
-                    return Ok(());
-                }
-
-                if let Ok(source) = Decoder::new(BufReader::new(File::open(&metronome)?)) {
-                    player.append(source);
-                }
-
-                if self.sleep_interruptible(Duration::from_secs(58), start_counter) {
-                    return Ok(());
-                }
-
-                let bell2 = self.get_path("bell.ogg")?;
-                if let Ok(source) = Decoder::new(BufReader::new(File::open(&bell2)?)) {
-                    player.append(source);
-                }
-            }
-            (AudioPreset::Silence, _) => {
-                // No audio, just wait for 60 seconds
-                if self.sleep_interruptible(Duration::from_secs(60), start_counter) {
-                    return Ok(());
                 }
             }
         }
 
         self.wait_player_interruptible(&player, start_counter);
         Ok(())
+    }
+
+    /// Return a list of ordered steps for the given preset.
+    fn preset_steps(
+        &self,
+        preset: AudioPreset,
+        voice: AnnouncementVoice,
+        anthem_voice: AnthemVoice,
+    ) -> Vec<Step> {
+        use AudioPreset::*;
+
+        let mut out = Vec::new();
+
+        match preset {
+            VoiceMetronome => {
+                out.push(Step::File(self.get_announcement_filename(voice)));
+                out.push(Step::Wait);
+                out.push(Step::Pause(Duration::from_secs(1)));
+                out.push(Step::File("metronome.ogg".to_string()));
+            }
+            MetronomeOnly => {
+                out.push(Step::File("metronome.ogg".to_string()));
+            }
+            VoiceSilenceBell => {
+                out.push(Step::File(self.get_announcement_filename(voice)));
+                out.push(Step::Wait);
+                out.push(Step::Pause(Duration::from_secs(60)));
+                out.push(Step::File("bell.ogg".to_string()));
+            }
+            VoiceSilence => {
+                out.push(Step::File(self.get_announcement_filename(voice)));
+                out.push(Step::Wait);
+                out.push(Step::Pause(Duration::from_secs(60)));
+            }
+            VoiceMetronomeAnthem => {
+                out.push(Step::File(self.get_announcement_filename(voice)));
+                out.push(Step::Wait);
+                out.push(Step::Pause(Duration::from_secs(1)));
+                out.push(Step::File("metronome.ogg".to_string()));
+                out.push(Step::Wait);
+                out.push(Step::Anthem(self.get_anthem_filename(anthem_voice)));
+            }
+            VoiceMetronomeEnding => {
+                if let AnnouncementVoice::AirAlert = voice {
+                    out.push(Step::File(self.get_announcement_filename(voice)));
+                    out.push(Step::Wait);
+                    out.push(Step::Pause(Duration::from_secs(1)));
+                    out.push(Step::File("metronome.ogg".to_string()));
+                    out.push(Step::Wait);
+                } else {
+                    out.push(Step::File(self.get_announcement_filename(voice)));
+                    out.push(Step::Wait);
+                    out.push(Step::Pause(Duration::from_secs(1)));
+                    out.push(Step::File("metronome.ogg".to_string()));
+                    out.push(Step::Pause(Duration::from_secs(30)));
+                    out.push(Step::File(match voice {
+                        AnnouncementVoice::BohdanHdal => "ending.ogg".to_string(),
+                        AnnouncementVoice::SoniaSotnyk => "ending_sotnyk.ogg".to_string(),
+                        AnnouncementVoice::DaniaKhomutovskyi => {
+                            "ending_khomutovskyi.ogg".to_string()
+                        }
+                        AnnouncementVoice::RadioBg => "ending_radio_bg.ogg".to_string(),
+                        AnnouncementVoice::AirAlert => unreachable!(),
+                    }));
+                }
+            }
+            MetronomeAnthem => {
+                out.push(Step::File("metronome.ogg".to_string()));
+                out.push(Step::Wait);
+                out.push(Step::Anthem(self.get_anthem_filename(anthem_voice)));
+            }
+            BellSilenceBell => {
+                out.push(Step::File("bell.ogg".to_string()));
+                out.push(Step::Wait);
+                out.push(Step::Pause(Duration::from_secs(60)));
+                out.push(Step::File("bell.ogg".to_string()));
+            }
+            BellMetronomeBell => {
+                out.push(Step::File("bell.ogg".to_string()));
+                out.push(Step::Wait);
+                out.push(Step::Pause(Duration::from_secs(1)));
+                out.push(Step::File("metronome.ogg".to_string()));
+                out.push(Step::Pause(Duration::from_secs(58)));
+                out.push(Step::File("bell.ogg".to_string()));
+            }
+            Silence => {
+                out.push(Step::Pause(Duration::from_secs(60)));
+            }
+        }
+
+        out
     }
 
     fn get_announcement_filename(&self, voice: AnnouncementVoice) -> String {
