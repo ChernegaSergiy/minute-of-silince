@@ -93,7 +93,7 @@ function useApngPlayer(
     if (!active) return;
     let rafId: number;
     let frames: ImageBitmap[] = [];
-    let startTime: number | null = null;
+    const wallStart = performance.now();
 
     const run = async () => {
       try { frames = await decodeApngFrames(src); }
@@ -107,9 +107,11 @@ function useApngPlayer(
       canvas.height = height;
 
       const tick = (now: number) => {
-        if (!startTime) startTime = now;
-        const progress = Math.min((now - startTime) / 1000 / durationSeconds, 1);
-        const frameIdx = Math.min(Math.floor(progress * frames.length), frames.length - 1);
+        const progress = Math.min((now - wallStart) / 1000 / durationSeconds, 1);
+        const frameCount = frames.length;
+        const frameIdx = frameCount > 1
+          ? Math.min(Math.floor(progress * (frameCount - 1)), frameCount - 1)
+          : 0;
         ctx.clearRect(0, 0, width, height);
         ctx.drawImage(frames[frameIdx], 0, 0);
         if (progress < 1) rafId = requestAnimationFrame(tick);
