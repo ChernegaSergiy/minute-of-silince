@@ -29,6 +29,7 @@ pub fn send_toast(title: &str, body: &str) -> Result<(), crate::AppError> {
     );
 
     tauri_winrt_notification::Toast::new(&aumid)
+        .scenario(tauri_winrt_notification::Scenario::Reminder)
         .title(title)
         .text1(body)
         .show()
