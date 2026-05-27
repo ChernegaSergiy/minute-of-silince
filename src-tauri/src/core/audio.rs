@@ -265,7 +265,6 @@ impl AudioEngine {
     ) -> Result<Duration> {
         let mut total = Duration::from_secs(0);
         let steps = self.preset_steps(preset, voice, anthem_voice);
-        let mut prev_step: Option<&Step> = None;
         for step in &steps {
             match step {
                 Step::File(f) | Step::Anthem(f) => {
@@ -273,20 +272,12 @@ impl AudioEngine {
                     total = total.checked_add(dur).unwrap_or(total);
                 }
                 Step::Pause(d) => {
-                    let count_pause = match prev_step {
-                        None => true, // always count first step
-                        Some(Step::Wait) => true,
-                        _ => false,
-                    };
-                    if count_pause {
-                        total = total.checked_add(*d).unwrap_or(total);
-                    }
+                    total = total.checked_add(*d).unwrap_or(total);
                 }
                 Step::Wait => {
                     // no-op: waits are covered by file durations
                 }
             }
-            prev_step = Some(step);
         }
         Ok(total)
     }
