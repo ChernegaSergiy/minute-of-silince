@@ -1,3 +1,14 @@
+- version: "0.10.0"
+  date: "2026-05-28"
+  entries:
+    - category: added
+      key: "candle_overlay"
+    - category: added
+      key: "apng_progress_ring"
+    - category: added
+      key: "ceremony_duration_payload"
+    - category: added
+      key: "estimate_preset_duration"
 - version: "0.9.7"
   date: "2026-05-20"
   entries:

@@ -9,6 +9,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.10.0] - 2026-05-28
+
+### Added
+- Animated candle image in the full-screen overlay, replacing the pulsing red cross.
+- APNG progress ring synced with ceremony duration.
+- `ceremony-start` now carries `duration_ms` so the frontend can sync the progress ring to actual ceremony length.
+- Added `estimate_preset_duration` method for computing ceremony duration.
+
 ## [0.9.7] - 2026-05-20
 
 ### Added

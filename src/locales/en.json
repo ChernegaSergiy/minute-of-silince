@@ -151,6 +151,12 @@
       "deprecated": "Deprecated",
       "security": "Security"
     },
+    "0.10.0": {
+      "candle_overlay": "Animated candle image in the full-screen overlay, replacing the pulsing red cross.",
+      "apng_progress_ring": "APNG progress ring synced with ceremony duration.",
+      "ceremony_duration_payload": "`ceremony-start` now carries `duration_ms` so the frontend can sync the progress ring to actual ceremony length.",
+      "estimate_preset_duration": "Added `estimate_preset_duration` method for computing ceremony duration."
+    },
     "0.9.7": {
       "macos_platform": "Initial macOS platform implementation: media controls integration and volume control utilities.",
       "tauri_winrt_notification": "Add `tauri-winrt-notification` dependency to provide WinRT/MSIX toast notifications for packaged Windows builds.",
