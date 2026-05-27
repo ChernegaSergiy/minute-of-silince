@@ -206,27 +206,11 @@ impl AudioEngine {
                 out.push(Step::Anthem(self.get_anthem_filename(anthem_voice)));
             }
             VoiceMetronomeEnding => {
-                if let AnnouncementVoice::AirAlert = voice {
-                    out.push(Step::File(self.get_announcement_filename(voice)));
-                    out.push(Step::Wait);
-                    out.push(Step::Pause(Duration::from_secs(1)));
-                    out.push(Step::File("metronome.ogg".to_string()));
-                    out.push(Step::Wait);
-                } else {
-                    out.push(Step::File(self.get_announcement_filename(voice)));
-                    out.push(Step::Wait);
-                    out.push(Step::Pause(Duration::from_secs(1)));
-                    out.push(Step::File("metronome.ogg".to_string()));
-                    out.push(Step::File(match voice {
-                        AnnouncementVoice::BohdanHdal => "ending.ogg".to_string(),
-                        AnnouncementVoice::SoniaSotnyk => "ending_sotnyk.ogg".to_string(),
-                        AnnouncementVoice::DaniaKhomutovskyi => {
-                            "ending_khomutovskyi.ogg".to_string()
-                        }
-                        AnnouncementVoice::RadioBg => "ending_radio_bg.ogg".to_string(),
-                        AnnouncementVoice::AirAlert => unreachable!(),
-                    }));
-                }
+                out.push(Step::File(self.get_announcement_filename(voice)));
+                out.push(Step::Wait);
+                out.push(Step::Pause(Duration::from_secs(1)));
+                out.push(Step::File("metronome.ogg".to_string()));
+                out.push(Step::File(self.get_ending_filename(voice)));
             }
             MetronomeAnthem => {
                 out.push(Step::File("metronome.ogg".to_string()));
