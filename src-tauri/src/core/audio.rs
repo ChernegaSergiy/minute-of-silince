@@ -282,6 +282,16 @@ impl AudioEngine {
         }
     }
 
+    fn get_ending_filename(&self, voice: AnnouncementVoice) -> Option<String> {
+        match voice {
+            AnnouncementVoice::BohdanHdal => Some("ending.ogg".to_string()),
+            AnnouncementVoice::SoniaSotnyk => Some("ending_sotnyk.ogg".to_string()),
+            AnnouncementVoice::DaniaKhomutovskyi => Some("ending_khomutovskyi.ogg".to_string()),
+            AnnouncementVoice::RadioBg => Some("ending_radio_bg.ogg".to_string()),
+            AnnouncementVoice::AirAlert => None,
+        }
+    }
+
     /// Resolves the absolute path to an audio resource using Tauri's path resolver.
     /// Works on all platforms: EXE, MSI, MSIX, AppImage, Snap.
     fn get_path(&self, filename: &str) -> Result<PathBuf> {
