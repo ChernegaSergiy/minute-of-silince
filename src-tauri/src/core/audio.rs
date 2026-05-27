@@ -217,7 +217,6 @@ impl AudioEngine {
                     out.push(Step::Wait);
                     out.push(Step::Pause(Duration::from_secs(1)));
                     out.push(Step::File("metronome.ogg".to_string()));
-                    out.push(Step::Pause(Duration::from_secs(30)));
                     out.push(Step::File(match voice {
                         AnnouncementVoice::BohdanHdal => "ending.ogg".to_string(),
                         AnnouncementVoice::SoniaSotnyk => "ending_sotnyk.ogg".to_string(),
