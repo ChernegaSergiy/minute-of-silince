@@ -67,12 +67,12 @@ const subStyle: React.CSSProperties = {
 async function decodeApngFrames(src: string): Promise<ImageBitmap[]> {
   const resp = await fetch(src);
   const blob = await resp.blob();
-  const decoder: any = new (globalThis as any).ImageDecoder({ data: blob.stream(), type: "image/png" });
+  const decoder = new ImageDecoder({ data: blob.stream(), type: "image/png" });
   await decoder.tracks.ready;
   const count = decoder.tracks.selectedTrack?.frameCount ?? 1;
   const frames: ImageBitmap[] = [];
   for (let i = 0; i < count; i++) {
-    const result: any = await decoder.decode({ frameIndex: i });
+    const result = await decoder.decode({ frameIndex: i });
     frames.push(await createImageBitmap(result.image));
     result.image.close();
   }
