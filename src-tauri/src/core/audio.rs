@@ -210,7 +210,11 @@ impl AudioEngine {
                 out.push(Step::Wait);
                 out.push(Step::Pause(Duration::from_secs(1)));
                 out.push(Step::File("metronome.ogg".to_string()));
-                out.push(Step::File(self.get_ending_filename(voice)));
+
+                // Append the ending file only if one exists for the selected voice
+                if let Some(ending_file) = self.get_ending_filename(voice) {
+                    out.push(Step::File(ending_file));
+                }
             }
             MetronomeAnthem => {
                 out.push(Step::File("metronome.ogg".to_string()));
