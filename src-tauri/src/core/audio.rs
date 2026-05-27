@@ -244,7 +244,6 @@ impl AudioEngine {
                 out.push(Step::Wait);
                 out.push(Step::Pause(Duration::from_secs(1)));
                 out.push(Step::File("metronome.ogg".to_string()));
-                out.push(Step::Pause(Duration::from_secs(58)));
                 out.push(Step::File("bell.ogg".to_string()));
             }
             Silence => {
