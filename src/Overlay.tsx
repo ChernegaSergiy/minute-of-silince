@@ -97,7 +97,10 @@ function useApngPlayer(
       catch (e) { console.error("APNG decode failed:", e); return; }
 
       const canvas = canvasRef.current;
-      if (!canvas || frames.length === 0) return;
+      if (!canvas || frames.length === 0) {
+        frames.forEach((bm) => bm.close());
+        return;
+      }
       const ctx = canvas.getContext("2d")!;
       const { width, height } = frames[0];
       canvas.width  = width;
