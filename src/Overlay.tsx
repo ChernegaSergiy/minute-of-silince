@@ -127,8 +127,6 @@ function useApngPlayer(
   }, [active, src, durationSeconds, canvasRef]);
 }
 
-
-
 export default function Overlay({ show, durationSeconds = 60 }: OverlayProps) {
   const ringCanvasRef   = useRef<HTMLCanvasElement>(null);
 
