@@ -1,6 +1,7 @@
 import { useEffect, useRef } from "react";
 import { t } from "./i18n";
 import parseAPNG from "apng-js";
+import Player from "apng-js/types/library/player";
 
 interface OverlayProps {
   show: boolean;
@@ -73,7 +74,7 @@ function useApngPlayer(
 ) {
   useEffect(() => {
     if (!active) return;
-    let player: any = null;
+    let player: Player | null = null;
     let isCancelled = false;
 
     const run = async () => {
@@ -83,9 +84,7 @@ function useApngPlayer(
         
         if (isCancelled) return;
 
-        // Safely resolve parseAPNG function for ES / CommonJS modules interoperability
-        const parser = typeof parseAPNG === "function" ? parseAPNG : (parseAPNG as any).default;
-        const apng = parser(buffer);
+        const apng = parseAPNG(buffer);
         if (apng instanceof Error) {
           throw apng;
         }
