@@ -151,6 +151,9 @@
       "deprecated": "Deprecated",
       "security": "Security"
     },
+    "0.10.1": {
+      "apng_webkitgtk_compat": "Fix the progress ring overlay on Linux (WebKitGTK) by replacing the unsupported ImageDecoder API with apng-js."
+    },
     "0.10.0": {
       "candle_overlay": "Animated candle image in the full-screen overlay, replacing the pulsing red cross.",
       "apng_progress_ring": "APNG progress ring synced with ceremony duration.",

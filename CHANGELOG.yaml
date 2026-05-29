@@ -1,3 +1,9 @@
+- version: "0.10.1"
+  date: "2026-05-29"
+  entries:
+    - category: fixed
+      key: "apng_webkitgtk_compat"
+
 - version: "0.10.0"
   date: "2026-05-28"
   entries:
@@ -9,6 +15,7 @@
       key: "ceremony_duration_payload"
     - category: added
       key: "estimate_preset_duration"
+
 - version: "0.9.7"
   date: "2026-05-20"
   entries:

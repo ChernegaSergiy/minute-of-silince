@@ -9,6 +9,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.10.1] - 2026-05-29
+
+### Fixed
+- Fix the progress ring overlay on Linux (WebKitGTK) by replacing the unsupported ImageDecoder API with apng-js.
+
 ## [0.10.0] - 2026-05-28
 
 ### Added
