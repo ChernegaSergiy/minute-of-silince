@@ -93,9 +93,8 @@ pub struct PersonalDate {
     pub day: u8,
     /// Label to display (e.g. "In memory of ...")
     pub label: String,
-    /// Optional year for one-off dates. If None, the date repeats every year.
-    #[serde(default)]
-    pub year: Option<i32>,
+    /// Year of the event.
+    pub year: i32,
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Serialize, Deserialize)]

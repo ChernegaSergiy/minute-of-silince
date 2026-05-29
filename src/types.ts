@@ -90,5 +90,5 @@ export interface PersonalDate {
   month: number; // 1-12
   day: number; // 1-31
   label: string;
-  year?: number | null;
+  year: number;
 }

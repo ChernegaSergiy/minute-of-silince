@@ -337,8 +337,7 @@ function EditForm({
 }) {
   const styles = useStyles();
   const [date, setDate] = useState<Date | null>(() => {
-    const year = initial.year ?? new Date().getFullYear();
-    return new Date(year, initial.month - 1, initial.day);
+    return new Date(initial.year, initial.month - 1, initial.day);
   });
   const [label, setLabel] = useState(initial.label);
 
