@@ -168,10 +168,15 @@ export default function PersonalDatesTab({ settings, onSettingsChange }: Persona
     },
     [locale]
   );
-  const dates = settings.personalDates ?? [];
+  const dates = useMemo(() => {
+    return (settings.personalDates ?? []).map((d) => ({
+      ...d,
+      id: d.id || Math.random().toString(36).substring(2),
+    }));
+  }, [settings.personalDates]);
   const [newDate, setNewDate] = useState<Date | null>(null);
   const [newLabel, setNewLabel] = useState("");
-  const [editingIndex, setEditingIndex] = useState<number | null>(null);
+  const [editingId, setEditingId] = useState<string | null>(null);
 
   const persist = useCallback(async (next: PersonalDate[]) => {
     try {
@@ -188,6 +193,7 @@ export default function PersonalDatesTab({ settings, onSettingsChange }: Persona
     await persist([
       ...dates,
       {
+        id: Math.random().toString(36).substring(2),
         month: newDate.getMonth() + 1,
         day: newDate.getDate(),
         year: newDate.getFullYear(),
@@ -199,15 +205,15 @@ export default function PersonalDatesTab({ settings, onSettingsChange }: Persona
   }, [dates, newDate, newLabel, persist]);
 
   const removeDate = useCallback(
-    async (idx: number) => {
-      await persist(dates.filter((_, i) => i !== idx));
+    async (id: string) => {
+      await persist(dates.filter((d) => d.id !== id));
     },
     [dates, persist]
   );
 
-  const saveEdit = async (idx: number, updated: PersonalDate) => {
-    await persist(dates.map((d, i) => (i === idx ? updated : d)));
-    setEditingIndex(null);
+  const saveEdit = async (id: string, updated: PersonalDate) => {
+    await persist(dates.map((d) => (d.id === id ? updated : d)));
+    setEditingId(null);
   };
 
   return (
@@ -266,22 +272,23 @@ export default function PersonalDatesTab({ settings, onSettingsChange }: Persona
           </Text>
         )}
 
-        {dates.map((d, idx) =>
-          editingIndex === idx ? (
+        {dates.map((d) => {
+          const id = d.id!;
+          return editingId === id ? (
             <div
-              key={idx}
+              key={id}
               className={`${styles.listItem} ${styles.listItemEditing}`}
             >
               <EditForm
                 initial={d}
-                onCancel={() => setEditingIndex(null)}
-                onSave={(v) => saveEdit(idx, v)}
+                onCancel={() => setEditingId(null)}
+                onSave={(v) => saveEdit(id, v)}
                 calendarStrings={calendarStrings}
                 formatDate={formatDate}
               />
             </div>
           ) : (
-            <div key={idx} className={styles.listItem}>
+            <div key={id} className={styles.listItem}>
               <div className={styles.listLeft}>
                 <span className={styles.listDate}>
                   {String(d.month).padStart(2, "0")}/{String(d.day).padStart(2, "0")}
@@ -300,7 +307,7 @@ export default function PersonalDatesTab({ settings, onSettingsChange }: Persona
                   <Button
                     appearance="transparent"
                     icon={<Edit20Regular />}
-                    onClick={() => setEditingIndex(idx)}
+                    onClick={() => setEditingId(id)}
                   />
                 </Tooltip>
                 <Tooltip
@@ -310,13 +317,13 @@ export default function PersonalDatesTab({ settings, onSettingsChange }: Persona
                   <Button
                     appearance="transparent"
                     icon={<Delete20Regular />}
-                    onClick={() => removeDate(idx)}
+                    onClick={() => removeDate(id)}
                   />
                 </Tooltip>
               </div>
             </div>
-          )
-        )}
+          );
+        })}
       </Card>
     </>
   );

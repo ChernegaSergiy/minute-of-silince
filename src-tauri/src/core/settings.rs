@@ -87,6 +87,9 @@ pub struct Settings {
 /// A user-provided personal date (monthly/day) entry.
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct PersonalDate {
+    /// Unique identifier for the date.
+    #[serde(default)]
+    pub id: Option<String>,
     /// Month number 1..=12
     pub month: u8,
     /// Day number 1..=31
