@@ -213,7 +213,7 @@ export default function PersonalDatesTab({ personalDates, onPersonalDatesChange 
   );
 
   const saveEdit = async (id: string, updated: PersonalDate) => {
-    await persist(dates.map((d) => (d.id === id ? updated : d)));
+    await persist(dates.map((d) => (d.id === id ? { ...updated, id } : d)));
     setEditingId(null);
   };
 
