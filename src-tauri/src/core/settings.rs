@@ -160,13 +160,20 @@ impl Settings {
         })
     }
 
+    pub fn validate(&mut self) {
+        self.personal_dates.retain(|d| {
+            chrono::NaiveDate::from_ymd_opt(d.year, d.month as u32, d.day as u32).is_some()
+        });
+    }
+
     pub fn load() -> Result<Self> {
         let path = Self::path()?;
         if !path.exists() {
             return Ok(Self::default());
         }
         let raw = std::fs::read_to_string(&path)?;
-        let settings = serde_json::from_str(&raw)?;
+        let mut settings: Settings = serde_json::from_str(&raw)?;
+        settings.validate();
         Ok(settings)
     }
 
@@ -175,7 +182,9 @@ impl Settings {
         if let Some(parent) = path.parent() {
             std::fs::create_dir_all(parent)?;
         }
-        let json = serde_json::to_string_pretty(self)?;
+        let mut settings = self.clone();
+        settings.validate();
+        let json = serde_json::to_string_pretty(&settings)?;
         std::fs::write(&path, json)?;
         Ok(())
     }
