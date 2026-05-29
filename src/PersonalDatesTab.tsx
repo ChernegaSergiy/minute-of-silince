@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState, useMemo } from "react";
+import { useCallback, useState, useMemo } from "react";
 import {
   Button,
   Card,
@@ -16,7 +16,7 @@ import {
   Checkmark20Regular,
   Dismiss20Regular,
 } from "@fluentui/react-icons";
-import { getSettings, saveSettings } from "./api";
+import { saveSettings } from "./api";
 import type { PersonalDate, Settings } from "./types";
 import { t } from "./i18n";
 import i18next from "./i18n";
@@ -118,7 +118,12 @@ const useStyles = makeStyles({
   },
 });
 
-export default function PersonalDatesTab() {
+interface PersonalDatesTabProps {
+  settings: Settings;
+  onSettingsChange: (newSettings: Settings) => void;
+}
+
+export default function PersonalDatesTab({ settings, onSettingsChange }: PersonalDatesTabProps) {
   const styles = useStyles();
   const locale = i18next.language || ((typeof navigator !== "undefined" && navigator.language) || "en-US");
 
@@ -163,34 +168,20 @@ export default function PersonalDatesTab() {
     },
     [locale]
   );
-  const [dates, setDates] = useState<PersonalDate[]>([]);
-  const [loading, setLoading] = useState(true);
+  const dates = settings.personalDates ?? [];
   const [newDate, setNewDate] = useState<Date | null>(null);
   const [newLabel, setNewLabel] = useState("");
   const [editingIndex, setEditingIndex] = useState<number | null>(null);
 
-  useEffect(() => {
-    (async () => {
-      try {
-        const s: Settings = await getSettings();
-        setDates(s.personalDates ?? []);
-      } catch (e) {
-        console.error(e);
-      } finally {
-        setLoading(false);
-      }
-    })();
-  }, []);
-
   const persist = useCallback(async (next: PersonalDate[]) => {
     try {
-      const s: Settings = await getSettings();
-      await saveSettings({ ...s, personalDates: next });
-      setDates(next);
+      const nextSettings = { ...settings, personalDates: next };
+      await saveSettings(nextSettings);
+      onSettingsChange(nextSettings);
     } catch (e) {
       console.error(e);
     }
-  }, []);
+  }, [settings, onSettingsChange]);
 
   const addDate = useCallback(async () => {
     if (!newDate || !newLabel.trim()) return;
@@ -218,8 +209,6 @@ export default function PersonalDatesTab() {
     await persist(dates.map((d, i) => (i === idx ? updated : d)));
     setEditingIndex(null);
   };
-
-  if (loading) return <Text>{t("loading")}</Text>;
 
   return (
     <>

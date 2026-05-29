@@ -1,4 +1,4 @@
-﻿import { Suspense, lazy, useCallback, useEffect, useRef, useState } from "react";
+import { Suspense, lazy, useCallback, useEffect, useRef, useState } from "react";
 import {
   Button,
   FluentProvider,
@@ -276,7 +276,13 @@ export default function App() {
                       onSyncNtp={handleSyncNtp}
                     />
                   ) : selectedNav === "personal_dates" ? (
-                    <PersonalDatesTab />
+                    <PersonalDatesTab
+                      settings={settings}
+                      onSettingsChange={(newSettings) => {
+                        setSettings(newSettings);
+                        setCleanSettings(JSON.stringify(newSettings));
+                      }}
+                    />
                   ) : (
                     <AboutTab version={version} />
                   )}
