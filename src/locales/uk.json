@@ -5,7 +5,8 @@
   "tabs": {
     "settings": "НАЛАШТУВАННЯ",
     "about": "ПРО ПРОГРАМУ",
-    "changelog": "ЗМІНИ"
+    "changelog": "ЗМІНИ",
+    "personal_dates": "ОСОБИСТІ ДАТИ"
   },
   "sections": {
     "general": "ОСНОВНІ",
@@ -19,6 +20,23 @@
     "ntp_disabled": "Вимкнено",
     "ntp_syncing": "Синхронізація...",
     "ntp_error": "Помилка"
+  },
+  "loading": "Завантаження...",
+  "calendar": {
+    "goToToday": "До сьогодні",
+    "weekNumberFormatString": "Номер тижня {0}",
+    "prevMonthAriaLabel": "Попередній місяць",
+    "nextMonthAriaLabel": "Наступний місяць",
+    "prevYearAriaLabel": "Попередній рік",
+    "nextYearAriaLabel": "Наступний рік",
+    "prevYearRangeAriaLabel": "Попередній діапазон років",
+    "nextYearRangeAriaLabel": "Наступний діапазон років",
+    "closeButtonAriaLabel": "Закрити",
+    "selectedDateFormatString": "Вибрана дата {0}",
+    "todayDateFormatString": "Сьогодні {0}",
+    "monthPickerHeaderAriaLabel": "{0}, змінити рік",
+    "yearPickerHeaderAriaLabel": "{0}, змінити місяць",
+    "dayMarkedAriaLabel": "позначено"
   },
   "controls": {
     "ceremony": {
@@ -126,7 +144,11 @@
     "sync": "СИНХРОНІЗУВАТИ",
     "test": "ТЕСТ",
     "save": "ЗБЕРЕГТИ",
-    "save_dirty": "ЗБЕРЕГТИ *"
+    "save_dirty": "ЗБЕРЕГТИ *",
+    "add": "ДОДАТИ",
+    "cancel": "СКАСУВАТИ",
+    "edit": "РЕДАГУВАТИ",
+    "delete": "ВИДАЛИТИ"
   },
   "about": {
     "description": "Додаток створено для вшанування пам'яті полеглих захисників та жертв війни.",
@@ -141,6 +163,14 @@
   "overlay": {
     "title": "ХВИЛИНА МОВЧАННЯ",
     "subtitle": "ПАМ'ЯТАЄМО КОЖНОГО"
+  },
+  "personal_dates": {
+    "title": "Особисті дати",
+    "date": "Дата",
+    "label": "Назва",
+    "list_title": "Збережені дати",
+    "empty": "Немає особистих дат.",
+    "edit_title": "Редагувати дату"
   },
   "changelog": {
     "categories": {

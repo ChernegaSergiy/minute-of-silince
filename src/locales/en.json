@@ -6,6 +6,7 @@
     "settings": "SETTINGS",
     "about": "ABOUT",
     "changelog": "CHANGELOG"
+    ,"personal_dates": "PERSONAL DATES"
   },
   "sections": {
     "general": "GENERAL",
@@ -19,6 +20,23 @@
     "ntp_disabled": "Disabled",
     "ntp_syncing": "Synchronizing...",
     "ntp_error": "Error"
+  },
+  "loading": "Loading...",
+  "calendar": {
+    "goToToday": "Go to today",
+    "weekNumberFormatString": "Week number {0}",
+    "prevMonthAriaLabel": "Previous month",
+    "nextMonthAriaLabel": "Next month",
+    "prevYearAriaLabel": "Previous year",
+    "nextYearAriaLabel": "Next year",
+    "prevYearRangeAriaLabel": "Previous year range",
+    "nextYearRangeAriaLabel": "Next year range",
+    "closeButtonAriaLabel": "Close",
+    "selectedDateFormatString": "Selected date {0}",
+    "todayDateFormatString": "Today's date {0}",
+    "monthPickerHeaderAriaLabel": "{0}, change year",
+    "yearPickerHeaderAriaLabel": "{0}, change month",
+    "dayMarkedAriaLabel": "marked"
   },
   "controls": {
     "ceremony": {
@@ -126,7 +144,11 @@
     "sync": "SYNCHRONIZE",
     "test": "TEST",
     "save": "SAVE",
-    "save_dirty": "SAVE *"
+    "save_dirty": "SAVE *",
+    "add": "ADD",
+    "cancel": "CANCEL",
+    "edit": "EDIT",
+    "delete": "DELETE"
   },
   "about": {
     "description": "The application was created to honor the memory of fallen defenders and victims of war.",
@@ -141,6 +163,14 @@
   "overlay": {
     "title": "MINUTE OF SILENCE",
     "subtitle": "WE REMEMBER EVERYONE"
+  },
+  "personal_dates": {
+    "title": "Personal dates",
+    "date": "Date",
+    "label": "Label",
+    "list_title": "Saved dates",
+    "empty": "No personal dates.",
+    "edit_title": "Edit date"
   },
   "changelog": {
     "categories": {

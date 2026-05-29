@@ -77,6 +77,27 @@ pub struct Settings {
     /// Date to skip the next ceremony (one-time skip). Persisted to disk.
     #[serde(default)]
     pub skip_date: Option<chrono::NaiveDate>,
+
+    /// Personal dates (month/day) that the user wants to remember specially.
+    /// Stored as part of settings; repeating yearly unless `year` is set.
+    #[serde(default)]
+    pub personal_dates: Vec<PersonalDate>,
+}
+
+/// A user-provided personal date (monthly/day) entry.
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct PersonalDate {
+    /// Unique identifier for the date.
+    #[serde(default)]
+    pub id: Option<String>,
+    /// Month number 1..=12
+    pub month: u8,
+    /// Day number 1..=31
+    pub day: u8,
+    /// Label to display (e.g. "In memory of ...")
+    pub label: String,
+    /// Year of the event.
+    pub year: i32,
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Serialize, Deserialize)]
@@ -128,6 +149,7 @@ impl Default for Settings {
             use_system_theme: true,
             ui_theme: UiTheme::Light,
             skip_date: None,
+            personal_dates: Vec::new(),
         }
     }
 }
@@ -141,13 +163,20 @@ impl Settings {
         })
     }
 
+    pub fn validate(&mut self) {
+        self.personal_dates.retain(|d| {
+            chrono::NaiveDate::from_ymd_opt(d.year, d.month as u32, d.day as u32).is_some()
+        });
+    }
+
     pub fn load() -> Result<Self> {
         let path = Self::path()?;
         if !path.exists() {
             return Ok(Self::default());
         }
         let raw = std::fs::read_to_string(&path)?;
-        let settings = serde_json::from_str(&raw)?;
+        let mut settings: Settings = serde_json::from_str(&raw)?;
+        settings.validate();
         Ok(settings)
     }
 
@@ -156,7 +185,9 @@ impl Settings {
         if let Some(parent) = path.parent() {
             std::fs::create_dir_all(parent)?;
         }
-        let json = serde_json::to_string_pretty(self)?;
+        let mut settings = self.clone();
+        settings.validate();
+        let json = serde_json::to_string_pretty(&settings)?;
         std::fs::write(&path, json)?;
         Ok(())
     }
