@@ -16,8 +16,8 @@ import {
   Checkmark20Regular,
   Dismiss20Regular,
 } from "@fluentui/react-icons";
-import { saveSettings } from "./api";
-import type { PersonalDate, Settings } from "./types";
+import { getSettings, saveSettings } from "./api";
+import type { PersonalDate } from "./types";
 import { t } from "./i18n";
 import i18next from "./i18n";
 import { DatePicker, defaultDatePickerStrings } from "@fluentui/react-datepicker-compat";
@@ -119,11 +119,11 @@ const useStyles = makeStyles({
 });
 
 interface PersonalDatesTabProps {
-  settings: Settings;
-  onSettingsChange: (newSettings: Settings) => void;
+  personalDates?: PersonalDate[];
+  onPersonalDatesChange: (nextDates: PersonalDate[]) => void;
 }
 
-export default function PersonalDatesTab({ settings, onSettingsChange }: PersonalDatesTabProps) {
+export default function PersonalDatesTab({ personalDates, onPersonalDatesChange }: PersonalDatesTabProps) {
   const styles = useStyles();
   const locale = i18next.language || ((typeof navigator !== "undefined" && navigator.language) || "en-US");
 
@@ -169,24 +169,25 @@ export default function PersonalDatesTab({ settings, onSettingsChange }: Persona
     [locale]
   );
   const dates = useMemo(() => {
-    return (settings.personalDates ?? []).map((d) => ({
+    return (personalDates ?? []).map((d) => ({
       ...d,
       id: d.id || Math.random().toString(36).substring(2),
     }));
-  }, [settings.personalDates]);
+  }, [personalDates]);
   const [newDate, setNewDate] = useState<Date | null>(null);
   const [newLabel, setNewLabel] = useState("");
   const [editingId, setEditingId] = useState<string | null>(null);
 
   const persist = useCallback(async (next: PersonalDate[]) => {
     try {
-      const nextSettings = { ...settings, personalDates: next };
+      const diskSettings = await getSettings();
+      const nextSettings = { ...diskSettings, personalDates: next };
       await saveSettings(nextSettings);
-      onSettingsChange(nextSettings);
+      onPersonalDatesChange(next);
     } catch (e) {
       console.error(e);
     }
-  }, [settings, onSettingsChange]);
+  }, [onPersonalDatesChange]);
 
   const addDate = useCallback(async () => {
     if (!newDate || !newLabel.trim()) return;

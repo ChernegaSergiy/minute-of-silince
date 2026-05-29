@@ -277,10 +277,19 @@ export default function App() {
                     />
                   ) : selectedNav === "personal_dates" ? (
                     <PersonalDatesTab
-                      settings={settings}
-                      onSettingsChange={(newSettings) => {
-                        setSettings(newSettings);
-                        setCleanSettings(JSON.stringify(newSettings));
+                      personalDates={settings.personalDates}
+                      onPersonalDatesChange={(nextDates) => {
+                        setSettings((prev) => ({ ...prev, personalDates: nextDates }));
+                        setCleanSettings((prev) => {
+                          if (!prev) return prev;
+                          try {
+                            const clean = JSON.parse(prev);
+                            clean.personalDates = nextDates;
+                            return JSON.stringify(clean);
+                          } catch {
+                            return prev;
+                          }
+                        });
                       }}
                     />
                   ) : (
