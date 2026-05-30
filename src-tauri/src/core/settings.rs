@@ -10,7 +10,7 @@ use serde::{Deserialize, Serialize};
 use crate::error::{AppError, Result};
 
 /// User-configurable settings.  Persisted as JSON in the platform config dir.
-#[derive(Debug, Clone, Serialize, Deserialize)]
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase", default)]
 pub struct Settings {
     /// Enable daily activation at 09:00.
@@ -77,27 +77,6 @@ pub struct Settings {
     /// Date to skip the next ceremony (one-time skip). Persisted to disk.
     #[serde(default)]
     pub skip_date: Option<chrono::NaiveDate>,
-
-    /// Personal dates (month/day) that the user wants to remember specially.
-    /// Stored as part of settings; repeating yearly unless `year` is set.
-    #[serde(default)]
-    pub personal_dates: Vec<PersonalDate>,
-}
-
-/// A user-provided personal date (monthly/day) entry.
-#[derive(Debug, Clone, Serialize, Deserialize)]
-pub struct PersonalDate {
-    /// Unique identifier for the date.
-    #[serde(default)]
-    pub id: Option<String>,
-    /// Month number 1..=12
-    pub month: u8,
-    /// Day number 1..=31
-    pub day: u8,
-    /// Label to display (e.g. "In memory of ...")
-    pub label: String,
-    /// Year of the event.
-    pub year: i32,
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Serialize, Deserialize)]
@@ -149,7 +128,6 @@ impl Default for Settings {
             use_system_theme: true,
             ui_theme: UiTheme::Light,
             skip_date: None,
-            personal_dates: Vec::new(),
         }
     }
 }
@@ -163,10 +141,42 @@ impl Settings {
         })
     }
 
-    pub fn validate(&mut self) {
-        self.personal_dates.retain(|d| {
-            chrono::NaiveDate::from_ymd_opt(d.year, d.month as u32, d.day as u32).is_some()
-        });
+    /// Load settings from the Tauri store, falling back to defaults on any error.
+    pub fn load_from_store(app_handle: &tauri::AppHandle) -> Self {
+        use tauri_plugin_store::StoreExt;
+
+        let load_impl = || -> std::result::Result<Settings, String> {
+            let store = app_handle
+                .store("settings.json")
+                .map_err(|e| e.to_string())?;
+            if let Some(val) = store.get("settings") {
+                let settings: Settings = serde_json::from_value(val).map_err(|e| e.to_string())?;
+                Ok(settings)
+            } else {
+                Ok(Settings::default())
+            }
+        };
+
+        load_impl().unwrap_or_else(|e| {
+            log::warn!("Failed to load settings from store: {}, using defaults", e);
+            Settings::default()
+        })
+    }
+
+    /// Save settings to the Tauri store.
+    pub fn save_to_store(&self, app_handle: &tauri::AppHandle) -> Result<()> {
+        use tauri_plugin_store::StoreExt;
+
+        let store = app_handle
+            .store("settings.json")
+            .map_err(|e| crate::error::AppError::Settings(e.to_string()))?;
+
+        let val = serde_json::to_value(self)?;
+        store.set("settings".to_string(), val);
+        store
+            .save()
+            .map_err(|e| crate::error::AppError::Settings(e.to_string()))?;
+        Ok(())
     }
 
     pub fn load() -> Result<Self> {
@@ -175,8 +185,7 @@ impl Settings {
             return Ok(Self::default());
         }
         let raw = std::fs::read_to_string(&path)?;
-        let mut settings: Settings = serde_json::from_str(&raw)?;
-        settings.validate();
+        let settings: Settings = serde_json::from_str(&raw)?;
         Ok(settings)
     }
 
@@ -185,9 +194,7 @@ impl Settings {
         if let Some(parent) = path.parent() {
             std::fs::create_dir_all(parent)?;
         }
-        let mut settings = self.clone();
-        settings.validate();
-        let json = serde_json::to_string_pretty(&settings)?;
+        let json = serde_json::to_string_pretty(self)?;
         std::fs::write(&path, json)?;
         Ok(())
     }

@@ -26,6 +26,7 @@ import { listen } from "@tauri-apps/api/event";
 import {
   bringWindowToFront,
   getSettings,
+  getPersonalDates,
   getStatus,
   onCeremonyEnd,
   onCeremonyStart,
@@ -33,7 +34,7 @@ import {
   syncNtpNow,
   triggerCeremonyNow,
 } from "./api";
-import { DEFAULT_SETTINGS, type Settings, type StatusSnapshot } from "./types";
+import { DEFAULT_SETTINGS, type PersonalDate, type Settings, type StatusSnapshot } from "./types";
 import { t } from "./i18n";
 import AboutTab from "./AboutTab";
 import Overlay from "./Overlay";
@@ -93,6 +94,7 @@ export default function App() {
       : true
   );
   const [settings, setSettings] = useState<Settings>(DEFAULT_SETTINGS);
+  const [personalDates, setPersonalDates] = useState<PersonalDate[]>([]);
   const [cleanSettings, setCleanSettings] = useState<string>("");
   const [status, setStatus] = useState<StatusSnapshot>(DEFAULT_STATUS);
   const [version, setVersion] = useState("...");
@@ -112,9 +114,10 @@ export default function App() {
 
     (async () => {
       try {
-        const [s, st, v] = await Promise.all([getSettings(), getStatus(), getVersion()]);
+        const [s, dates, st, v] = await Promise.all([getSettings(), getPersonalDates(), getStatus(), getVersion()]);
         setSettings(s);
         setCleanSettings(JSON.stringify(s));
+        setPersonalDates(dates);
         setStatus(st);
         setVolumeValue(s.volume);
         setVersion(v);
@@ -277,20 +280,8 @@ export default function App() {
                     />
                   ) : selectedNav === "personal_dates" ? (
                     <PersonalDatesTab
-                      personalDates={settings.personalDates}
-                      onPersonalDatesChange={(nextDates) => {
-                        setSettings((prev) => ({ ...prev, personalDates: nextDates }));
-                        setCleanSettings((prev) => {
-                          if (!prev) return prev;
-                          try {
-                            const clean = JSON.parse(prev);
-                            clean.personalDates = nextDates;
-                            return JSON.stringify(clean);
-                          } catch {
-                            return prev;
-                          }
-                        });
-                      }}
+                      personalDates={personalDates}
+                      onPersonalDatesChange={setPersonalDates}
                     />
                   ) : (
                     <AboutTab version={version} />

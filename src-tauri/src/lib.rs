@@ -6,7 +6,7 @@ mod error;
 mod platform;
 mod state;
 
-use tauri::Manager;
+use tauri::{Listener, Manager};
 rust_i18n::i18n!("locales");
 
 pub use core::settings::{AudioPreset, Settings};
@@ -35,6 +35,7 @@ pub fn run() {
                 .level(log::LevelFilter::Info)
                 .build(),
         )
+        .plugin(tauri_plugin_store::Builder::new().build())
         .setup(|app| {
             let handle = app.handle();
 
@@ -45,11 +46,59 @@ pub fn run() {
             log::info!("Backend locale set to: {}, source: {}", lang, locale);
 
             // --- 2. State Management ---
-            let settings = Settings::load_or_default();
+            let settings = Settings::load_from_store(handle);
             app.manage(AppState::new_with_settings(
                 handle.clone(),
                 settings.clone(),
             ));
+
+            // --- 2.1. Store Change Listener ---
+            {
+                let app_handle = handle.clone();
+                app.listen_any("store://change", move |event: tauri::Event| {
+                    log::info!("Received store change event: {:?}", event.payload());
+
+                    let app_handle_clone = app_handle.clone();
+                    tauri::async_runtime::spawn(async move {
+                        let state = app_handle_clone.state::<AppState>();
+                        let new_settings = Settings::load_from_store(&app_handle_clone);
+
+                        let old_settings = {
+                            let mut lock = state.lock();
+                            let old = lock.settings.clone();
+                            lock.settings = new_settings.clone();
+                            old
+                        };
+
+                        // Apply autostart setting side-effects
+                        if old_settings.autostart_enabled != new_settings.autostart_enabled {
+                            log::info!(
+                                "Autostart setting changed: {} -> {}",
+                                old_settings.autostart_enabled,
+                                new_settings.autostart_enabled
+                            );
+                            crate::platform::apply_autostart_enabled(
+                                &app_handle_clone,
+                                new_settings.autostart_enabled,
+                            );
+                        }
+
+                        // Apply NTP synchronization side-effects
+                        if old_settings.system_time_only != new_settings.system_time_only
+                            && !new_settings.system_time_only
+                        {
+                            log::info!("System time only disabled, triggering immediate NTP sync");
+                            let ntp = state.ntp_service.clone();
+                            let app_handle_clone2 = app_handle_clone.clone();
+                            tauri::async_runtime::spawn(async move {
+                                let _ = ntp.sync().await;
+                                use tauri::Emitter;
+                                let _ = app_handle_clone2.emit("ntp-synced", ());
+                            });
+                        }
+                    });
+                });
+            }
 
             // --- 3. UI Initialization ---
             app::tray::build_tray(app)?;
@@ -107,9 +156,7 @@ pub fn run() {
             Ok(())
         })
         .invoke_handler(tauri::generate_handler![
-            app::commands::get_settings,
             app::commands::sync_autostart_from_system,
-            app::commands::save_settings,
             app::commands::get_status,
             app::commands::sync_ntp_now,
             app::commands::skip_next,

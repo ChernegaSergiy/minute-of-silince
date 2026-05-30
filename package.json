@@ -24,6 +24,7 @@
     "@tauri-apps/plugin-log": "^2.0.0",
     "@tauri-apps/plugin-notification": "^2.0.0",
     "@tauri-apps/plugin-shell": "^2.3.5",
+    "@tauri-apps/plugin-store": "^2.4.3",
     "apng-js": "^1.1.5",
     "i18next": "^26.2.0",
     "i18next-browser-languagedetector": "^8.2.1",

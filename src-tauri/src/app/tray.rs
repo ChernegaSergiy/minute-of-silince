@@ -44,7 +44,7 @@ pub fn build_tray(app: &App) -> tauri::Result<()> {
                 {
                     let mut inner = state.lock();
                     inner.settings.skip_date = Some(skip_date);
-                    let _ = inner.settings.save();
+                    let _ = inner.settings.save_to_store(app);
                 }
                 log::info!("Tray: next ceremony skipped ({skip_date})");
 
