@@ -231,7 +231,7 @@ pub fn sync_autostart_from_system(state: tauri::State<'_, crate::AppState>) -> R
 pub fn is_msix() -> bool {
     #[cfg(target_os = "windows")]
     {
-        extern "system" {
+        unsafe extern "system" {
             fn GetCurrentPackageFullName(
                 packageFullNameLength: *mut u32,
                 packageFullName: *mut u16,
