@@ -20,7 +20,7 @@ Minute of Silence is a lightweight desktop application built with [Tauri 2](http
 
 - **Automatic Daily Activation**: Activates at 09:00 with NTP time correction.
 - **Ten Audio Presets**: Voice announcement combined with silence, bell, metronome, national anthem, and/or ending, plus a silent "Silence" preset.
-- **Voice Selection**: Four announcer voices available (original, Vshanui organization voices, Air Alert app).
+- **Voice Selection**: Five announcer voices available (original, Vshanui organization voices, Radio BG, Air Alert app).
 - **Media Management**: Pauses Spotify, browser video, VLC, and other players before the ceremony (supports MPRIS on Linux).
 - **Visual Status**: A status indicator appears in the main window during the ceremony (full-screen overlay planned).
 - **Skip Next**: Suppresses a single upcoming activation via the tray menu or the main window.
