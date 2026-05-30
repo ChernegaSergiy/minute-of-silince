@@ -11,49 +11,15 @@ use tauri::{AppHandle, Manager, State};
 use crate::{
     Result,
     app::next_skip_date,
-    core::settings::Settings,
     state::{AppState, StatusSnapshot},
 };
 
 // Settings
 
-/// Return the current settings snapshot.
-#[tauri::command]
-pub fn get_settings(state: State<'_, AppState>) -> Settings {
-    state.lock().settings.clone()
-}
-
 /// Sync the persisted autostart setting with the actual platform state.
 #[tauri::command]
 pub fn sync_autostart_from_system(state: State<'_, AppState>) -> Result<()> {
     crate::platform::sync_autostart_from_system(state)
-}
-
-/// Persist updated settings and apply side-effects (e.g. autostart toggle).
-#[tauri::command]
-pub fn save_settings(app: AppHandle, state: State<'_, AppState>, settings: Settings) -> Result<()> {
-    // Persist to disk.
-    settings.save_to_store(&app)?;
-
-    // Apply autostart setting.
-    crate::platform::apply_autostart_enabled(&app, settings.autostart_enabled);
-
-    // Update in-memory state.
-    state.lock().settings = settings.clone();
-
-    // Trigger immediate NTP sync if system time is disabled.
-    if !settings.system_time_only {
-        let ntp = state.ntp_service.clone();
-        let app_handle = app.clone();
-        tauri::async_runtime::spawn(async move {
-            let _ = ntp.sync().await;
-            use tauri::Emitter;
-            let _ = app_handle.emit("ntp-synced", ());
-        });
-    }
-
-    log::info!("Settings saved");
-    Ok(())
 }
 
 // Status
