@@ -133,7 +133,7 @@ jobs:
   build-snap:
     name: Build Snap Package
     needs: [frontend-checks, backend-checks]
-    if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/develop'
+    if: github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -154,7 +154,7 @@ jobs:
   build-flatpak:
     name: Build Flatpak Package
     needs: [frontend-checks, backend-checks]
-    if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/develop'
+    if: github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
