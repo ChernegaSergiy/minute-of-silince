@@ -5,19 +5,19 @@ body:
   - type: textarea
     id: problem
     attributes:
-      label: Проблема або потреба
-      description: Що саме незручно або чого не вистачає?
+      label: Problem or need
+      description: What exactly is inconvenient or missing?
     validations:
       required: true
 
   - type: textarea
     id: solution
     attributes:
-      label: Пропоноване рішення
+      label: Proposed solution
     validations:
       required: true
 
   - type: textarea
     id: alternatives
     attributes:
-      label: Альтернативи, які ви розглядали
+      label: Alternatives you considered

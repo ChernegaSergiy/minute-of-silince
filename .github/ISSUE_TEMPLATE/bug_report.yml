@@ -5,12 +5,12 @@ body:
   - type: markdown
     attributes:
       value: |
-        Дякуємо, що повідомляєте про проблему. Будь ласка, заповніть поля нижче.
+        Thank you for reporting the issue. Please fill in the fields below.
 
   - type: input
     id: version
     attributes:
-      label: Версія застосунку
+      label: Application version
       placeholder: "0.1.0"
     validations:
       required: true
@@ -18,30 +18,30 @@ body:
   - type: dropdown
     id: os
     attributes:
-      label: Операційна система
+      label: Operating system
       options:
         - Windows 11
         - Windows 10
         - Ubuntu 22.04
         - Ubuntu 24.04
-        - Інша (вкажіть нижче)
+        - Other (specify below)
     validations:
       required: true
 
   - type: textarea
     id: description
     attributes:
-      label: Опис проблеми
-      description: Що сталося? Що мало статися?
+      label: Description of the issue
+      description: What happened? What was expected to happen?
     validations:
       required: true
 
   - type: textarea
     id: steps
     attributes:
-      label: Кроки для відтворення
+      label: Steps to reproduce
       placeholder: |
-        1. Запустити застосунок
+        1. Run the application
         2. ...
     validations:
       required: true
@@ -49,6 +49,6 @@ body:
   - type: textarea
     id: logs
     attributes:
-      label: Логи (якщо є)
-      description: Вставте вміст файлу `minute-of-silence.log` з директорії конфігурації.
+      label: Logs (if any)
+      description: Paste the content of the `minute-of-silence.log` file from the configuration directory.
       render: shell
