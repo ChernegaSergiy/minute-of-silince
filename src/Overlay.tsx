@@ -1,7 +1,6 @@
 import { useEffect, useRef } from "react";
+import UPNG from "upng-js";
 import { t } from "./i18n";
-import parseAPNG from "apng-js";
-import Player from "apng-js/types/library/player";
 
 interface OverlayProps {
   show: boolean;
@@ -66,6 +65,27 @@ const subStyle: React.CSSProperties = {
   letterSpacing: "0.4em",
 };
 
+async function loadApngFrames(src: string): Promise<{ frames: ImageBitmap[]; width: number; height: number }> {
+  const resp = await fetch(src);
+  const buf = await resp.arrayBuffer();
+  const img = UPNG.decode(buf);
+  const rgbaFrames = UPNG.toRGBA8(img);
+
+  const bitmaps: ImageBitmap[] = [];
+  for (const rgbaBuf of rgbaFrames) {
+    const rawData = new Uint8ClampedArray(rgbaBuf);
+    const imageData = new ImageData(rawData, img.width, img.height);
+    const bitmap = await createImageBitmap(imageData);
+    bitmaps.push(bitmap);
+  }
+
+  return {
+    frames: bitmaps,
+    width: img.width,
+    height: img.height,
+  };
+}
+
 function useApngPlayer(
   canvasRef: React.RefObject<HTMLCanvasElement | null>,
   src: string,
@@ -74,42 +94,52 @@ function useApngPlayer(
 ) {
   useEffect(() => {
     if (!active) return;
-    let player: Player | null = null;
+    let rafId: number;
+    let frames: ImageBitmap[] = [];
+    let startTime: number | null = null;
     let isCancelled = false;
 
     const run = async () => {
       try {
-        const resp = await fetch(src);
-        const buffer = await resp.arrayBuffer();
-        
-        if (isCancelled) return;
-
-        const apng = parseAPNG(buffer);
-        if (apng instanceof Error) {
-          throw apng;
+        const data = await loadApngFrames(src);
+        if (isCancelled) {
+          data.frames.forEach((bm) => bm.close());
+          return;
         }
+        frames = data.frames;
 
         const canvas = canvasRef.current;
-        if (!canvas) return;
-
-        const ctx = canvas.getContext("2d")!;
-        
-        // Setup canvas size based on APNG dimensions
-        canvas.width = apng.width;
-        canvas.height = apng.height;
-
-        // Get the built-in apng-js Player that handles blending and disposals automatically
-        player = await apng.getPlayer(ctx, false);
-        if (isCancelled) {
-          player.stop();
+        if (!canvas || frames.length === 0) {
+          frames.forEach((bm) => bm.close());
           return;
         }
 
-        // Adjust speed rate based on ceremony duration
-        player.playbackRate = apng.playTime / (durationSeconds * 1000);
-        player.play();
+        // Handle high DPI screens
+        const dpr = window.devicePixelRatio || 1;
+        canvas.width = RING_SIZE * dpr;
+        canvas.height = RING_SIZE * dpr;
+
+        const ctx = canvas.getContext("2d")!;
+        ctx.scale(dpr, dpr);
+
+        const tick = (now: number) => {
+          if (!startTime) startTime = now;
+          const elapsed = (now - startTime) / 1000;
+          const progress = Math.min(elapsed / durationSeconds, 1);
+          const frameIdx = Math.min(Math.floor(progress * frames.length), frames.length - 1);
+
+          ctx.clearRect(0, 0, RING_SIZE, RING_SIZE);
+          if (frames[frameIdx]) {
+            ctx.drawImage(frames[frameIdx], 0, 0, RING_SIZE, RING_SIZE);
+          }
+
+          if (progress < 1) {
+            rafId = requestAnimationFrame(tick);
+          }
+        };
+        rafId = requestAnimationFrame(tick);
       } catch (e) {
-        console.error("APNG play failed:", e);
+        console.error("APNG decode failed:", e);
       }
     };
 
@@ -117,9 +147,8 @@ function useApngPlayer(
 
     return () => {
       isCancelled = true;
-      if (player) {
-        player.stop();
-      }
+      cancelAnimationFrame(rafId);
+      frames.forEach((bm) => bm.close());
     };
   }, [active, src, durationSeconds, canvasRef]);
 }
