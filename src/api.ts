@@ -7,7 +7,8 @@
 
 import { listen, type UnlistenFn } from "@tauri-apps/api/event";
 import { getCurrentWindow } from "@tauri-apps/api/window";
-import type { Settings, StatusSnapshot } from "./types";
+import { LazyStore } from "@tauri-apps/plugin-store";
+import { DEFAULT_SETTINGS, type Settings, type StatusSnapshot } from "./types";
 
 declare global {
   interface Window {
@@ -32,12 +33,16 @@ async function invoke<T = unknown>(cmd: string, args?: Record<string, unknown>):
 
 // Settings
 
+const store = new LazyStore("settings.json");
+
 export async function getSettings(): Promise<Settings> {
-  return invoke<Settings>("get_settings");
+  const settings = await store.get<Settings>("settings");
+  return settings ?? DEFAULT_SETTINGS;
 }
 
 export async function saveSettings(settings: Settings): Promise<void> {
-  return invoke<void>("save_settings", { settings });
+  await store.set("settings", settings);
+  await store.save();
 }
 
 // Status
