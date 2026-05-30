@@ -10,7 +10,7 @@ use serde::{Deserialize, Serialize};
 use crate::error::{AppError, Result};
 
 /// User-configurable settings.  Persisted as JSON in the platform config dir.
-#[derive(Debug, Clone, Serialize, Deserialize)]
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase", default)]
 pub struct Settings {
     /// Enable daily activation at 09:00.
@@ -85,7 +85,7 @@ pub struct Settings {
 }
 
 /// A user-provided personal date (monthly/day) entry.
-#[derive(Debug, Clone, Serialize, Deserialize)]
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub struct PersonalDate {
     /// Unique identifier for the date.
     #[serde(default)]
@@ -161,6 +161,46 @@ impl Settings {
             log::warn!("Failed to load settings ({e}), using defaults");
             Self::default()
         })
+    }
+
+    /// Load settings from the Tauri store, falling back to defaults on any error.
+    pub fn load_from_store(app_handle: &tauri::AppHandle) -> Self {
+        use tauri_plugin_store::StoreExt;
+
+        let load_impl = || -> std::result::Result<Settings, String> {
+            let store = app_handle
+                .store("settings.json")
+                .map_err(|e| e.to_string())?;
+            if let Some(val) = store.get("settings") {
+                let mut settings: Settings =
+                    serde_json::from_value(val).map_err(|e| e.to_string())?;
+                settings.validate();
+                Ok(settings)
+            } else {
+                Ok(Settings::default())
+            }
+        };
+
+        load_impl().unwrap_or_else(|e| {
+            log::warn!("Failed to load settings from store: {}, using defaults", e);
+            Settings::default()
+        })
+    }
+
+    /// Save settings to the Tauri store.
+    pub fn save_to_store(&self, app_handle: &tauri::AppHandle) -> Result<()> {
+        use tauri_plugin_store::StoreExt;
+
+        let store = app_handle
+            .store("settings.json")
+            .map_err(|e| crate::error::AppError::Settings(e.to_string()))?;
+
+        let val = serde_json::to_value(self)?;
+        store.set("settings".to_string(), val);
+        store
+            .save()
+            .map_err(|e| crate::error::AppError::Settings(e.to_string()))?;
+        Ok(())
     }
 
     pub fn validate(&mut self) {
