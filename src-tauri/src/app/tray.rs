@@ -4,12 +4,32 @@ use crate::app::next_skip_date;
 use crate::platform::is_dark_mode;
 use rust_i18n::t;
 use tauri::{
-    App, Emitter, Manager,
+    App, Emitter, Manager, Wry,
     menu::{Menu, MenuItem, PredefinedMenuItem},
     tray::{MouseButton, MouseButtonState, TrayIconBuilder, TrayIconEvent},
 };
 
 use crate::AppState;
+
+/// Structure that explicitly owns the menu and all its elements to keep them from being dropped on Linux.
+#[derive(Clone)]
+pub struct TrayMenuState {
+    pub menu: Menu<Wry>,
+    pub open_item: MenuItem<Wry>,
+    pub skip_item: MenuItem<Wry>,
+    pub quit_item: MenuItem<Wry>,
+}
+
+impl std::fmt::Debug for TrayMenuState {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        f.debug_struct("TrayMenuState")
+            .field("menu", &"<Tauri Menu>")
+            .field("open_item", &"<Tauri MenuItem>")
+            .field("skip_item", &"<Tauri MenuItem>")
+            .field("quit_item", &"<Tauri MenuItem>")
+            .finish()
+    }
+}
 
 /// Build and register the system-tray icon for `app`.
 pub fn build_tray(app: &App) -> tauri::Result<()> {
@@ -19,6 +39,15 @@ pub fn build_tray(app: &App) -> tauri::Result<()> {
     let quit_i = MenuItem::with_id(app, "quit", t!("quit"), true, None::<&str>)?;
 
     let menu = Menu::with_items(app, &[&open_i, &skip_i, &sep, &quit_i])?;
+
+    // Store the tray menu in AppState to keep strong references to it and its items
+    let state = app.state::<AppState>();
+    let _ = state.tray_menu.set(TrayMenuState {
+        menu: menu.clone(),
+        open_item: open_i,
+        skip_item: skip_i,
+        quit_item: quit_i,
+    });
 
     let icon = if is_dark_mode() {
         tauri::include_image!("icons/tray-icon-32-light.png")

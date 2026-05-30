@@ -21,6 +21,7 @@ pub struct AppState {
     pub ntp_service: NtpService,
     pub audio: Arc<AudioEngine>,
     pub app_handle: AppHandle,
+    pub tray_menu: std::sync::OnceLock<crate::app::tray::TrayMenuState>,
 }
 
 #[derive(Debug, Default)]
@@ -46,6 +47,7 @@ impl AppState {
             ntp_service: NtpService::new(settings.ntp_server.clone()),
             audio: Arc::new(AudioEngine::new(app_handle.clone())),
             app_handle,
+            tray_menu: std::sync::OnceLock::new(),
         }
     }
 
