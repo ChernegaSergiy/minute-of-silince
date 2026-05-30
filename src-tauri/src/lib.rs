@@ -46,7 +46,7 @@ pub fn run() {
             log::info!("Backend locale set to: {}, source: {}", lang, locale);
 
             // --- 2. State Management ---
-            let settings = Settings::load_from_store(&handle);
+            let settings = Settings::load_from_store(handle);
             app.manage(AppState::new_with_settings(
                 handle.clone(),
                 settings.clone(),

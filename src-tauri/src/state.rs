@@ -23,21 +23,11 @@ pub struct AppState {
     pub app_handle: AppHandle,
 }
 
-#[derive(Debug)]
+#[derive(Debug, Default)]
 pub struct Inner {
     pub settings: Settings,
     pub ceremony_active: bool,
     pub last_activation: Option<DateTime<Local>>,
-}
-
-impl Default for Inner {
-    fn default() -> Self {
-        Self {
-            settings: Settings::default(),
-            ceremony_active: false,
-            last_activation: None,
-        }
-    }
 }
 
 impl AppState {
