@@ -5,31 +5,11 @@
  * in `src-tauri/src/commands.rs`.
  */
 
+import { invoke } from "@tauri-apps/api/core";
 import { listen, type UnlistenFn } from "@tauri-apps/api/event";
 import { getCurrentWindow } from "@tauri-apps/api/window";
 import { LazyStore } from "@tauri-apps/plugin-store";
 import { DEFAULT_SETTINGS, type PersonalDate, type Settings, type StatusSnapshot } from "./types";
-
-declare global {
-  interface Window {
-    __TAURI__?: {
-      core?: {
-        invoke: <T = unknown>(cmd: string, args?: Record<string, unknown>) => Promise<T>;
-      };
-    };
-  }
-}
-
-function getInvoke() {
-  if (typeof window !== 'undefined' && window.__TAURI__?.core?.invoke) {
-    return window.__TAURI__.core.invoke;
-  }
-  throw new Error("Tauri invoke not available");
-}
-
-async function invoke<T = unknown>(cmd: string, args?: Record<string, unknown>): Promise<T> {
-  return getInvoke()<T>(cmd, args);
-}
 
 // Settings
 
