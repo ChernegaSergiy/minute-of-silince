@@ -231,17 +231,32 @@ pub fn sync_autostart_from_system(state: tauri::State<'_, crate::AppState>) -> R
 pub fn is_msix() -> bool {
     #[cfg(target_os = "windows")]
     {
-        std::env::current_exe()
-            .map(|p| {
-                let s = p.to_string_lossy().to_ascii_lowercase();
-                s.contains("\\windowsapps\\")
-            })
-            .unwrap_or(false)
+        extern "system" {
+            fn GetCurrentPackageFullName(
+                packageFullNameLength: *mut u32,
+                packageFullName: *mut u16,
+            ) -> i32;
+        }
+        let mut length = 0;
+        let rc = unsafe { GetCurrentPackageFullName(&mut length, std::ptr::null_mut()) };
+        rc != 15700 // 15700 is APPMODEL_ERROR_NO_PACKAGE
     }
     #[cfg(not(target_os = "windows"))]
     {
         false
     }
+}
+
+/// Returns true if the application should perform automatic update checks.
+///
+/// Updates are disabled for sandboxed distributions (Snap, Flatpak, MSIX)
+/// where updates are managed by their respective stores/package managers.
+pub fn should_check_for_updates() -> bool {
+    let is_snap = std::env::var("SNAP").is_ok();
+    let is_flatpak = std::env::var("FLATPAK_ID").is_ok();
+    let is_msix = is_msix();
+
+    !is_snap && !is_flatpak && !is_msix
 }
 
 #[async_trait::async_trait]
