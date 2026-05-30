@@ -216,7 +216,7 @@ pub fn sync_autostart_from_system(state: tauri::State<'_, crate::AppState>) -> R
     if let Some(system_enabled) = system_autostart_enabled() {
         if system_enabled != settings.autostart_enabled {
             settings.autostart_enabled = system_enabled;
-            settings.save()?;
+            settings.save_to_store(&state.app_handle)?;
             guard.settings = settings;
             log::info!("Autostart setting synced from system: {}", system_enabled);
         }
