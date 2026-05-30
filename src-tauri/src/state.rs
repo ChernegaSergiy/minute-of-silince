@@ -20,6 +20,7 @@ pub struct AppState {
     inner: Arc<Mutex<Inner>>,
     pub ntp_service: NtpService,
     pub audio: Arc<AudioEngine>,
+    pub app_handle: AppHandle,
 }
 
 #[derive(Debug)]
@@ -32,7 +33,7 @@ pub struct Inner {
 impl Default for Inner {
     fn default() -> Self {
         Self {
-            settings: Settings::load_or_default(),
+            settings: Settings::default(),
             ceremony_active: false,
             last_activation: None,
         }
@@ -41,7 +42,7 @@ impl Default for Inner {
 
 impl AppState {
     pub fn new(app_handle: AppHandle) -> Self {
-        let settings = Settings::load_or_default();
+        let settings = Settings::load_from_store(&app_handle);
         Self::new_with_settings(app_handle, settings)
     }
 
@@ -53,7 +54,8 @@ impl AppState {
                 last_activation: None,
             })),
             ntp_service: NtpService::new(settings.ntp_server.clone()),
-            audio: Arc::new(AudioEngine::new(app_handle)),
+            audio: Arc::new(AudioEngine::new(app_handle.clone())),
+            app_handle,
         }
     }
 
