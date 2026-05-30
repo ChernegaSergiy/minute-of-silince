@@ -22,7 +22,7 @@ Minute of Silence is a lightweight desktop application built with [Tauri 2](http
 - **Ten Audio Presets**: Voice announcement combined with silence, bell, metronome, national anthem, and/or ending, plus a silent "Silence" preset.
 - **Voice Selection**: Five announcer voices available (original, Vshanui organization voices, Radio BG, Air Alert app).
 - **Media Management**: Pauses Spotify, browser video, VLC, and other players before the ceremony (supports MPRIS on Linux).
-- **Visual Status**: A status indicator appears in the main window during the ceremony (full-screen overlay planned).
+- **Visual Status**: A visual overlay with an animated candle and progress ring is displayed during the ceremony.
 - **Skip Next**: Suppresses a single upcoming activation via the tray menu or the main window.
 - **Post-Sleep Handling**: If the system wakes from sleep after 09:00, a configurable grace window decides whether to activate late or skip.
 - **Persistent Settings**: Stored as JSON in the platform config directory; no registry writes.
