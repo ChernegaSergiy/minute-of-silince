@@ -37,7 +37,7 @@ const store = new LazyStore("settings.json");
 
 export async function getSettings(): Promise<Settings> {
   const settings = await store.get<Settings>("settings");
-  return settings ?? DEFAULT_SETTINGS;
+  return settings ?? { ...DEFAULT_SETTINGS, personalDates: [...(DEFAULT_SETTINGS.personalDates ?? [])] };
 }
 
 export async function saveSettings(settings: Settings): Promise<void> {
