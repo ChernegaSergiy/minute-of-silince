@@ -15,6 +15,7 @@
   "bundle": {
     "active": true,
     "targets": "all",
+    "createUpdaterArtifacts": true,
     "resources": ["audio/*", "Strings"],
     "icon": [
       "icons/32x32.png",
@@ -36,5 +37,14 @@
       }
     }
   },
-  "plugins": {}
+  "plugins": {
+    "updater": {
+      "active": false,
+      "dialog": true,
+      "pubkey": "dW51c2VkX3BsYWNlaG9sZGVyX3B1YmtleV9mb3JfZGV2X29ubHk=",
+      "endpoints": [
+        "https://github.com/ChernegaSergiy/minute-of-silence/releases/latest/download/latest.json"
+      ]
+    }
+  }
 }
