@@ -6,7 +6,7 @@ mod error;
 mod platform;
 mod state;
 
-use tauri::Manager;
+use tauri::{Listener, Manager};
 rust_i18n::i18n!("locales");
 
 pub use core::settings::{AudioPreset, Settings};
@@ -46,11 +46,56 @@ pub fn run() {
             log::info!("Backend locale set to: {}, source: {}", lang, locale);
 
             // --- 2. State Management ---
-            let settings = Settings::load_or_default();
+            let settings = Settings::load_from_store(&handle);
             app.manage(AppState::new_with_settings(
                 handle.clone(),
                 settings.clone(),
             ));
+
+            // --- 2.1. Store Change Listener ---
+            {
+                let app_handle = handle.clone();
+                app.listen_any("store://change", move |event: tauri::Event| {
+                    log::info!("Received store change event: {:?}", event.payload());
+
+                    let state = app_handle.state::<AppState>();
+                    let new_settings = Settings::load_from_store(&app_handle);
+
+                    let old_settings = {
+                        let mut lock = state.lock();
+                        let old = lock.settings.clone();
+                        lock.settings = new_settings.clone();
+                        old
+                    };
+
+                    // Apply autostart setting side-effects
+                    if old_settings.autostart_enabled != new_settings.autostart_enabled {
+                        log::info!(
+                            "Autostart setting changed: {} -> {}",
+                            old_settings.autostart_enabled,
+                            new_settings.autostart_enabled
+                        );
+                        crate::platform::apply_autostart_enabled(
+                            &app_handle,
+                            new_settings.autostart_enabled,
+                        );
+                    }
+
+                    // Apply NTP synchronization side-effects
+                    if old_settings.system_time_only != new_settings.system_time_only
+                        && !new_settings.system_time_only
+                    {
+                        log::info!("System time only disabled, triggering immediate NTP sync");
+                        let ntp = state.ntp_service.clone();
+                        let app_handle_clone = app_handle.clone();
+                        tauri::async_runtime::spawn(async move {
+                            let _ = ntp.sync().await;
+                            use tauri::Emitter;
+                            let _ = app_handle_clone.emit("ntp-synced", ());
+                        });
+                    }
+                });
+            }
 
             // --- 3. UI Initialization ---
             app::tray::build_tray(app)?;
