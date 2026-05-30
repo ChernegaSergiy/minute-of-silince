@@ -98,6 +98,29 @@ const useStyles = makeStyles({
     letterSpacing: "0.5em",
     fontSize: "13px",
     margin: 0,
+  },
+  subtitleContainer: {
+    display: "flex",
+    flexDirection: "column",
+    alignItems: "center",
+    ...shorthands.gap("8px"),
+  },
+  personalName: {
+    color: tokens.colorNeutralForeground1,
+    fontSize: "13px",
+    fontWeight: tokens.fontWeightSemibold,
+    letterSpacing: "0.4em",
+    textTransform: "uppercase",
+    textAlign: "center",
+    maxWidth: "600px",
+    lineHeight: "1.5",
+    opacity: 0,
+    transform: "translateY(4px)",
+    transition: "opacity 500ms ease-in-out, transform 500ms cubic-bezier(0.25, 1, 0.5, 1)",
+  },
+  personalNameVisible: {
+    opacity: 1,
+    transform: "translateY(0)",
   }
 });
 
@@ -211,8 +234,8 @@ export default function Overlay({ show, durationSeconds = 60, personalDates = []
 
   useApngPlayer(ringCanvasRef, ringUrl, durationSeconds, shouldRender);
 
-  // Check if there's any active personal dates matching today
-  const hasActiveDates = useMemo(() => {
+  // Get active personal dates matching today
+  const activeDates = useMemo(() => {
     const today = new Date();
     const currentMonth = today.getMonth() + 1;
     const currentDay = today.getDate();
@@ -227,8 +250,38 @@ export default function Overlay({ show, durationSeconds = 60, personalDates = []
       const feb29Events = personalDates.filter((d) => d.month === 2 && d.day === 29);
       active = [...active, ...feb29Events];
     }
-    return active.length > 0;
+    return active;
   }, [personalDates]);
+
+  const hasActiveDates = activeDates.length > 0;
+
+  // Name carousel/slider state
+  const [currentNameIndex, setCurrentNameIndex] = useState(0);
+  const [nameFadeState, setNameFadeState] = useState(true);
+
+  // Reset index when active dates or overlay state changes
+  useEffect(() => {
+    setCurrentNameIndex(0);
+    setNameFadeState(true);
+  }, [activeDates, show]);
+
+  // Rotator effect for multiple names
+  useEffect(() => {
+    if (activeDates.length <= 1 || !show) return;
+
+    const interval = setInterval(() => {
+      setNameFadeState(false); // Start fade-out animation
+
+      setTimeout(() => {
+        setCurrentNameIndex((prev) => (prev + 1) % activeDates.length);
+        setNameFadeState(true); // Start fade-in animation
+      }, 500);
+    }, 4000); // 4 seconds total interval for each slide
+
+    return () => clearInterval(interval);
+  }, [activeDates, show]);
+
+  const currentCommemorationName = activeDates[currentNameIndex]?.label || "";
 
   if (!shouldRender) return null;
 
@@ -254,9 +307,21 @@ export default function Overlay({ show, durationSeconds = 60, personalDates = []
             />
           </div>
           
-          <Subtitle1 className={styles.subtitle}>
-            {hasActiveDates ? t("overlay.personal_subtitle") : t("overlay.subtitle")}
-          </Subtitle1>
+          <div className={styles.subtitleContainer}>
+            <Subtitle1 className={styles.subtitle}>
+              {hasActiveDates ? t("overlay.personal_subtitle") : t("overlay.subtitle")}
+            </Subtitle1>
+            {hasActiveDates && currentCommemorationName && (
+              <div
+                className={mergeClasses(
+                  styles.personalName,
+                  nameFadeState && styles.personalNameVisible
+                )}
+              >
+                {currentCommemorationName}
+              </div>
+            )}
+          </div>
         </div>
       </div>
     </FluentProvider>
