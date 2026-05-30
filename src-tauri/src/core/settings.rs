@@ -150,9 +150,7 @@ impl Settings {
                 .store("settings.json")
                 .map_err(|e| e.to_string())?;
             if let Some(val) = store.get("settings") {
-                let mut settings: Settings =
-                    serde_json::from_value(val).map_err(|e| e.to_string())?;
-                settings.validate();
+                let settings: Settings = serde_json::from_value(val).map_err(|e| e.to_string())?;
                 Ok(settings)
             } else {
                 Ok(Settings::default())
@@ -181,16 +179,13 @@ impl Settings {
         Ok(())
     }
 
-    pub fn validate(&mut self) {}
-
     pub fn load() -> Result<Self> {
         let path = Self::path()?;
         if !path.exists() {
             return Ok(Self::default());
         }
         let raw = std::fs::read_to_string(&path)?;
-        let mut settings: Settings = serde_json::from_str(&raw)?;
-        settings.validate();
+        let settings: Settings = serde_json::from_str(&raw)?;
         Ok(settings)
     }
 
@@ -199,9 +194,7 @@ impl Settings {
         if let Some(parent) = path.parent() {
             std::fs::create_dir_all(parent)?;
         }
-        let mut settings = self.clone();
-        settings.validate();
-        let json = serde_json::to_string_pretty(&settings)?;
+        let json = serde_json::to_string_pretty(self)?;
         std::fs::write(&path, json)?;
         Ok(())
     }
