@@ -314,7 +314,11 @@ export default function App() {
         </div>
       </FluentProvider>
 
-      <Overlay show={showOverlay} durationSeconds={ceremonyDurationMs ? ceremonyDurationMs / 1000 : undefined} />
+      <Overlay
+        show={showOverlay}
+        durationSeconds={ceremonyDurationMs ? ceremonyDurationMs / 1000 : undefined}
+        personalDates={personalDates}
+      />
     </>
   );
 }
