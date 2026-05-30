@@ -16,7 +16,7 @@ import {
   Checkmark20Regular,
   Dismiss20Regular,
 } from "@fluentui/react-icons";
-import { getSettings, saveSettings } from "./api";
+import { getPersonalDates, savePersonalDates } from "./api";
 import type { PersonalDate } from "./types";
 import { t } from "./i18n";
 import i18next from "./i18n";
@@ -180,9 +180,7 @@ export default function PersonalDatesTab({ personalDates, onPersonalDatesChange 
 
   const persist = useCallback(async (next: PersonalDate[]) => {
     try {
-      const diskSettings = await getSettings();
-      const nextSettings = { ...diskSettings, personalDates: next };
-      await saveSettings(nextSettings);
+      await savePersonalDates(next);
       onPersonalDatesChange(next);
     } catch (e) {
       console.error(e);
