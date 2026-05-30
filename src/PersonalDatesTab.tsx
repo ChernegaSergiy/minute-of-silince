@@ -16,7 +16,7 @@ import {
   Checkmark20Regular,
   Dismiss20Regular,
 } from "@fluentui/react-icons";
-import { getPersonalDates, savePersonalDates } from "./api";
+import { savePersonalDates } from "./api";
 import type { PersonalDate } from "./types";
 import { t } from "./i18n";
 import i18next from "./i18n";
