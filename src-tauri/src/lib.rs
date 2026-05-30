@@ -58,42 +58,45 @@ pub fn run() {
                 app.listen_any("store://change", move |event: tauri::Event| {
                     log::info!("Received store change event: {:?}", event.payload());
 
-                    let state = app_handle.state::<AppState>();
-                    let new_settings = Settings::load_from_store(&app_handle);
+                    let app_handle_clone = app_handle.clone();
+                    tauri::async_runtime::spawn(async move {
+                        let state = app_handle_clone.state::<AppState>();
+                        let new_settings = Settings::load_from_store(&app_handle_clone);
 
-                    let old_settings = {
-                        let mut lock = state.lock();
-                        let old = lock.settings.clone();
-                        lock.settings = new_settings.clone();
-                        old
-                    };
+                        let old_settings = {
+                            let mut lock = state.lock();
+                            let old = lock.settings.clone();
+                            lock.settings = new_settings.clone();
+                            old
+                        };
 
-                    // Apply autostart setting side-effects
-                    if old_settings.autostart_enabled != new_settings.autostart_enabled {
-                        log::info!(
-                            "Autostart setting changed: {} -> {}",
-                            old_settings.autostart_enabled,
-                            new_settings.autostart_enabled
-                        );
-                        crate::platform::apply_autostart_enabled(
-                            &app_handle,
-                            new_settings.autostart_enabled,
-                        );
-                    }
+                        // Apply autostart setting side-effects
+                        if old_settings.autostart_enabled != new_settings.autostart_enabled {
+                            log::info!(
+                                "Autostart setting changed: {} -> {}",
+                                old_settings.autostart_enabled,
+                                new_settings.autostart_enabled
+                            );
+                            crate::platform::apply_autostart_enabled(
+                                &app_handle_clone,
+                                new_settings.autostart_enabled,
+                            );
+                        }
 
-                    // Apply NTP synchronization side-effects
-                    if old_settings.system_time_only != new_settings.system_time_only
-                        && !new_settings.system_time_only
-                    {
-                        log::info!("System time only disabled, triggering immediate NTP sync");
-                        let ntp = state.ntp_service.clone();
-                        let app_handle_clone = app_handle.clone();
-                        tauri::async_runtime::spawn(async move {
-                            let _ = ntp.sync().await;
-                            use tauri::Emitter;
-                            let _ = app_handle_clone.emit("ntp-synced", ());
-                        });
-                    }
+                        // Apply NTP synchronization side-effects
+                        if old_settings.system_time_only != new_settings.system_time_only
+                            && !new_settings.system_time_only
+                        {
+                            log::info!("System time only disabled, triggering immediate NTP sync");
+                            let ntp = state.ntp_service.clone();
+                            let app_handle_clone2 = app_handle_clone.clone();
+                            tauri::async_runtime::spawn(async move {
+                                let _ = ntp.sync().await;
+                                use tauri::Emitter;
+                                let _ = app_handle_clone2.emit("ntp-synced", ());
+                            });
+                        }
+                    });
                 });
             }
 
