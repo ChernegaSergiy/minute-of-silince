@@ -35,6 +35,7 @@ pub fn run() {
                 .level(log::LevelFilter::Info)
                 .build(),
         )
+        .plugin(tauri_plugin_store::Builder::new().build())
         .setup(|app| {
             let handle = app.handle();
 
