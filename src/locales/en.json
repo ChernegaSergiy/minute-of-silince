@@ -162,7 +162,8 @@
   },
   "overlay": {
     "title": "MINUTE OF SILENCE",
-    "subtitle": "WE REMEMBER EVERYONE"
+    "subtitle": "WE REMEMBER EVERYONE",
+    "personal_subtitle": "TODAY IS A DAY OF REMEMBRANCE"
   },
   "personal_dates": {
     "title": "Personal dates",

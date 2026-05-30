@@ -162,7 +162,8 @@
   },
   "overlay": {
     "title": "ХВИЛИНА МОВЧАННЯ",
-    "subtitle": "ПАМ'ЯТАЄМО КОЖНОГО"
+    "subtitle": "ПАМ'ЯТАЄМО КОЖНОГО",
+    "personal_subtitle": "СЬОГОДНІ ДЕНЬ ПАМ'ЯТІ"
   },
   "personal_dates": {
     "title": "Особисті дати",
