@@ -11,8 +11,9 @@ graph TD
     Commands["commands.rs\n(IPC)"]
     State["AppState\nArc<Mutex<Inner>>\nsettings · skip_date · ceremony_active"]
     Platform["Platform layer\ncfg-gated"]
-    Windows["platform_windows\nSendInput / SMTC"]
-    Linux["platform_linux\nxdotool / MPRIS"]
+    Windows["platform_windows\nSMTC / Win32"]
+    Linux["platform_linux\nMPRIS (zbus)"]
+    Macos["platform_macos\nNSWorkspace / AppleScript"]
 
     Scheduler -->|emit| Frontend
     Frontend --> Overlay
@@ -23,12 +24,13 @@ graph TD
     State --> Platform
     Platform --> Windows
     Platform --> Linux
+    Platform --> Macos
 ```
 
 ## Key design decisions
 
 ### Why Tauri instead of Electron?
-Tauri's Rust backend gives us direct access to Win32 and Linux system APIs
+Tauri's Rust backend gives us direct access to Win32, Linux, and macOS system APIs
 without an extra IPC layer, and the resulting binary is ~5 MB vs ~150 MB for
 an equivalent Electron app.
 
@@ -37,16 +39,19 @@ The scheduler runs as a long-lived `tokio` task on the async runtime.  Tauri
 commands run on the Tauri thread pool.  A single `Arc<Mutex<Inner>>` wrapped
 in the `AppState` newtype is the simplest correct approach for this scale.
 
-### Why `SendInput(VK_MEDIA_PLAY_PAUSE)` instead of per-process muting?
-`VK_MEDIA_PLAY_PAUSE` works for every media app without requiring per-app
-integration.  `IAudioSessionControl` (Core Audio) is available as a future
-enhancement for cases where targeted muting is needed without pausing.
+### Targeted media pausing instead of system-wide key emulation
+Earlier designs simulated media key events (such as `VK_MEDIA_PLAY_PAUSE`), but this was prone to toggling state on already-paused players or failing under certain window focus conditions. Now, the app uses native platform APIs to query active media sessions and pause/resume them selectively:
+- **Windows:** System Media Transport Controls (`GlobalSystemMediaTransportControlsSessionManager`)
+- **Linux:** MPRIS D-Bus interface (`zbus`)
+- **macOS:** AppleScript control of running media apps (`osascript` via `NSWorkspace`)
+Active players are tracked dynamically and restored precisely when the ceremony ends.
 
 ### Settings persistence
 Settings are serialised as pretty-printed JSON to the platform config
 directory:
 - **Windows:** `%APPDATA%\minute-of-silence\settings.json`
 - **Linux:** `~/.config/minute-of-silence/settings.json`
+- **macOS:** `~/Library/Application Support/minute-of-silence/settings.json`
 
 ### NTP Synchronization Strategy
 The app supports both system clock and NTP-corrected time. 
