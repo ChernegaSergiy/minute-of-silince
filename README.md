@@ -171,42 +171,61 @@ Artifacts are written to `src-tauri/target/release/bundle/`.
 ```
 minute-of-silence/
 +-- src/                              # TypeScript frontend (Vite)
-|   +-- api.ts                        # Typed wrappers around Tauri invoke()
-|   +-- app.ts                        # Root UI controller
-|   \-- types.ts                      # Shared types, mirrors Rust structs
+|   +-- locales/                      # JSON translation files (UK, EN)
+|   +-- AboutTab.tsx                  # About application tab
+|   +-- App.tsx                       # Root container, layout, and event handlers
+|   +-- ChangelogTab.tsx              # Changelog tab and version history
+|   +-- Overlay.tsx                   # Active ceremony overlay component
+|   +-- PersonalDatesTab.tsx          # Personal dates creation & management tab
+|   +-- SettingsTab.tsx               # Main settings and configuration tab
+|   +-- api.ts                        # Typed wrappers around Tauri IPC invoke()
+|   +-- changelog.ts                  # Changelog parser/loader helper
+|   +-- i18n.ts                       # Localization configuration
+|   +-- main.tsx                      # React mounting entry point
+|   +-- style.css                     # Custom global CSS overrides
+|   \-- types.ts                      # Shared type definitions mirroring Rust
 +-- src-tauri/
+|   +-- capabilities/                 # Tauri v2 application permissions configuration
 |   +-- src/
-|   |   +-- app/                      # Tauri entry points
+|   |   +-- app/                      # Tauri application modules
 |   |   |   +-- mod.rs
 |   |   |   +-- commands.rs           # Tauri IPC command handlers
-|   |   |   \-- tray.rs               # System tray icon and context menu
-|   |   +-- core/                     # Business logic
+|   |   |   \-- tray.rs               # System tray menu and setup
+|   |   +-- core/                     # Core business logic
 |   |   |   +-- mod.rs
-|   |   |   +-- audio.rs              # Backend audio engine (rodio)
-|   |   |   +-- ceremony.rs           # Ceremony orchestration and lifecycle
-|   |   |   +-- ntp.rs                # NTP client logic
-|   |   |   +-- ntp_service.rs        # NTP sync service and offset caching
-|   |   |   +-- scheduler.rs          # Daily trigger loop with NTP correction
-|   |   |   \-- settings.rs           # Persistent settings and audio presets
-|   |   +-- platform/                 # Platform abstraction and implementations
-|   |   |   +-- mod.rs                # Platform trait and get_platform()
+|   |   |   +-- audio.rs              # Audio engine orchestration (rodio)
+|   |   |   +-- ceremony.rs           # Ceremony flow and state management
+|   |   |   +-- ntp_service.rs        # NTP time synchronization and offset caching
+|   |   |   +-- scheduler.rs          # Precise daily scheduler check loop
+|   |   |   \-- settings.rs           # Application configuration load/save/presets
+|   |   +-- platform/                 # OS-specific trait and implementations
+|   |   |   +-- mod.rs                # Platform selection logic
 |   |   |   +-- windows/
 |   |   |   |   +-- mod.rs
-|   |   |   |   +-- media.rs          # Win32 API — media control
-|   |   |   |   +-- notifications.rs  # MSIX toast notifications via WinRT
-|   |   |   |   +-- power.rs          # Win32 power events (wake from sleep)
-|   |   |   |   \-- volume.rs         # Win32 API — system volume control
-|   |   |   \-- linux/
+|   |   |   |   +-- autostart.rs      # Windows startup shortcuts management
+|   |   |   |   +-- media.rs          # Windows media controls muting/restoring
+|   |   |   |   +-- notifications.rs  # Windows MSIX toast notifications
+|   |   |   |   +-- power.rs          # Windows power state/sleep event handlers
+|   |   |   |   +-- theme.rs          # Windows system dark theme detection
+|   |   |   |   \-- volume.rs         # Windows Endpoint volume controls API
+|   |   |   +-- linux/
+|   |   |   |   +-- mod.rs
+|   |   |   |   +-- autostart.rs      # Linux autostart desktop entry generator
+|   |   |   |   +-- media.rs          # Linux MPRIS media controller via DBus
+|   |   |   |   +-- theme.rs          # Linux GSettings dark theme detection
+|   |   |   |   \-- volume.rs         # Linux ALSA volume control API wrapper
+|   |   |   \-- macos/
 |   |   |       +-- mod.rs
-|   |   |       +-- autostart.rs      # Snap autostart .desktop management
-|   |   |       +-- media.rs          # MPRIS D-Bus media control
-|   |   |       \-- volume.rs         # ALSA system volume control
-|   |   +-- error.rs                  # Unified error type
-|   |   +-- state.rs                  # Shared application state (Arc<Mutex>)
-|   |   +-- main.rs                   # Rust entry point
-|   |   \-- lib.rs                    # Library root and Tauri setup
-|   +-- audio/                        # Source audio files (.ogg)
-|   \-- tests/                        # Rust integration tests
+|   |   |       +-- media.rs          # macOS media player keys muting
+|   |   |       \-- volume.rs         # macOS system volume controller API
+|   |   +-- error.rs                  # Unified custom application error types
+|   |   +-- state.rs                  # Thread-safe global application state
+|   |   +-- main.rs                   # Rust entry point (forwarder)
+|   |   \-- lib.rs                    # Tauri run block and event loops
+|   +-- audio/                        # Built-in ceremony audio tracks (.ogg)
+|   +-- tests/                        # Rust integration tests
+|   +-- Cargo.toml                    # Rust/Cargo project dependency manifest
+|   \-- tauri.conf.json               # Tauri v2 application configuration file
 +-- docs/
 |   +-- architecture.md               # System design and data flow
 |   \-- images/                       # Documentation images (screenshots)
