@@ -1,7 +1,7 @@
 import i18next from "i18next";
 import LanguageDetector from "i18next-browser-languagedetector";
-import en from "./locales/en.json";
-import uk from "./locales/uk.json";
+import en from "../locales/en.json";
+import uk from "../locales/uk.json";
 
 const detector = new LanguageDetector();
 detector.addDetector({

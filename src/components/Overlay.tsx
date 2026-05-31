@@ -10,8 +10,8 @@ import {
   mergeClasses,
 } from "@fluentui/react-components";
 import UPNG from "upng-js";
-import { t } from "./i18n";
-import type { PersonalDate } from "./types";
+import { t } from "../utils/i18n";
+import type { PersonalDate } from "../types";
 
 interface OverlayProps {
   show: boolean;

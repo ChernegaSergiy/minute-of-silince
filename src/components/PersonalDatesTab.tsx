@@ -16,10 +16,10 @@ import {
   Checkmark20Regular,
   Dismiss20Regular,
 } from "@fluentui/react-icons";
-import { savePersonalDates } from "./api";
-import type { PersonalDate } from "./types";
-import { t } from "./i18n";
-import i18next from "./i18n";
+import { savePersonalDates } from "../utils/api";
+import type { PersonalDate } from "../types";
+import { t } from "../utils/i18n";
+import i18next from "../utils/i18n";
 import { DatePicker, defaultDatePickerStrings } from "@fluentui/react-datepicker-compat";
 import type { CalendarStrings } from "@fluentui/react-datepicker-compat";
 

@@ -1,8 +1,8 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { Card, Spinner, Text, Link, makeStyles, shorthands, tokens } from "@fluentui/react-components";
 import Markdown from "react-markdown";
-import { changelogVersions } from "./changelog";
-import { t } from "./i18n";
+import { changelogVersions } from "../utils/changelog";
+import { t } from "../utils/i18n";
 import { open } from "@tauri-apps/plugin-shell";
 
 const CHANGELOG_PAGE_SIZE = 1;

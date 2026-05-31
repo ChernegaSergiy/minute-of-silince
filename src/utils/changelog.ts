@@ -1,5 +1,5 @@
 import { parse } from "yaml";
-import changelogYaml from "../CHANGELOG.yaml?raw";
+import changelogYaml from "../../CHANGELOG.yaml?raw";
 
 const CHANGELOG_CATEGORIES = ["added", "changed", "fixed", "removed", "deprecated", "security"] as const;
 

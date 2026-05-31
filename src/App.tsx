@@ -33,15 +33,15 @@ import {
   saveSettings,
   syncNtpNow,
   triggerCeremonyNow,
-} from "./api";
+} from "./utils/api";
 import { DEFAULT_SETTINGS, type PersonalDate, type Settings, type StatusSnapshot } from "./types";
-import { t } from "./i18n";
-import AboutTab from "./AboutTab";
-import Overlay from "./Overlay";
-import SettingsTab from "./SettingsTab";
-import PersonalDatesTab from "./PersonalDatesTab";
+import { t } from "./utils/i18n";
+import AboutTab from "./components/AboutTab";
+import Overlay from "./components/Overlay";
+import SettingsTab from "./components/SettingsTab";
+import PersonalDatesTab from "./components/PersonalDatesTab";
 
-const ChangelogTab = lazy(() => import("./ChangelogTab"));
+const ChangelogTab = lazy(() => import("./components/ChangelogTab"));
 
 const DEFAULT_STATUS: StatusSnapshot = {
   ceremonyActive: false,

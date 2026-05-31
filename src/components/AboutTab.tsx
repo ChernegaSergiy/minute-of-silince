@@ -2,8 +2,8 @@ import { Button, Link, makeStyles, tokens } from "@fluentui/react-components";
 import { ClipboardCheckmarkRegular, ClipboardRegular } from "@fluentui/react-icons";
 import { useCallback, useState } from "react";
 import { open } from "@tauri-apps/plugin-shell";
-import { getLogContents } from "./api";
-import { t } from "./i18n";
+import { getLogContents } from "../utils/api";
+import { t } from "../utils/i18n";
 
 interface AboutTabProps {
   version: string;

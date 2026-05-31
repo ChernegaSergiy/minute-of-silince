@@ -11,9 +11,9 @@ import {
   tokens,
 } from "@fluentui/react-components";
 import { ArrowSync20Regular } from "@fluentui/react-icons";
-import { skipNext, unskipNext } from "./api";
-import type { AnnouncementVoice, AnthemVoice, AudioPreset, Settings, StatusSnapshot } from "./types";
-import { t } from "./i18n";
+import { skipNext, unskipNext } from "../utils/api";
+import type { AnnouncementVoice, AnthemVoice, AudioPreset, Settings, StatusSnapshot } from "../types";
+import { t } from "../utils/i18n";
 
 const presets: AudioPreset[] = [
   "voice_metronome",
