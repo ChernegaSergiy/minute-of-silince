@@ -171,16 +171,18 @@ Artifacts are written to `src-tauri/target/release/bundle/`.
 ```
 minute-of-silence/
 +-- src/                              # TypeScript frontend (Vite)
+|   +-- components/                   # React tab and overlay components
+|   |   +-- AboutTab.tsx              # About application tab
+|   |   +-- ChangelogTab.tsx          # Changelog and version history UI
+|   |   +-- Overlay.tsx               # Active ceremony overlay component
+|   |   +-- PersonalDatesTab.tsx      # Personal remembrance dates management
+|   |   \-- SettingsTab.tsx           # Main settings interface
 |   +-- locales/                      # JSON translation files (UK, EN)
-|   +-- AboutTab.tsx                  # About application tab
+|   +-- utils/                        # Core utilities and services
+|   |   +-- api.ts                    # Typed wrappers around Tauri IPC invoke()
+|   |   +-- changelog.ts              # Changelog parser/loader helper
+|   |   \-- i18n.ts                   # Localization configuration
 |   +-- App.tsx                       # Root container, layout, and event handlers
-|   +-- ChangelogTab.tsx              # Changelog tab and version history
-|   +-- Overlay.tsx                   # Active ceremony overlay component
-|   +-- PersonalDatesTab.tsx          # Personal dates creation & management tab
-|   +-- SettingsTab.tsx               # Main settings and configuration tab
-|   +-- api.ts                        # Typed wrappers around Tauri IPC invoke()
-|   +-- changelog.ts                  # Changelog parser/loader helper
-|   +-- i18n.ts                       # Localization configuration
 |   +-- main.tsx                      # React mounting entry point
 |   +-- style.css                     # Custom global CSS overrides
 |   \-- types.ts                      # Shared type definitions mirroring Rust
