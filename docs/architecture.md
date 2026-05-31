@@ -63,13 +63,21 @@ To ensure the application feels like a native desktop tool:
 
 ```
 Scheduler loop (every 1 s)
-  └─ current_local_time()          ← NTP-corrected or system clock
-       └─ is_within_window()       ← [09:00, 09:00 + grace from settings)
-            └─ trigger_ceremony()
-                 ├─ platform::media::pause_all()
-                 ├─ emit("ceremony:start")   → Frontend shows overlay
-                 ├─ audio engine plays preset
-                 └─ finish_ceremony()
-                      ├─ platform::media::resume_all()
-                      └─ emit("ceremony:end")  → Frontend hides overlay
+  ├─ sync_ntp() if needed          ← hourly or on sleep resume
+  └─ get_synchronized_now()        ← NTP-corrected or system clock
+       └─ Should trigger today?
+            ├─ Compensation window: [09:00 - compensation, 09:00)  ← voice/bell early start
+            └─ Grace window: [09:00, 09:00 + grace_minutes)        ← late start / wake up
+                 └─ trigger_ceremony() (CeremonyManager)
+                      ├─ Set ceremony_active = true & last_activation = now
+                      ├─ Setup flag animation webview window (if enabled & preset has anthem)
+                      ├─ emit("ceremony-start", { duration_ms })   → Frontend shows overlay
+                      ├─ platform.pause_media()                    → Pause other players (if enabled)
+                      ├─ Auto-unmute & set system volume priority
+                      ├─ audio_engine.play_preset(...)             → Runs on a dedicated thread
+                      └─ finish_ceremony()                         ← Called when audio ends
+                           ├─ Restore system volume & mute states
+                           ├─ platform.resume_media(...)           → Resume players (if enabled)
+                           ├─ Clear settings.skip_date from store
+                           └─ emit("ceremony-end")                 → Frontend hides overlay
 ```
