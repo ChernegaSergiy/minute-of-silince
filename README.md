@@ -4,6 +4,8 @@
 
 # Minute of Silence
 
+*A desktop app for Ukraine's daily moment of silence.*
+
 [![minute-of-silence](https://snapcraft.io/minute-of-silence/badge.svg)](https://snapcraft.io/minute-of-silence)
 [![CI](https://github.com/ChernegaSergiy/minute-of-silence/actions/workflows/ci.yml/badge.svg)](https://github.com/ChernegaSergiy/minute-of-silence/actions)
 [![License: CSSM Unlimited License v2.0](https://img.shields.io/badge/License-CSSM%20Unlimited%20License%20v2.0-blue.svg?logo=opensourceinitiative)](LICENSE)
