@@ -61,23 +61,25 @@ npm run typecheck
 
 ```
 minute-of-silence/
-+-- src/                     # TypeScript frontend
-|   +-- api.ts               # Typed Tauri invoke wrappers
-|   +-- app.ts               # Root UI controller
-|   +-- overlay.ts           # Ceremony overlay
-|   \-- types.ts             # Shared types (mirrors Rust structs)
-+-- src-tauri/
++-- src/                     # TypeScript React frontend
+|   +-- components/          # Tab and overlay components
+|   +-- locales/             # Localization files (UK, EN)
+|   +-- utils/               # Helpers (api, i18n, changelog)
+|   +-- App.tsx              # Root component & state management
+|   \-- types.ts             # Shared type definitions (mirrors Rust)
++-- src-tauri/               # Rust Tauri backend
+|   +-- capabilities/        # Tauri v2 permissions config
 |   +-- src/
-|   |   +-- core/            # Scheduler, NTP, settings
-|   |   +-- commands.rs      # Tauri IPC commands
-|   |   +-- tray.rs          # System-tray setup
-|   |   +-- platform_windows.rs
-|   |   \-- platform_linux.rs
-|   \-- tests/               # Integration tests
-+-- .github/
-|   +-- workflows/ci.yml
-|   \-- ISSUE_TEMPLATE/
-\-- docs/
+|   |   +-- app/             # Tauri command handlers & tray menu
+|   |   +-- core/            # Audio engine, ceremony, scheduler, settings
+|   |   +-- platform/        # OS-specific implementations (Linux, Windows, macOS)
+|   |   +-- lib.rs           # Tauri app entry & builder
+|   |   \-- main.rs          # Executable entry point
+|   +-- audio/               # Built-in audio assets
+|   \-- tests/               # Backend integration tests
++-- docs/                    # Architecture and images documentation
++-- .github/                 # GitHub CI workflows and templates
+\-- package.json             # Node dependencies and scripts
 ```
 
 ---
