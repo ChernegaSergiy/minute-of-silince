@@ -9,6 +9,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.10.2] - 2026-05-31
+
+### Added
+- Personal remembrance dates management with name carousel on the visual overlay.
+
+### Changed
+- Migrate settings persistence to Tauri `plugin-store` and add dynamic settings change listener.
+- Switch APNG progress ring rendering to `upng-js` for better compatibility and performance.
+- Restructure frontend code into dedicated components and utils directories.
+
 ## [0.10.1] - 2026-05-29
 
 ### Fixed

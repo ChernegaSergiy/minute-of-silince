@@ -182,6 +182,12 @@
       "deprecated": "Deprecated",
       "security": "Security"
     },
+    "0.10.2": {
+      "personal_dates": "Personal remembrance dates management with name carousel on the visual overlay.",
+      "tauri_store_migration": "Migrate settings persistence to Tauri `plugin-store` and add dynamic settings change listener.",
+      "upng_apng_compatibility": "Switch APNG progress ring rendering to `upng-js` for better compatibility and performance.",
+      "frontend_structure_refactor": "Restructure frontend code into dedicated components and utils directories."
+    },
     "0.10.1": {
       "apng_webkitgtk_compat": "Fix the progress ring overlay on Linux (WebKitGTK) by replacing the unsupported ImageDecoder API with apng-js."
     },

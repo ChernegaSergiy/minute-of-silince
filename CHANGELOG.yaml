@@ -1,3 +1,15 @@
+- version: "0.10.2"
+  date: "2026-05-31"
+  entries:
+    - category: added
+      key: "personal_dates"
+    - category: changed
+      key: "tauri_store_migration"
+    - category: changed
+      key: "upng_apng_compatibility"
+    - category: changed
+      key: "frontend_structure_refactor"
+
 - version: "0.10.1"
   date: "2026-05-29"
   entries:
