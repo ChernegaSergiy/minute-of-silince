@@ -36,6 +36,8 @@ pub fn run() {
                 .build(),
         )
         .plugin(tauri_plugin_store::Builder::new().build())
+        .plugin(tauri_plugin_updater::Builder::new().build())
+        .plugin(tauri_plugin_process::init())
         .setup(|app| {
             let handle = app.handle();
 
@@ -152,6 +154,39 @@ pub fn run() {
             tauri::async_runtime::spawn(async move {
                 core::scheduler::run(app_handle).await;
             });
+
+            // --- 5. Auto Update Check ---
+            #[cfg(desktop)]
+            {
+                if crate::platform::should_check_for_updates() {
+                    let handle = handle.clone();
+                    tauri::async_runtime::spawn(async move {
+                        use tauri_plugin_updater::UpdaterExt;
+                        log::info!("Checking for updates...");
+                        match handle.updater_builder().build() {
+                            Ok(updater) => match updater.check().await {
+                                Ok(Some(update)) => {
+                                    log::info!("Update found: {:?}", update.version);
+                                    if let Err(e) =
+                                        update.download_and_install(|_, _| {}, || {}).await
+                                    {
+                                        log::error!("Failed to download and install update: {}", e);
+                                    }
+                                }
+                                Ok(None) => {
+                                    log::info!("No updates available.");
+                                }
+                                Err(e) => {
+                                    log::error!("Failed to check for updates: {}", e);
+                                }
+                            },
+                            Err(e) => {
+                                log::error!("Failed to build updater: {}", e);
+                            }
+                        }
+                    });
+                }
+            }
 
             Ok(())
         })
