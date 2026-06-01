@@ -124,22 +124,26 @@ const useStyles = makeStyles({
   }
 });
 
-async function loadApngFrames(src: string): Promise<{ frames: ImageBitmap[]; width: number; height: number }> {
+async function loadApngFrames(src: string): Promise<{ frames: HTMLCanvasElement[]; width: number; height: number }> {
   const resp = await fetch(src);
   const buf = await resp.arrayBuffer();
   const img = UPNG.decode(buf);
   const rgbaFrames = UPNG.toRGBA8(img);
 
-  const bitmaps: ImageBitmap[] = [];
+  const canvases: HTMLCanvasElement[] = [];
   for (const rgbaBuf of rgbaFrames) {
     const rawData = new Uint8ClampedArray(rgbaBuf);
     const imageData = new ImageData(rawData, img.width, img.height);
-    const bitmap = await createImageBitmap(imageData);
-    bitmaps.push(bitmap);
+    const canvas = document.createElement("canvas");
+    canvas.width = img.width;
+    canvas.height = img.height;
+    const ctx = canvas.getContext("2d")!;
+    ctx.putImageData(imageData, 0, 0);
+    canvases.push(canvas);
   }
 
   return {
-    frames: bitmaps,
+    frames: canvases,
     width: img.width,
     height: img.height,
   };
@@ -154,7 +158,7 @@ function useApngPlayer(
   useEffect(() => {
     if (!active) return;
     let rafId: number;
-    let frames: ImageBitmap[] = [];
+    let frames: HTMLCanvasElement[] = [];
     let startTime: number | null = null;
     let isCancelled = false;
 
@@ -162,14 +166,12 @@ function useApngPlayer(
       try {
         const data = await loadApngFrames(src);
         if (isCancelled) {
-          data.frames.forEach((bm) => bm.close());
           return;
         }
         frames = data.frames;
 
         const canvas = canvasRef.current;
         if (!canvas || frames.length === 0) {
-          frames.forEach((bm) => bm.close());
           return;
         }
 
@@ -207,7 +209,6 @@ function useApngPlayer(
     return () => {
       isCancelled = true;
       cancelAnimationFrame(rafId);
-      frames.forEach((bm) => bm.close());
     };
   }, [active, src, durationSeconds, canvasRef]);
 }
