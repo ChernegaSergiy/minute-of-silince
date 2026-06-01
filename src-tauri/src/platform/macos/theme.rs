@@ -1,6 +1,6 @@
 //! macOS-specific theme detection via Swift helper.
 
-extern "C" {
+unsafe extern "C" {
     fn macos_detect_system_theme() -> bool;
 }
 
