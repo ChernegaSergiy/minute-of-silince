@@ -1,0 +1,28 @@
+name: Snap Pipeline
+
+on:
+  workflow_run:
+    workflows: ["CI Checks Pipeline"]
+    branches: ["main"]
+    types: [completed]
+
+jobs:
+  build-snap:
+    name: Build Snap Package
+    if: github.event.workflow_run.conclusion == 'success'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: recursive
+          fetch-depth: 0
+
+      - name: Build Snap
+        uses: snapcore/action-build@v1
+        id: build
+
+      - name: Upload Snap Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: minute-of-silence-snap
+          path: ${{ steps.build.outputs.snap }}
