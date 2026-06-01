@@ -15,8 +15,8 @@
     "system": "SYSTEM"
   },
   "status": {
-    "last_ceremony": "Last ceremony:",
-    "ntp_sync": "NTP synchronization:",
+    "last_ceremony": "Last ceremony",
+    "ntp_sync": "NTP synchronization",
     "ntp_disabled": "Disabled",
     "ntp_syncing": "Synchronizing...",
     "ntp_error": "Error"

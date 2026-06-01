@@ -15,8 +15,8 @@
     "system": "СИСТЕМА"
   },
   "status": {
-    "last_ceremony": "Остання церемонія:",
-    "ntp_sync": "Синхронізація NTP:",
+    "last_ceremony": "Остання церемонія",
+    "ntp_sync": "Синхронізація NTP",
     "ntp_disabled": "Вимкнено",
     "ntp_syncing": "Синхронізація...",
     "ntp_error": "Помилка"
