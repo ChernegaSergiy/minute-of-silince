@@ -36,10 +36,9 @@ pub fn start_theme_watcher(app_handle: AppHandle) {
                 if *args.namespace() == "org.freedesktop.appearance"
                     && *args.key() == "color-scheme"
                 {
-                    // is_dark_mode() already handles the GNOME exception (forcing dark mode).
-                    let is_dark = crate::platform::is_dark_mode();
+                    let is_dark = is_dark_mode();
 
-                    if crate::platform::is_gnome() {
+                    if is_gnome() {
                         // Skip redundant updates on GNOME as the panel is always dark.
                         continue;
                     }
@@ -57,4 +56,81 @@ pub fn start_theme_watcher(app_handle: AppHandle) {
             }
         }
     });
+}
+
+pub fn detect_system_theme() -> bool {
+    use std::process::Command;
+
+    // 1. Primary method: XDG Desktop Portal (Universal)
+    if let Ok(conn) = Connection::session() {
+        if let Ok(proxy) = PortalSettingsProxyBlocking::new(&conn) {
+            if let Ok(val) = proxy.read("org.freedesktop.appearance", "color-scheme") {
+                if let Ok(scheme) = u32::try_from(val) {
+                    return scheme == 1; // 1 = Prefer Dark
+                }
+            }
+        }
+    }
+
+    // 2. Fallback: KDE specific via kreadconfig
+    if is_kde() {
+        for cmd in ["kreadconfig6", "kreadconfig5"] {
+            let output = Command::new(cmd)
+                .args([
+                    "--file",
+                    "kdeglobals",
+                    "--group",
+                    "KDE",
+                    "--key",
+                    "ColorScheme",
+                ])
+                .output();
+
+            if let Ok(output) = output {
+                let stdout = String::from_utf8_lossy(&output.stdout).to_lowercase();
+                if !stdout.trim().is_empty() {
+                    return stdout.contains("dark");
+                }
+            }
+        }
+    }
+
+    // 3. Fallback: GNOME/GSettings
+    let output = Command::new("gsettings")
+        .args(["get", "org.gnome.desktop.interface", "color-scheme"])
+        .output();
+
+    if let Ok(output) = output {
+        let stdout = String::from_utf8_lossy(&output.stdout);
+        return stdout.contains("dark");
+    }
+
+    false
+}
+
+pub fn is_gnome() -> bool {
+    std::env::var("XDG_CURRENT_DESKTOP")
+        .map(|v| {
+            let v = v.to_lowercase();
+            v.contains("gnome") || v.contains("unity")
+        })
+        .unwrap_or(false)
+}
+
+pub fn is_kde() -> bool {
+    std::env::var("XDG_CURRENT_DESKTOP")
+        .map(|v| v.to_lowercase().contains("kde"))
+        .unwrap_or(false)
+}
+
+pub fn is_dark_mode() -> bool {
+    if is_gnome() {
+        // On GNOME, the top panel is almost always dark regardless of the application theme.
+        return true;
+    }
+    if is_kde() {
+        // On KDE, we rely on the specific theme detection in detect_system_theme.
+        return detect_system_theme();
+    }
+    detect_system_theme()
 }

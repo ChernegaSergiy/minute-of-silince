@@ -38,7 +38,7 @@ pub fn start_theme_watcher(app_handle: AppHandle) {
 
                 if result.is_ok() {
                     if let Some(tray) = app_handle.tray_by_id("main") {
-                        let is_dark = crate::platform::detect_system_theme();
+                        let is_dark = detect_system_theme();
                         let icon = if is_dark {
                             tauri::include_image!("icons/tray-icon-32-light.png")
                         } else {
@@ -52,4 +52,23 @@ pub fn start_theme_watcher(app_handle: AppHandle) {
         }
         let _ = RegCloseKey(hkey);
     });
+}
+
+pub fn detect_system_theme() -> bool {
+    use winreg::RegKey;
+    use winreg::enums::HKEY_CURRENT_USER;
+
+    let hkcu = RegKey::predef(HKEY_CURRENT_USER);
+    if let Ok(key) =
+        hkcu.open_subkey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Themes\\Personalize")
+    {
+        if let Ok(value) = key.get_value::<u32, _>("AppsUseLightTheme") {
+            return value == 0;
+        }
+    }
+    false
+}
+
+pub fn is_dark_mode() -> bool {
+    detect_system_theme()
 }

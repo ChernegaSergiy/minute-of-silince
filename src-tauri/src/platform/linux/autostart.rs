@@ -81,3 +81,38 @@ fn remove_file(path: &std::path::Path, context: &str) {
         Err(e) => log::warn!("{} autostart: remove failed: {}", context, e),
     }
 }
+
+/// Returns the current autostart state reported by the platform.
+pub fn system_autostart_enabled() -> Option<bool> {
+    if let Ok(snap_user_data) = std::env::var("SNAP_USER_DATA") {
+        let desktop_path = std::path::PathBuf::from(snap_user_data)
+            .join(".config/autostart/minute-of-silence.desktop");
+        Some(desktop_path.exists())
+    } else if let Ok(flatpak_id) = std::env::var("FLATPAK_ID") {
+        let home = std::env::var("HOME").ok()?;
+        let desktop_path = std::path::PathBuf::from(home)
+            .join(".config/autostart")
+            .join(format!("{}.desktop", flatpak_id));
+        Some(desktop_path.exists())
+    } else {
+        None
+    }
+}
+
+/// Apply the requested autostart state to the current platform.
+pub fn apply_autostart_enabled(app: &tauri::AppHandle, enabled: bool) {
+    let is_snap = std::env::var("SNAP").is_ok();
+    let is_flatpak = std::env::var("FLATPAK_ID").is_ok();
+
+    if is_snap || is_flatpak {
+        manage(enabled);
+    } else {
+        use tauri_plugin_autostart::ManagerExt;
+        let autostart_manager = app.autolaunch();
+        if enabled {
+            let _ = autostart_manager.enable();
+        } else {
+            let _ = autostart_manager.disable();
+        }
+    }
+}

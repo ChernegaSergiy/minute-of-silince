@@ -24,3 +24,27 @@ impl super::Platform for MacosPlatform {
         self::media::resume_specific(players).await
     }
 }
+
+pub mod theme {
+    pub fn detect_system_theme() -> bool {
+        false
+    }
+    pub fn is_dark_mode() -> bool {
+        false
+    }
+}
+
+pub mod autostart {
+    pub fn system_autostart_enabled() -> Option<bool> {
+        None
+    }
+    pub fn apply_autostart_enabled(app: &tauri::AppHandle, enabled: bool) {
+        use tauri_plugin_autostart::ManagerExt;
+        let autostart_manager = app.autolaunch();
+        if enabled {
+            let _ = autostart_manager.enable();
+        } else {
+            let _ = autostart_manager.disable();
+        }
+    }
+}
