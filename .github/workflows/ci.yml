@@ -1,10 +1,10 @@
-name: CI/CD Pipeline
+name: CI Checks Pipeline
 
 on:
   push:
-    branches: [ "main", "feature/**", "fix/**", "refactor/**" ]
+    branches: ["main", "feature/**", "fix/**", "refactor/**"]
   pull_request:
-    branches: [ "main" ]
+    branches: ["main"]
 
 env:
   CARGO_TERM_COLOR: always
@@ -38,7 +38,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [windows-latest, ubuntu-latest, macos-latest]
+        os: [ubuntu-latest, windows-latest, macos-latest]
     steps:
       - uses: actions/checkout@v4
 
@@ -75,120 +75,3 @@ jobs:
       - name: Unit & integration tests
         working-directory: src-tauri
         run: cargo test --all
-
-  build-release:
-    name: Build & Release — ${{ matrix.os }}
-    needs: [frontend-checks, backend-checks]
-    if: github.ref == 'refs/heads/main'
-    runs-on: ${{ matrix.os }}
-    permissions:
-      contents: write
-      packages: write
-    strategy:
-      fail-fast: false
-      matrix:
-        os: [windows-latest, ubuntu-latest, macos-latest]
-    steps:
-      - uses: actions/checkout@v4
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: "20"
-          cache: "npm"
-
-      - name: Install Linux system deps
-        if: runner.os == 'Linux'
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y \
-            libwebkit2gtk-4.1-dev \
-            libappindicator3-dev \
-            librsvg2-dev \
-            patchelf \
-            libasound2-dev \
-            libjack-dev
-
-      - name: Install Rust stable
-        uses: dtolnay/rust-toolchain@stable
-
-      - name: Add Apple Silicon target (macOS only)
-        if: runner.os == 'macOS'
-        run: rustup target add aarch64-apple-darwin x86_64-apple-darwin
-
-      - name: Rust Cache
-        uses: Swatinem/rust-cache@v2
-        with:
-          workspaces: "src-tauri -> target"
-
-      - name: Install frontend deps
-        run: npm ci
-
-      - name: Tauri build
-        uses: tauri-apps/tauri-action@v0
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          TAURI_SIGNING_PRIVATE_KEY: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY }}
-        with:
-          tagName: nightly-${{ github.sha }}
-          releaseName: "Nightly build"
-          releaseDraft: true
-          prerelease: true
-
-  build-snap:
-    name: Build Snap Package
-    needs: [frontend-checks, backend-checks]
-    if: github.ref == 'refs/heads/main'
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-        with:
-          submodules: recursive
-          fetch-depth: 0
-
-      - name: Build Snap
-        uses: snapcore/action-build@v1
-        id: build
-
-      - name: Upload Snap Artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: minute-of-silence-snap
-          path: ${{ steps.build.outputs.snap }}
-
-  build-flatpak:
-    name: Build Flatpak Package
-    needs: [frontend-checks, backend-checks]
-    if: github.ref == 'refs/heads/main'
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-        with:
-          submodules: recursive
-          fetch-depth: 0
-
-      - name: Install Flatpak tools
-        run: |
-          sudo add-apt-repository ppa:flatpak/stable -y
-          sudo apt-get update
-          sudo apt-get install -y flatpak flatpak-builder
-          sudo flatpak remote-add --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo
-          sudo flatpak install -y flathub \
-            org.gnome.Sdk//50 \
-            org.gnome.Platform//50 \
-            org.freedesktop.Sdk.Extension.rust-stable//25.08 \
-            org.freedesktop.Sdk.Extension.node20//25.08
-
-      - name: Build Flatpak
-        uses: flatpak/flatpak-github-actions/flatpak-builder@v6
-        with:
-          bundle: MinuteOfSilence.flatpak
-          manifest-path: flatpak/ua.pp.khvylyna.MinuteOfSilence.yml
-          cache: "true"
-          cache-key: flatpak-builder-${{ github.sha }}
-
-      - name: Upload Flatpak Artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: minute-of-silence-flatpak
-          path: MinuteOfSilence.flatpak
