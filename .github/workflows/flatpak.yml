@@ -1,0 +1,44 @@
+name: Flatpak Pipeline
+
+on:
+  workflow_run:
+    workflows: ["CI Checks Pipeline"]
+    branches: ["main"]
+    types: [completed]
+
+jobs:
+  build-flatpak:
+    name: Build Flatpak Package
+    if: github.event.workflow_run.conclusion == 'success'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: recursive
+          fetch-depth: 0
+
+      - name: Install Flatpak tools
+        run: |
+          sudo add-apt-repository ppa:flatpak/stable -y
+          sudo apt-get update
+          sudo apt-get install -y flatpak flatpak-builder
+          sudo flatpak remote-add --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo
+          sudo flatpak install -y flathub \
+            org.gnome.Sdk//50 \
+            org.gnome.Platform//50 \
+            org.freedesktop.Sdk.Extension.rust-stable//25.08 \
+            org.freedesktop.Sdk.Extension.node20//25.08
+
+      - name: Build Flatpak
+        uses: flatpak/flatpak-github-actions/flatpak-builder@v6
+        with:
+          bundle: MinuteOfSilence.flatpak
+          manifest-path: flatpak/ua.pp.khvylyna.MinuteOfSilence.yml
+          cache: "true"
+          cache-key: flatpak-builder-${{ github.sha }}
+
+      - name: Upload Flatpak Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: minute-of-silence-flatpak
+          path: MinuteOfSilence.flatpak
