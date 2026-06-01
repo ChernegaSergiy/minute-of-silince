@@ -4,7 +4,7 @@ use crate::error::Result;
 use std::ffi::{CStr, CString};
 use std::os::raw::c_char;
 
-extern "C" {
+unsafe extern "C" {
     fn macos_pause_all() -> *mut c_char;
     fn macos_resume_players(bundle_ids_csv: *const c_char);
     fn macos_free_string(ptr: *mut c_char);
