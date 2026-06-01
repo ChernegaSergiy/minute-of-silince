@@ -231,15 +231,25 @@ pub fn sync_autostart_from_system(state: tauri::State<'_, crate::AppState>) -> R
 pub fn is_msix() -> bool {
     #[cfg(target_os = "windows")]
     {
+        use windows::Win32::Foundation::{ERROR_INSUFFICIENT_BUFFER, WIN32_ERROR};
+
         unsafe extern "system" {
             fn GetCurrentPackageFullName(
                 packageFullNameLength: *mut u32,
                 packageFullName: *mut u16,
-            ) -> i32;
+            ) -> u32;
         }
-        let mut length = 0;
-        let rc = unsafe { GetCurrentPackageFullName(&mut length, std::ptr::null_mut()) };
-        rc != 15700 // 15700 is APPMODEL_ERROR_NO_PACKAGE
+
+        let mut length: u32 = 0;
+        unsafe {
+            let result = GetCurrentPackageFullName(&mut length, std::ptr::null_mut());
+
+            // The magic number 15700 is wrapped in the APPMODEL_ERROR_NO_PACKAGE constant in windows-rs.
+            // But in practice, we check specifically for ERROR_INSUFFICIENT_BUFFER.
+            // If it returned the "insufficient buffer" error (code 122),
+            // it means the package definitely exists, we just didn't provide a buffer to write the name.
+            WIN32_ERROR(result) == ERROR_INSUFFICIENT_BUFFER
+        }
     }
     #[cfg(not(target_os = "windows"))]
     {
