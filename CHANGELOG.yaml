@@ -1,3 +1,17 @@
+- version: "0.10.4"
+  date: "2026-06-01"
+  entries:
+    - category: added
+      key: "tauri_updater_integration"
+    - category: added
+      key: "macos_system_theme"
+    - category: changed
+      key: "platform_refactoring"
+    - category: changed
+      key: "msix_windows_bindings"
+    - category: fixed
+      key: "i18n_punctuation_fix"
+
 - version: "0.10.3"
   date: "2026-06-01"
   entries:

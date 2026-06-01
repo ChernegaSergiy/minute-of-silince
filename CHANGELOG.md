@@ -9,6 +9,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.10.4] - 2026-06-01
+
+### Added
+- Integrate Tauri Auto-Updater system to check for and install updates in the background on startup (except for sandboxed package environments like Snap, Flatpak, and MSIX).
+- Implement native system theme (light/dark mode) detection on macOS.
+
+### Changed
+- Refactor platform-specific modules (Windows, macOS, Linux) into separate submodules using the `sys` module pattern.
+- Migrate Windows MSIX package installation check to use official `windows` crate bindings.
+
+### Fixed
+- Remove duplicate punctuation marks (colons) in localized status labels.
+
 ## [0.10.3] - 2026-06-01
 
 ### Added

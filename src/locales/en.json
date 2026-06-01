@@ -182,6 +182,13 @@
       "deprecated": "Deprecated",
       "security": "Security"
     },
+    "0.10.4": {
+      "tauri_updater_integration": "Integrate Tauri Auto-Updater system to check for and install updates in the background on startup (except for sandboxed package environments like Snap, Flatpak, and MSIX).",
+      "macos_system_theme": "Implement native system theme (light/dark mode) detection on macOS.",
+      "platform_refactoring": "Refactor platform-specific modules (Windows, macOS, Linux) into separate submodules using the \"sys\" module pattern.",
+      "msix_windows_bindings": "Migrate Windows MSIX package installation check to use official \"windows\" crate bindings.",
+      "i18n_punctuation_fix": "Remove duplicate punctuation marks (colons) in localized status labels."
+    },
     "0.10.3": {
       "linux_glib_dependency": "Add `glib` dependency for target Linux to enable setting the program name.",
       "disable_viewport_scaling": "Disable user viewport scaling in index.html to prevent zoom gesture scaling.",
