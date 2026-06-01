@@ -152,7 +152,7 @@
   },
   "about": {
     "description": "The application was created to honor the memory of fallen defenders and victims of war.",
-    "acknowledgments": "Desktop version inspired by Bohdan Hdal's app.",
+    "acknowledgments": "Desktop version based on the idea and voice of Bohdan Hdal.",
     "version": "Version:",
     "copy_logs": "Copy debug logs",
     "copy_logs_copied": "Copied.",
