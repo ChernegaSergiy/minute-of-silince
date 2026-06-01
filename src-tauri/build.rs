@@ -26,7 +26,9 @@ fn main() {
 
         // Link Swift runtime libraries
         println!("cargo:rustc-link-search=native=/usr/lib/swift");
-        println!("cargo:rustc-link-search=native=/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/macosx");
+        println!(
+            "cargo:rustc-link-search=native=/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/macosx"
+        );
         println!("cargo:rustc-link-lib=dylib=swiftCore");
         println!("cargo:rustc-link-lib=dylib=swiftAppKit");
     }
