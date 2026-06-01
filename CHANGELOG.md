@@ -9,6 +9,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.10.3] - 2026-06-01
+
+### Added
+- Add `glib` dependency for target Linux to enable setting the program name.
+- Disable user viewport scaling in index.html to prevent zoom gesture scaling.
+
+### Changed
+- Update acknowledgments in the About tab to explicitly credit Bohdan Hdal's original idea and voice.
+
+### Fixed
+- Fix window grouping and application icon under pure Wayland in Snap environment by dynamically setting program name.
+
+
 ## [0.10.2] - 2026-05-31
 
 ### Added

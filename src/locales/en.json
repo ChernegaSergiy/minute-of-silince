@@ -182,6 +182,12 @@
       "deprecated": "Deprecated",
       "security": "Security"
     },
+    "0.10.3": {
+      "linux_glib_dependency": "Add `glib` dependency for target Linux to enable setting the program name.",
+      "disable_viewport_scaling": "Disable user viewport scaling in index.html to prevent zoom gesture scaling.",
+      "about_credits_update": "Update acknowledgments in the About tab to explicitly credit Bohdan Hdal's original idea and voice.",
+      "snap_wayland_app_id_fix": "Fix window grouping and application icon under pure Wayland in Snap environment by dynamically setting program name."
+    },
     "0.10.2": {
       "personal_dates": "Personal remembrance dates management with name carousel on the visual overlay.",
       "tauri_store_migration": "Migrate settings persistence to Tauri `plugin-store` and add dynamic settings change listener.",

@@ -1,3 +1,15 @@
+- version: "0.10.3"
+  date: "2026-06-01"
+  entries:
+    - category: added
+      key: "linux_glib_dependency"
+    - category: added
+      key: "disable_viewport_scaling"
+    - category: changed
+      key: "about_credits_update"
+    - category: fixed
+      key: "snap_wayland_app_id_fix"
+
 - version: "0.10.2"
   date: "2026-05-31"
   entries:
