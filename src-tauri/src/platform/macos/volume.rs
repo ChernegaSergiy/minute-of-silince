@@ -2,7 +2,7 @@
 
 use crate::error::{AppError, Result};
 
-extern "C" {
+unsafe extern "C" {
     fn macos_get_volume() -> u8;
     fn macos_set_volume(level: u8) -> bool;
     fn macos_is_muted() -> bool;
