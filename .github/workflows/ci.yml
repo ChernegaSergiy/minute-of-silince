@@ -112,6 +112,10 @@ jobs:
       - name: Install Rust stable
         uses: dtolnay/rust-toolchain@stable
 
+      - name: Add Apple Silicon target (macOS only)
+        if: runner.os == 'macOS'
+        run: rustup target add aarch64-apple-darwin x86_64-apple-darwin
+
       - name: Rust Cache
         uses: Swatinem/rust-cache@v2
         with:
