@@ -15,15 +15,15 @@ private func runAppleScript(_ source: String) -> String? {
 
 // Helper to get default output audio device
 private func getDefaultOutputDevice() -> AudioObjectID? {
-    var deviceID = AudioObjectID(kAudioObjectUnknown)
+    var deviceID = AudioObjectID(0) // kAudioObjectUnknown is 0
     var size = UInt32(MemoryLayout.size(ofValue: deviceID))
     var address = AudioObjectPropertyAddress(
         mSelector: kAudioHardwarePropertyDefaultOutputDevice,
         mScope: kAudioObjectPropertyScopeGlobal,
-        mElement: AudioObjectPropertyElement(kAudioObjectPropertyElementMain)
+        mElement: 0 // kAudioObjectPropertyElementMain is 0
     )
     let status = AudioObjectGetPropertyData(
-        AudioObjectID(kAudioSystemObject),
+        AudioObjectID(1), // kAudioSystemObject is 1
         &address,
         0,
         nil,
@@ -39,8 +39,9 @@ public func macosDetectSystemTheme() -> Bool {
         if let style = UserDefaults.standard.string(forKey: "AppleInterfaceStyle") {
             return style.lowercased().contains("dark")
         }
-        let appearance = NSAppearance.current
-        return appearance.bestMatch(from: [.darkAqua, .aqua]) == .darkAqua
+        if let appearance = NSAppearance.current {
+            return appearance.bestMatch(from: [.darkAqua, .aqua]) == .darkAqua
+        }
     }
     return false
 }
@@ -53,7 +54,7 @@ public func macosGetVolume() -> UInt8 {
     var address = AudioObjectPropertyAddress(
         mSelector: kAudioDevicePropertyVolumeScalar,
         mScope: kAudioDevicePropertyScopeOutput,
-        mElement: AudioObjectPropertyElement(kAudioObjectPropertyElementMain)
+        mElement: 0
     )
     
     var status = AudioObjectGetPropertyData(deviceID, &address, 0, nil, &size, &volume)
@@ -74,7 +75,7 @@ public func macosSetVolume(level: UInt8) -> Bool {
     var address = AudioObjectPropertyAddress(
         mSelector: kAudioDevicePropertyVolumeScalar,
         mScope: kAudioDevicePropertyScopeOutput,
-        mElement: AudioObjectPropertyElement(kAudioObjectPropertyElementMain)
+        mElement: 0
     )
     
     var status = AudioObjectSetPropertyData(deviceID, &address, 0, nil, size, &volume)
@@ -94,7 +95,7 @@ public func macosIsMuted() -> Bool {
     var address = AudioObjectPropertyAddress(
         mSelector: kAudioDevicePropertyMute,
         mScope: kAudioDevicePropertyScopeOutput,
-        mElement: AudioObjectPropertyElement(kAudioObjectPropertyElementMain)
+        mElement: 0
     )
     
     var status = AudioObjectGetPropertyData(deviceID, &address, 0, nil, &size, &mute)
@@ -114,7 +115,7 @@ public func macosSetMute(mute: Bool) -> Bool {
     var address = AudioObjectPropertyAddress(
         mSelector: kAudioDevicePropertyMute,
         mScope: kAudioDevicePropertyScopeOutput,
-        mElement: AudioObjectPropertyElement(kAudioObjectPropertyElementMain)
+        mElement: 0
     )
     
     var status = AudioObjectSetPropertyData(deviceID, &address, 0, nil, size, &muteVal)
