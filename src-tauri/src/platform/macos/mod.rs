@@ -27,10 +27,20 @@ impl super::Platform for MacosPlatform {
 
 pub mod theme {
     pub fn detect_system_theme() -> bool {
-        false
+        use std::process::Command;
+        let output = Command::new("defaults")
+            .args(["read", "-g", "AppleInterfaceStyle"])
+            .output();
+
+        if let Ok(output) = output {
+            let stdout = String::from_utf8_lossy(&output.stdout);
+            stdout.trim().to_lowercase().contains("dark")
+        } else {
+            false
+        }
     }
     pub fn is_dark_mode() -> bool {
-        false
+        detect_system_theme()
     }
 }
 
