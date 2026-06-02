@@ -1,12 +1,14 @@
-import { Button, Link, makeStyles, tokens } from "@fluentui/react-components";
-import { ClipboardCheckmarkRegular, ClipboardRegular } from "@fluentui/react-icons";
+import { Button, Link, Spinner, makeStyles, tokens } from "@fluentui/react-components";
+import { ArrowSyncRegular, ClipboardCheckmarkRegular, ClipboardRegular } from "@fluentui/react-icons";
 import { useCallback, useState } from "react";
 import { open } from "@tauri-apps/plugin-shell";
 import { getLogContents } from "../utils/api";
 import { t } from "../utils/i18n";
+import { type UpdateInfo } from "./UpdateDialog";
 
 interface AboutTabProps {
   version: string;
+  onCheckForUpdates: () => Promise<UpdateInfo | null>;
 }
 
 const useStyles = makeStyles({
@@ -43,6 +45,7 @@ const useStyles = makeStyles({
     marginTop: tokens.spacingVerticalL,
     display: "flex",
     justifyContent: "center",
+    gap: tokens.spacingHorizontalM,
   },
   aboutLicense: {
     fontSize: tokens.fontSizeBase100,
@@ -51,9 +54,31 @@ const useStyles = makeStyles({
   },
 });
 
-export default function AboutTab({ version }: AboutTabProps) {
+export default function AboutTab({ version, onCheckForUpdates }: AboutTabProps) {
   const styles = useStyles();
   const [copyState, setCopyState] = useState<"idle" | "copied" | "error">("idle");
+  const [updateCheckState, setUpdateCheckState] = useState<"idle" | "checking" | "up_to_date" | "error">("idle");
+
+  const handleCheckUpdates = useCallback(async () => {
+    if (updateCheckState === "checking") return;
+    setUpdateCheckState("checking");
+    try {
+      const [update] = await Promise.all([
+        onCheckForUpdates(),
+        new Promise((resolve) => setTimeout(resolve, 800)),
+      ]);
+
+      if (update) {
+        setUpdateCheckState("idle");
+      } else {
+        setUpdateCheckState("up_to_date");
+        window.setTimeout(() => setUpdateCheckState("idle"), 2000);
+      }
+    } catch {
+      setUpdateCheckState("error");
+      window.setTimeout(() => setUpdateCheckState("idle"), 2000);
+    }
+  }, [updateCheckState, onCheckForUpdates]);
 
   const handleCopyLogs = useCallback(async () => {
     if (copyState !== "idle") return;
@@ -90,6 +115,21 @@ export default function AboutTab({ version }: AboutTabProps) {
         </Link>
       </div>
       <div className={styles.aboutTools}>
+        <Button
+          key={updateCheckState}
+          appearance="subtle"
+          icon={updateCheckState === "checking" ? <Spinner size="tiny" /> : <ArrowSyncRegular />}
+          onClick={handleCheckUpdates}
+          disabled={updateCheckState === "checking"}
+        >
+          {updateCheckState === "checking"
+            ? t("about.check_updates_checking")
+            : updateCheckState === "up_to_date"
+              ? t("about.check_updates_up_to_date")
+              : updateCheckState === "error"
+                ? t("about.check_updates_error")
+                : t("about.check_updates")}
+        </Button>
         <Button
           key={copyState}
           appearance="subtle"
