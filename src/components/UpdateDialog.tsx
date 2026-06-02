@@ -149,7 +149,7 @@ export default function UpdateDialog({ updateInfo, onClose }: UpdateDialogProps)
   if (!updateInfo) return null;
 
   return (
-    <Dialog open={!!updateInfo} onOpenChange={() => {
+    <Dialog modalType="alert" open={!!updateInfo} onOpenChange={() => {
       if (!updating) {
         onClose();
       }
