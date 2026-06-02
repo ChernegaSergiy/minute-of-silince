@@ -57,7 +57,7 @@ const useStyles = makeStyles({
 export default function AboutTab({ version, onCheckForUpdates }: AboutTabProps) {
   const styles = useStyles();
   const [copyState, setCopyState] = useState<"idle" | "copied" | "error">("idle");
-  const [updateCheckState, setUpdateCheckState] = useState<"idle" | "checking" | "up_to_date" | "error">("idle");
+  const [updateCheckState, setUpdateCheckState] = useState<"initial" | "checking" | "up_to_date" | "error">("initial");
 
   const handleCheckUpdates = useCallback(async () => {
     if (updateCheckState === "checking") return;
@@ -69,14 +69,14 @@ export default function AboutTab({ version, onCheckForUpdates }: AboutTabProps) 
       ]);
 
       if (update) {
-        setUpdateCheckState("idle");
+        setUpdateCheckState("initial");
       } else {
         setUpdateCheckState("up_to_date");
-        window.setTimeout(() => setUpdateCheckState("idle"), 2000);
+        window.setTimeout(() => setUpdateCheckState("initial"), 2000);
       }
     } catch {
       setUpdateCheckState("error");
-      window.setTimeout(() => setUpdateCheckState("idle"), 2000);
+      window.setTimeout(() => setUpdateCheckState("initial"), 2000);
     }
   }, [updateCheckState, onCheckForUpdates]);
 
@@ -116,7 +116,7 @@ export default function AboutTab({ version, onCheckForUpdates }: AboutTabProps) 
       </div>
       <div className={styles.aboutTools}>
         <Button
-          key="update-check-btn"
+          key={updateCheckState}
           appearance="subtle"
           icon={updateCheckState === "checking" ? <Spinner size="tiny" /> : <ArrowSyncRegular />}
           onClick={handleCheckUpdates}
