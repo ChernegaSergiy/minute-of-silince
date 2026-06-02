@@ -28,6 +28,7 @@ pub struct Inner {
     pub settings: Settings,
     pub ceremony_active: bool,
     pub last_activation: Option<DateTime<Local>>,
+    pub pending_update: Option<tauri_plugin_updater::Update>,
 }
 
 impl AppState {
