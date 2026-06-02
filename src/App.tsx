@@ -324,17 +324,16 @@ export default function App() {
             </div>
           )}
         </div>
+        <UpdateDialog
+          updateInfo={updateInfo}
+          onClose={() => setUpdateInfo(null)}
+        />
       </FluentProvider>
 
       <Overlay
         show={showOverlay}
         durationSeconds={ceremonyDurationMs ? ceremonyDurationMs / 1000 : undefined}
         personalDates={personalDates}
-      />
-
-      <UpdateDialog
-        updateInfo={updateInfo}
-        onClose={() => setUpdateInfo(null)}
       />
     </>
   );
