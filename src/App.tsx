@@ -40,6 +40,7 @@ import AboutTab from "./components/AboutTab";
 import Overlay from "./components/Overlay";
 import SettingsTab from "./components/SettingsTab";
 import PersonalDatesTab from "./components/PersonalDatesTab";
+import UpdateDialog, { type UpdateInfo } from "./components/UpdateDialog";
 
 const ChangelogTab = lazy(() => import("./components/ChangelogTab"));
 
@@ -103,6 +104,7 @@ export default function App() {
   const [volumeValue, setVolumeValue] = useState(80);
   const [syncing, setSyncing] = useState(false);
   const [hydrated, setHydrated] = useState(false);
+  const [updateInfo, setUpdateInfo] = useState<UpdateInfo | null>(null);
   const initRef = useRef(false);
 
   const isDirty = hydrated && JSON.stringify(settings) !== cleanSettings;
@@ -122,6 +124,13 @@ export default function App() {
         setVolumeValue(s.volume);
         setVersion(v);
         await getCurrentWindow().setTitle(t("app.title"));
+
+        // Check for updates on startup
+        const { invoke } = await import("@tauri-apps/api/core");
+        const update = await invoke<UpdateInfo | null>("check_for_updates");
+        if (update) {
+          setUpdateInfo(update);
+        }
       } catch (error) {
         console.error(error);
       } finally {
@@ -145,7 +154,10 @@ export default function App() {
         await onCeremonyStart((_p) => refresh()),
         await onCeremonyEnd(refresh),
         await listen("ntp-synced", refresh),
-        await listen("status-updated", refresh)
+        await listen("status-updated", refresh),
+        await listen<UpdateInfo>("update-available", (event) => {
+          setUpdateInfo(event.payload);
+        })
       );
       setInterval(refresh, 60000);
     })();
@@ -318,6 +330,11 @@ export default function App() {
         show={showOverlay}
         durationSeconds={ceremonyDurationMs ? ceremonyDurationMs / 1000 : undefined}
         personalDates={personalDates}
+      />
+
+      <UpdateDialog
+        updateInfo={updateInfo}
+        onClose={() => setUpdateInfo(null)}
       />
     </>
   );
