@@ -1,4 +1,4 @@
-import { Button, Link, Spinner, makeStyles, tokens } from "@fluentui/react-components";
+import { Button, Link, makeStyles, tokens } from "@fluentui/react-components";
 import { ArrowSyncRegular, ClipboardCheckmarkRegular, ClipboardRegular } from "@fluentui/react-icons";
 import { useCallback, useState } from "react";
 import { open } from "@tauri-apps/plugin-shell";
@@ -52,6 +52,15 @@ const useStyles = makeStyles({
     fontSize: tokens.fontSizeBase100,
     color: tokens.colorNeutralForeground3,
     marginTop: tokens.spacingVerticalXXL,
+  },
+  spinIcon: {
+    animationName: {
+      from: { transform: "rotate(0deg)" },
+      to: { transform: "rotate(360deg)" },
+    },
+    animationDuration: "1s",
+    animationIterationCount: "infinite",
+    animationTimingFunction: "linear",
   },
 });
 
@@ -120,7 +129,11 @@ export default function AboutTab({ version, onCheckForUpdates, onUpdateFound }: 
         <Button
           key={updateCheckState}
           appearance="subtle"
-          icon={updateCheckState === "checking" ? <Spinner size="tiny" /> : <ArrowSyncRegular />}
+          icon={
+            <ArrowSyncRegular
+              className={updateCheckState === "checking" ? styles.spinIcon : undefined}
+            />
+          }
           onClick={handleCheckUpdates}
           disabled={updateCheckState === "checking"}
         >
