@@ -116,7 +116,7 @@ export default function AboutTab({ version, onCheckForUpdates }: AboutTabProps) 
       </div>
       <div className={styles.aboutTools}>
         <Button
-          key={updateCheckState}
+          key="update-check-btn"
           appearance="subtle"
           icon={updateCheckState === "checking" ? <Spinner size="tiny" /> : <ArrowSyncRegular />}
           onClick={handleCheckUpdates}
