@@ -167,11 +167,39 @@ pub fn run() {
                             Ok(updater) => match updater.check().await {
                                 Ok(Some(update)) => {
                                     log::info!("Update found: {:?}", update.version);
-                                    if let Err(e) =
-                                        update.download_and_install(|_, _| {}, || {}).await
+
+                                    let new_version = update.version.clone();
+                                    let current_version = handle.package_info().version.to_string();
+                                    let date = update.date.clone();
+                                    let body = update.body.clone();
+
+                                    // Save to app state
                                     {
-                                        log::error!("Failed to download and install update: {}", e);
+                                        let state = handle.state::<AppState>();
+                                        let mut inner = state.lock();
+                                        inner.pending_update = Some(update);
                                     }
+
+                                    // Emit event to frontend
+                                    #[derive(serde::Serialize, Clone)]
+                                    #[serde(rename_all = "camelCase")]
+                                    struct UpdateAvailablePayload {
+                                        version: String,
+                                        current_version: String,
+                                        date: Option<String>,
+                                        body: Option<String>,
+                                    }
+
+                                    use tauri::Emitter;
+                                    let _ = handle.emit(
+                                        "update-available",
+                                        UpdateAvailablePayload {
+                                            version: new_version,
+                                            current_version,
+                                            date,
+                                            body,
+                                        },
+                                    );
                                 }
                                 Ok(None) => {
                                     log::info!("No updates available.");
@@ -199,6 +227,8 @@ pub fn run() {
             app::commands::trigger_ceremony_now,
             app::commands::finish_ceremony_now,
             app::commands::get_log_contents,
+            app::commands::check_for_updates,
+            app::commands::install_update,
         ])
         .run(tauri::generate_context!())
         .expect("error while running Minute of Silence");
