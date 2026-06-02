@@ -149,7 +149,7 @@ pub async fn check_for_updates(
             return Ok(Some(UpdateInfo {
                 version: update.version.clone(),
                 current_version: app.package_info().version.to_string(),
-                date: update.date.clone(),
+                date: update.date.map(|d| d.to_string()),
                 body: update.body.clone(),
             }));
         }
@@ -167,7 +167,7 @@ pub async fn check_for_updates(
             let info = UpdateInfo {
                 version: update.version.clone(),
                 current_version: app.package_info().version.to_string(),
-                date: update.date.clone(),
+                date: update.date.map(|d| d.to_string()),
                 body: update.body.clone(),
             };
 
@@ -197,7 +197,6 @@ pub async fn install_update(app: AppHandle, state: State<'_, AppState>) -> Resul
 
     if let Some(update) = update {
         use tauri::Emitter;
-        use tauri_plugin_process::ProcessExt;
 
         #[derive(serde::Serialize, Clone)]
         struct ProgressPayload {
@@ -223,14 +222,17 @@ pub async fn install_update(app: AppHandle, state: State<'_, AppState>) -> Resul
                         );
                     }
                 },
-                move || {
-                    let _ = app.emit(
-                        "update-progress",
-                        ProgressPayload {
-                            progress: 100.0,
-                            status: "installing".to_string(),
-                        },
-                    );
+                {
+                    let app = app.clone();
+                    move || {
+                        let _ = app.emit(
+                            "update-progress",
+                            ProgressPayload {
+                                progress: 100.0,
+                                status: "installing".to_string(),
+                            },
+                        );
+                    }
                 },
             )
             .await;
@@ -238,8 +240,7 @@ pub async fn install_update(app: AppHandle, state: State<'_, AppState>) -> Resul
         match res {
             Ok(_) => {
                 log::info!("Update installed. Restarting...");
-                app_clone.restart();
-                Ok(())
+                app.restart();
             }
             Err(e) => {
                 let err_str = e.to_string();
