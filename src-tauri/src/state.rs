@@ -23,12 +23,26 @@ pub struct AppState {
     pub app_handle: AppHandle,
 }
 
-#[derive(Debug, Default)]
+#[derive(Default)]
 pub struct Inner {
     pub settings: Settings,
     pub ceremony_active: bool,
     pub last_activation: Option<DateTime<Local>>,
     pub pending_update: Option<tauri_plugin_updater::Update>,
+}
+
+impl std::fmt::Debug for Inner {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        f.debug_struct("Inner")
+            .field("settings", &self.settings)
+            .field("ceremony_active", &self.ceremony_active)
+            .field("last_activation", &self.last_activation)
+            .field(
+                "pending_update",
+                &self.pending_update.as_ref().map(|u| &u.version),
+            )
+            .finish()
+    }
 }
 
 impl AppState {
@@ -43,6 +57,7 @@ impl AppState {
                 settings: settings.clone(),
                 ceremony_active: false,
                 last_activation: None,
+                pending_update: None,
             })),
             ntp_service: NtpService::new(settings.ntp_server.clone()),
             audio: Arc::new(AudioEngine::new(app_handle.clone())),
