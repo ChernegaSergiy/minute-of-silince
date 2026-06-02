@@ -157,6 +157,10 @@
     "copy_logs": "Скопіювати логи",
     "copy_logs_copied": "Скопійовано.",
     "copy_logs_error": "Помилка копіювання",
+    "check_updates": "Перевірити оновлення",
+    "check_updates_checking": "Перевірка...",
+    "check_updates_up_to_date": "Нових оновлень немає",
+    "check_updates_error": "Помилка перевірки",
     "license": "Ліцензія: CSSM Unlimited License v2.0",
     "glory": "Ми щодня о 09:00 згадуємо всіх, чиї життя забрала війна. Слава Героям."
   },
