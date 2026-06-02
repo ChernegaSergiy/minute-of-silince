@@ -254,11 +254,7 @@ export default function App() {
     try {
       const { invoke } = await import("@tauri-apps/api/core");
       const update = await invoke<UpdateInfo | null>("check_for_updates");
-      if (update) {
-        setUpdateInfo(update);
-        setShowUpdateDialog(true);
-        return update;
-      }
+      return update;
     } catch (err) {
       console.error(err);
     }
@@ -325,7 +321,14 @@ export default function App() {
                       onPersonalDatesChange={setPersonalDates}
                     />
                   ) : (
-                    <AboutTab version={version} onCheckForUpdates={handleManualUpdateCheck} />
+                    <AboutTab
+                      version={version}
+                      onCheckForUpdates={handleManualUpdateCheck}
+                      onUpdateFound={(update) => {
+                        setUpdateInfo(update);
+                        setShowUpdateDialog(true);
+                      }}
+                    />
                   )}
                 </div>
               )}
