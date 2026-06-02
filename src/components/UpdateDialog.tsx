@@ -81,6 +81,9 @@ const useStyles = makeStyles({
     display: "block",
     fontSize: tokens.fontSizeBase200,
   },
+  actionButton: {
+    whiteSpace: "nowrap",
+  },
 });
 
 export default function UpdateDialog({ updateInfo, onClose }: UpdateDialogProps) {
@@ -202,6 +205,7 @@ export default function UpdateDialog({ updateInfo, onClose }: UpdateDialogProps)
           </DialogContent>
           <DialogActions>
             <Button
+              className={styles.actionButton}
               appearance="primary"
               disabled={updating}
               onClick={handleInstall}
@@ -209,6 +213,7 @@ export default function UpdateDialog({ updateInfo, onClose }: UpdateDialogProps)
               {t("update.btn_install")}
             </Button>
             <Button
+              className={styles.actionButton}
               appearance="secondary"
               disabled={updating}
               onClick={onClose}
