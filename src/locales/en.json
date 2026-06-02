@@ -178,7 +178,7 @@
     "version_info": "Available version: v{{newVersion}} (current: v{{currentVersion}})",
     "changelog": "Changelog:",
     "btn_install": "Install Now",
-    "btn_later": "Later",
+    "btn_later": "Remind me later",
     "status_downloading": "Downloading update... {{progress}}%",
     "status_installing": "Installing update...",
     "status_restarting": "Restarting...",

@@ -178,7 +178,7 @@
     "version_info": "Доступна версія: v{{newVersion}} (поточна: v{{currentVersion}})",
     "changelog": "Список змін:",
     "btn_install": "Встановити зараз",
-    "btn_later": "Пізніше",
+    "btn_later": "Нагадати пізніше",
     "status_downloading": "Завантаження оновлення... {{progress}}%",
     "status_installing": "Встановлення оновлення...",
     "status_restarting": "Перезапуск...",
