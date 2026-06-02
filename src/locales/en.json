@@ -173,6 +173,17 @@
     "empty": "No personal dates.",
     "edit_title": "Edit date"
   },
+  "update": {
+    "title": "Update Available",
+    "version_info": "Available version: v{{newVersion}} (current: v{{currentVersion}})",
+    "changelog": "Changelog:",
+    "btn_install": "Install Now",
+    "btn_later": "Later",
+    "status_downloading": "Downloading update... {{progress}}%",
+    "status_installing": "Installing update...",
+    "status_restarting": "Restarting...",
+    "error": "Update failed: {{error}}"
+  },
   "changelog": {
     "categories": {
       "added": "Added",
