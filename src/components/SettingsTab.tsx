@@ -130,6 +130,15 @@ const useStyles = makeStyles({
     alignItems: "center",
     gap: tokens.spacingHorizontalS,
   },
+  spinIcon: {
+    animationName: {
+      from: { transform: "rotate(0deg)" },
+      to: { transform: "rotate(360deg)" },
+    },
+    animationDuration: "1s",
+    animationIterationCount: "infinite",
+    animationTimingFunction: "linear",
+  },
 });
 
 function SwitchRow({
@@ -453,7 +462,11 @@ export default function SettingsTab({
             <Button
               size="small"
               appearance="transparent"
-              icon={<ArrowSync20Regular />}
+              icon={
+                <ArrowSync20Regular
+                  className={syncing ? styles.spinIcon : undefined}
+                />
+              }
               disabled={syncing}
               onClick={onSyncNtp}
             >
