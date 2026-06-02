@@ -9,6 +9,7 @@ import { type UpdateInfo } from "./UpdateDialog";
 interface AboutTabProps {
   version: string;
   onCheckForUpdates: () => Promise<UpdateInfo | null>;
+  onUpdateFound: (update: UpdateInfo) => void;
 }
 
 const useStyles = makeStyles({
@@ -54,7 +55,7 @@ const useStyles = makeStyles({
   },
 });
 
-export default function AboutTab({ version, onCheckForUpdates }: AboutTabProps) {
+export default function AboutTab({ version, onCheckForUpdates, onUpdateFound }: AboutTabProps) {
   const styles = useStyles();
   const [copyState, setCopyState] = useState<"idle" | "copied" | "error">("idle");
   const [updateCheckState, setUpdateCheckState] = useState<"initial" | "checking" | "up_to_date" | "error">("initial");
@@ -70,6 +71,7 @@ export default function AboutTab({ version, onCheckForUpdates }: AboutTabProps) 
 
       if (update) {
         setUpdateCheckState("initial");
+        onUpdateFound(update);
       } else {
         setUpdateCheckState("up_to_date");
         window.setTimeout(() => setUpdateCheckState("initial"), 2000);
@@ -78,7 +80,7 @@ export default function AboutTab({ version, onCheckForUpdates }: AboutTabProps) 
       setUpdateCheckState("error");
       window.setTimeout(() => setUpdateCheckState("initial"), 2000);
     }
-  }, [updateCheckState, onCheckForUpdates]);
+  }, [updateCheckState, onCheckForUpdates, onUpdateFound]);
 
   const handleCopyLogs = useCallback(async () => {
     if (copyState !== "idle") return;
