@@ -170,7 +170,7 @@ pub fn run() {
 
                                     let new_version = update.version.clone();
                                     let current_version = handle.package_info().version.to_string();
-                                    let date = update.date.clone();
+                                    let date = update.date.map(|d| d.to_string());
                                     let body = update.body.clone();
 
                                     // Save to app state
