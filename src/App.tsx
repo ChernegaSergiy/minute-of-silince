@@ -41,6 +41,7 @@ import Overlay from "./components/Overlay";
 import SettingsTab from "./components/SettingsTab";
 import PersonalDatesTab from "./components/PersonalDatesTab";
 import UpdateDialog, { type UpdateInfo } from "./components/UpdateDialog";
+import { useIdle } from "./hooks/useIdle";
 
 const ChangelogTab = lazy(() => import("./components/ChangelogTab"));
 
@@ -105,6 +106,9 @@ export default function App() {
   const [syncing, setSyncing] = useState(false);
   const [hydrated, setHydrated] = useState(false);
   const [updateInfo, setUpdateInfo] = useState<UpdateInfo | null>(null);
+  const [showUpdateDialog, setShowUpdateDialog] = useState(false);
+  const [updateDismissed, setUpdateDismissed] = useState(false);
+  const isIdle = useIdle(15000); // 15 seconds idle timeout
   const initRef = useRef(false);
 
   const isDirty = hydrated && JSON.stringify(settings) !== cleanSettings;
@@ -218,6 +222,15 @@ export default function App() {
     return () => media.removeEventListener("change", updateTheme);
   }, []);
 
+  // Trigger the update dialog when user is idle
+  useEffect(() => {
+    if (!updateInfo || updateDismissed || showUpdateDialog) return;
+
+    if (isIdle && document.hasFocus()) {
+      setShowUpdateDialog(true);
+    }
+  }, [updateInfo, updateDismissed, showUpdateDialog, isIdle]);
+
   const updateSetting = useCallback(<K extends keyof Settings>(key: K, value: Settings[K]) => {
     setSettings((prev) => ({ ...prev, [key]: value }));
   }, []);
@@ -325,8 +338,11 @@ export default function App() {
           )}
         </div>
         <UpdateDialog
-          updateInfo={updateInfo}
-          onClose={() => setUpdateInfo(null)}
+          updateInfo={showUpdateDialog ? updateInfo : null}
+          onClose={() => {
+            setShowUpdateDialog(false);
+            setUpdateDismissed(true);
+          }}
         />
       </FluentProvider>
 
