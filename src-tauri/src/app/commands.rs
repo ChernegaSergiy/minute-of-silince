@@ -122,3 +122,134 @@ pub fn get_log_contents(app: AppHandle) -> Result<String> {
 
     Ok(lines.join("\n"))
 }
+
+#[derive(serde::Serialize, Clone)]
+#[serde(rename_all = "camelCase")]
+pub struct UpdateInfo {
+    pub version: String,
+    pub current_version: String,
+    pub date: Option<String>,
+    pub body: Option<String>,
+}
+
+/// Check for updates and store the result in AppState.
+#[tauri::command]
+pub async fn check_for_updates(
+    app: AppHandle,
+    state: State<'_, AppState>,
+) -> Result<Option<UpdateInfo>> {
+    if !crate::platform::should_check_for_updates() {
+        return Ok(None);
+    }
+
+    // Check if there is already a pending update stored in state
+    {
+        let inner = state.lock();
+        if let Some(ref update) = inner.pending_update {
+            return Ok(Some(UpdateInfo {
+                version: update.version.clone(),
+                current_version: app.package_info().version.to_string(),
+                date: update.date.clone(),
+                body: update.body.clone(),
+            }));
+        }
+    }
+
+    use tauri_plugin_updater::UpdaterExt;
+    log::info!("Checking for updates...");
+    let updater = app
+        .updater_builder()
+        .build()
+        .map_err(|e| crate::AppError::Update(e.to_string()))?;
+    match updater.check().await {
+        Ok(Some(update)) => {
+            log::info!("Update found: {:?}", update.version);
+            let info = UpdateInfo {
+                version: update.version.clone(),
+                current_version: app.package_info().version.to_string(),
+                date: update.date.clone(),
+                body: update.body.clone(),
+            };
+
+            let mut inner = state.lock();
+            inner.pending_update = Some(update);
+            Ok(Some(info))
+        }
+        Ok(None) => {
+            log::info!("No updates available.");
+            Ok(None)
+        }
+        Err(e) => {
+            log::error!("Failed to check for updates: {}", e);
+            Err(crate::AppError::Update(e.to_string()))
+        }
+    }
+}
+
+/// Download and install the pending update.
+#[tauri::command]
+pub async fn install_update(app: AppHandle, state: State<'_, AppState>) -> Result<()> {
+    log::info!("Installing update...");
+    let update = {
+        let mut inner = state.lock();
+        inner.pending_update.take()
+    };
+
+    if let Some(update) = update {
+        use tauri::Emitter;
+        use tauri_plugin_process::ProcessExt;
+
+        #[derive(serde::Serialize, Clone)]
+        struct ProgressPayload {
+            progress: f64,
+            status: String,
+        }
+
+        let app_clone = app.clone();
+        let mut downloaded = 0;
+
+        let res = update
+            .download_and_install(
+                move |chunk_length, total_length| {
+                    downloaded += chunk_length;
+                    if let Some(total) = total_length {
+                        let progress = (downloaded as f64 / total as f64) * 100.0;
+                        let _ = app_clone.emit(
+                            "update-progress",
+                            ProgressPayload {
+                                progress,
+                                status: "downloading".to_string(),
+                            },
+                        );
+                    }
+                },
+                move || {
+                    let _ = app.emit(
+                        "update-progress",
+                        ProgressPayload {
+                            progress: 100.0,
+                            status: "installing".to_string(),
+                        },
+                    );
+                },
+            )
+            .await;
+
+        match res {
+            Ok(_) => {
+                log::info!("Update installed. Restarting...");
+                app_clone.restart();
+                Ok(())
+            }
+            Err(e) => {
+                let err_str = e.to_string();
+                log::error!("Failed to download and install update: {}", err_str);
+                Err(crate::AppError::Update(err_str))
+            }
+        }
+    } else {
+        Err(crate::AppError::Update(
+            "No pending update found".to_string(),
+        ))
+    }
+}
